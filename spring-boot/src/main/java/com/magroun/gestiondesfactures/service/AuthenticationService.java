@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,23 +34,41 @@ public class AuthenticationService {
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
 
-  public AuthenticationResponse register(RegisterRequest request) {
-    var user = User.builder()
-        .firstname(request.getFirstname())
-        .lastname(request.getLastname())
-        .email(request.getEmail())
-        .password(passwordEncoder.encode(request.getPassword()))
-        .role(request.getRole())
-        .build();
-    var savedUser = repository.save(user);
-    var jwtToken = jwtService.generateToken(user);
-    var refreshToken = jwtService.generateRefreshToken(user);
-    saveUserToken(savedUser, jwtToken);
-    return AuthenticationResponse.builder()
-        .accessToken(jwtToken)
-            .refreshToken(refreshToken)
-        .build();
+  public ResponseCookie register(RegisterRequest request, HttpServletResponse response) {
+      var user = User.builder()
+          .firstname(request.getFirstname())
+          .lastname(request.getLastname())
+          .email(request.getEmail())
+          .password(passwordEncoder.encode(request.getPassword()))
+          .role(request.getRole())
+          .build();
+      var savedUser = repository.save(user);
+      var jwtToken = jwtService.generateToken(user);
+      var refreshToken = jwtService.generateRefreshToken(user);
+
+      ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", jwtToken)
+          .httpOnly(true)
+          .secure(true)   
+          .path("/api")      
+          .maxAge(24 * 60 * 60) 
+          .build();
+      response.addHeader("Set-Cookie", accessTokenCookie.toString());
+
+      ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", refreshToken)
+          .httpOnly(true)
+          .secure(true)  
+          .path("/api")     
+          .maxAge(24 * 60 * 60) 
+          .build();
+      response.addHeader("Set-Cookie", refreshTokenCookie.toString());
+      saveUserToken(savedUser, jwtToken);
+      return accessTokenCookie; 
   }
+
+
+
+
+
 
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
     authenticationManager.authenticate(
