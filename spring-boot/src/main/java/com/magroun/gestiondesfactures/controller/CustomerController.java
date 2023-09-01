@@ -30,10 +30,14 @@ public class CustomerController {
 
     @GetMapping("/{customerId}")
     public ResponseEntity<Customer> getCustomerById(@PathVariable Long customerId) {
-        Optional<Customer> customer = customerService.getCustomerById(customerId);
-        return customer.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        Customer customer = customerService.getCustomerById(customerId);
+        if (customer != null) {
+            return new ResponseEntity<>(customer, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
+
 
     @GetMapping
     public ResponseEntity<List<Customer>> getAllCustomers() {
@@ -41,15 +45,16 @@ public class CustomerController {
         return new ResponseEntity<>(customers, HttpStatus.OK);
     }
 
-    @PutMapping("/{customerId}")
+ /*   @PutMapping("/{customerId}")
     public ResponseEntity<Customer> updateCustomer(@PathVariable Long customerId, @RequestBody Customer updatedCustomer) {
-        Customer customer = customerService.updateCustomer(customerId, updatedCustomer);
-        if (customer != null) {
-            return new ResponseEntity<>(customer, HttpStatus.OK);
+        Customer updatedCustomerEntity = customerService.updateCustomer(customerId, updatedCustomer);
+        if (updatedCustomerEntity != null) {
+            return new ResponseEntity<>(updatedCustomerEntity, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-    }
+    }  */
+
 
     @DeleteMapping("/{customerId}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long customerId) {

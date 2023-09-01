@@ -2,12 +2,7 @@ package com.magroun.gestiondesfactures.model;
 
 import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "customers")
@@ -28,13 +23,11 @@ public class Customer {
 
     private String phoneNumber;
 
-//    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-//    private List<Invoice> invoices;
-
-    // Constructors, getters, and setters
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<Invoice> invoices;
 
     public Customer() {
-        // Default constructor
+
     }
 
     public Customer(String firstName, String lastName, String email, String phoneNumber) {
@@ -78,6 +71,10 @@ public class Customer {
 
 	public Long getId() {
 		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
     
 }
