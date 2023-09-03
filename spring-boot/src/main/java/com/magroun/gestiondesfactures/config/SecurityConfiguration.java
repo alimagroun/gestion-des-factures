@@ -50,7 +50,10 @@ public class SecurityConfiguration {
                 "/swagger-ui/**",
                 "/webjars/**",
                 "/swagger-ui.html",
-                "/api/excel/**"
+                "/api/excel/**",
+                "api/invoices/**",
+                "api/products/**",
+                "/api/customers/**"
         )
           .permitAll()
 

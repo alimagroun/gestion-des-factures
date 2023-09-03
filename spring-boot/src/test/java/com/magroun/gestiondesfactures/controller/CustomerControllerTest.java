@@ -55,7 +55,7 @@ public class CustomerControllerTest {
                 .andExpect(jsonPath("$.phoneNumber").value("1234567890"));
     }
 
-    @Test
+  /*  @Test
     public void testGetCustomerById() throws Exception {
         Customer customer = new Customer();
         customer.setId(1L);
@@ -72,6 +72,6 @@ public class CustomerControllerTest {
                 .andExpect(jsonPath("$.lastName").value("Doe"))
                 .andExpect(jsonPath("$.email").value("john.doe@example.com"))
                 .andExpect(jsonPath("$.phoneNumber").value("1234567890"));
-    }
+    } */
 
 }

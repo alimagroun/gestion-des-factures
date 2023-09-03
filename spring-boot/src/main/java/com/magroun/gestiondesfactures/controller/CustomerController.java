@@ -45,7 +45,7 @@ public class CustomerController {
         return new ResponseEntity<>(customers, HttpStatus.OK);
     }
 
- /*   @PutMapping("/{customerId}")
+    @PutMapping("/{customerId}")
     public ResponseEntity<Customer> updateCustomer(@PathVariable Long customerId, @RequestBody Customer updatedCustomer) {
         Customer updatedCustomerEntity = customerService.updateCustomer(customerId, updatedCustomer);
         if (updatedCustomerEntity != null) {
@@ -53,8 +53,7 @@ public class CustomerController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-    }  */
-
+    }  
 
     @DeleteMapping("/{customerId}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long customerId) {
@@ -62,9 +61,5 @@ public class CustomerController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     
-    @GetMapping("/test")
-    public String sayHello() {
-        return "test";
-    }
 }
 

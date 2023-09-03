@@ -7,6 +7,7 @@ import com.magroun.gestiondesfactures.model.Customer;
 import com.magroun.gestiondesfactures.repository.CustomerRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -34,8 +35,21 @@ public class CustomerServiceImpl implements CustomerService {
     }
     
     @Override
-    public void updateCustomer(Customer customer) {
-        customerRepository.save(customer);
+    public Customer updateCustomer(Long id, Customer updatedCustomer) {
+        Optional<Customer> existingCustomerOptional = customerRepository.findById(id);
+
+        if (existingCustomerOptional.isPresent()) {
+            Customer existingCustomer = existingCustomerOptional.get();
+            existingCustomer.setFirstName(updatedCustomer.getFirstName());
+            existingCustomer.setLastName(updatedCustomer.getLastName());
+            existingCustomer.setEmail(updatedCustomer.getEmail());
+            existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
+            
+            customerRepository.save(existingCustomer);
+            return existingCustomer;
+        } else {
+            return null;
+        }
     }
 
     @Override
