@@ -18,6 +18,7 @@ import { SharedModule } from './shared/shared.module';
 import { SpinnerComponent } from './shared/spinner.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { InvoiceListComponent } from './invoice-list/invoice-list.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { RegisterComponent } from './register/register.component';
     SpinnerComponent,
     LoginComponent,
     RegisterComponent,
+    InvoiceListComponent,
     
   ],
   imports: [

@@ -9,7 +9,6 @@ import com.magroun.gestiondesfactures.model.Customer;
 import com.magroun.gestiondesfactures.service.CustomerService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/customers")

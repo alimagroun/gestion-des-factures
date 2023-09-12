@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { FullComponent } from './layouts/full/full.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { InvoiceListComponent } from './invoice-list/invoice-list.component';
 
 export const AppRoutes: Routes = [
   {
@@ -27,4 +28,5 @@ export const AppRoutes: Routes = [
   },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'invoice-list', component: InvoiceListComponent },
 ];
