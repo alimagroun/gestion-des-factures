@@ -4,6 +4,8 @@ import { FullComponent } from './layouts/full/full.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { InvoiceListComponent } from './invoice-list/invoice-list.component';
+import { InvoiceCreateComponent } from './invoice-create/invoice-create.component';
+import { ProductListComponent } from './product-list/product-list.component';
 
 export const AppRoutes: Routes = [
   {
@@ -23,10 +25,22 @@ export const AppRoutes: Routes = [
       {
         path: 'dashboard',
         loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule)
-      }
+      },
+      {
+        path: 'invoice-create',
+        component: InvoiceCreateComponent,
+      },
+      { 
+        path: 'invoice-list',
+        component: InvoiceListComponent
+      },
+      { 
+        path: 'product-list',
+        component: ProductListComponent
+      },
     ]
   },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'invoice-list', component: InvoiceListComponent },
+
 ];

@@ -19,6 +19,11 @@ import { SpinnerComponent } from './shared/spinner.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { InvoiceListComponent } from './invoice-list/invoice-list.component';
+import { InvoiceCreateComponent } from './invoice-create/invoice-create.component';
+import { ProductListComponent } from './product-list/product-list.component';
+import { ProductCreateModalComponent } from './product-create-modal/product-create-modal.component';
+
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -29,6 +34,9 @@ import { InvoiceListComponent } from './invoice-list/invoice-list.component';
     LoginComponent,
     RegisterComponent,
     InvoiceListComponent,
+    InvoiceCreateComponent,
+    ProductListComponent,
+    ProductCreateModalComponent,
     
   ],
   imports: [
@@ -39,7 +47,8 @@ import { InvoiceListComponent } from './invoice-list/invoice-list.component';
     HttpClientModule,
     SharedModule,
     RouterModule.forRoot(AppRoutes),
-    AppSidebarComponent
+    AppSidebarComponent,
+    ReactiveFormsModule
   ],
   providers: [
     {

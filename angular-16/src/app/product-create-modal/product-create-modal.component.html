@@ -1,0 +1,54 @@
+<h2 class="modal-title">CRÉATION D'UN NOUVEL ARTICLE</h2>
+
+<form [formGroup]="productForm" (ngSubmit)="saveProduct()">
+  <div class="form-row">
+    <div class="form-group col-md-4">
+      <mat-form-field appearance="fill">
+        <mat-label>Reference</mat-label>
+        <input matInput formControlName="reference" >
+      </mat-form-field>
+    </div>
+
+    <div class="form-group col-md-4">
+      <mat-form-field appearance="fill">
+        <mat-label>Designation</mat-label>
+        <input matInput formControlName="designation" required>
+      </mat-form-field>
+    </div>
+
+    <div class="form-group col-md-4">
+      <mat-form-field appearance="fill">
+        <mat-label>Purchase Price</mat-label>
+        <input matInput formControlName="purchasePrice" required>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-4">
+      <mat-form-field appearance="fill">
+        <mat-label>Selling Price</mat-label>
+        <input matInput formControlName="sellingPrice" required>
+      </mat-form-field>
+    </div>
+
+    <div class="form-group col-md-4">
+      <mat-form-field appearance="fill">
+        <mat-label>Profit margin</mat-label>
+        <input matInput formControlName="profitMargin" required>
+      </mat-form-field>
+    </div>
+
+    <div class="form-group col-md-4">
+      <mat-form-field appearance="fill">
+        <mat-label>TVA</mat-label>
+        <input matInput formControlName="tax" required>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="modal-actions">
+    <button mat-raised-button color="primary" type="submit">Save</button>
+    <button mat-button (click)="closeDialog()">Cancel</button>
+  </div>
+</form>

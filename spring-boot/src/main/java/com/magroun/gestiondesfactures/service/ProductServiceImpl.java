@@ -40,10 +40,14 @@ public class ProductServiceImpl implements ProductService {
 
         if (existingProductOptional.isPresent()) {
             Product existingProduct = existingProductOptional.get();
-            existingProduct.setName(updatedProduct.getName());
-            existingProduct.setDescription(updatedProduct.getDescription());
-            existingProduct.setUnitPrice(updatedProduct.getUnitPrice());
-                        
+            existingProduct.setReference(updatedProduct.getReference());
+            existingProduct.setDesignation(updatedProduct.getDesignation());
+            existingProduct.setPurchasePrice(updatedProduct.getPurchasePrice());
+            existingProduct.setSellingPrice(updatedProduct.getSellingPrice());
+            existingProduct.setProfitMargin(updatedProduct.getProfitMargin());
+            existingProduct.setTax(updatedProduct.getTax());
+            existingProduct.setLastUpdate(updatedProduct.getLastUpdate());
+                            
             productRepository.save(existingProduct);
             return existingProduct;
         } else {
