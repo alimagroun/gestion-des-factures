@@ -21,21 +21,6 @@ export class ProductCreateModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
-
-    this.productForm.get('sellingPrice')?.valueChanges.subscribe((value) => {
-      if (value !== null && value !== '') {
-        // Parse the value to a number (excluding TND)
-        const numericValue = parseFloat(value.replace(' TND', ''));
-  
-        // Format the number as desired (up to 19 digits on the left, 2 digits on the right)
-        const formattedValue = numericValue.toFixed(2);
-  
-        // Update the form control with the formatted value (including TND)
-        this.productForm.get('sellingPrice')?.setValue(`${formattedValue} TND`, {
-          emitEvent: false, // Avoid triggering infinite changes
-        });
-      }
-    });
   }
 
   initializeForm(): void {
@@ -50,6 +35,33 @@ export class ProductCreateModalComponent implements OnInit {
     });
   }
 
+  formatPrice(event: any): void {
+    const inputElement = event.target as HTMLInputElement;
+    const selectionStart = inputElement.selectionStart;
+    const selectionEnd = inputElement.selectionEnd;
+  
+    let inputValue = inputElement.value;
+  
+    inputValue = inputValue.replace(/[^0-9.]/g, '');
+  
+    const parts = inputValue.split('.');
+    if (parts.length > 2) {
+      inputValue = `${parts[0]}.${parts.slice(1).join('')}`;
+    }
+  
+    if (parts[1] && parts[1].length > 2) {
+      inputValue = `${parts[0]}.${parts[1].slice(0, 2)}`;
+    }
+  
+    if (parts[0].length > 1 && parts[0][0] === '0' && parts[0][1] !== '.') {
+      inputValue = parts[0].substring(1) + inputValue.substring(parts[0].length);
+    }
+  
+    inputElement.value = inputValue;
+  
+    inputElement.setSelectionRange(selectionStart, selectionEnd);
+  }
+  
   saveProduct(): void {
     if (this.productForm.valid) {
       const newProduct: Product = this.productForm.value;
