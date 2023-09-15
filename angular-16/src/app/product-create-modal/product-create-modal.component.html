@@ -4,21 +4,21 @@
   <div class="form-row">
     <div class="form-group col-md-4">
       <mat-form-field appearance="fill">
-        <mat-label>Reference</mat-label>
-        <input matInput formControlName="reference" >
+        <mat-label>Référence</mat-label>
+        <input matInput formControlName="reference" maxlength="20">
       </mat-form-field>
     </div>
 
     <div class="form-group col-md-4">
       <mat-form-field appearance="fill">
-        <mat-label>Designation</mat-label>
-        <input matInput formControlName="designation" required>
+        <mat-label>Désignation</mat-label>
+        <input matInput formControlName="designation" required maxlength="20">
       </mat-form-field>
     </div>
 
     <div class="form-group col-md-4">
       <mat-form-field appearance="fill">
-        <mat-label>Purchase Price</mat-label>
+        <mat-label>Prix ​​d'achat</mat-label>
         <input matInput formControlName="purchasePrice" min="0" maxlength="22" (input)="formatPrice($event)" required>
       </mat-form-field>
     </div>
@@ -27,22 +27,22 @@
   <div class="form-row">
     <div class="form-group col-md-4">
       <mat-form-field appearance="fill">
-        <mat-label>Selling Price</mat-label>
+        <mat-label>Prix ​​de vente</mat-label>
         <input matInput formControlName="sellingPrice"  min="0" maxlength="22" (input)="formatPrice($event)" required>
       </mat-form-field>
     </div>
     
     <div class="form-group col-md-4">
       <mat-form-field appearance="fill">
-        <mat-label>Profit margin</mat-label>
-        <input matInput formControlName="profitMargin" required>
+        <mat-label>Taux de marge</mat-label>
+        <input matInput formControlName="profitMargin" (input)="formatPercentage($event)" required>
       </mat-form-field>
     </div>
 
     <div class="form-group col-md-4">
       <mat-form-field appearance="fill">
         <mat-label>TVA</mat-label>
-        <input matInput formControlName="tax" required>
+        <input matInput formControlName="tax" (input)="formatPercentage($event)" required>
       </mat-form-field>
     </div>
   </div>

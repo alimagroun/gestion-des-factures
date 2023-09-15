@@ -25,16 +25,39 @@ export class ProductCreateModalComponent implements OnInit {
 
   initializeForm(): void {
     this.productForm = this.formBuilder.group({
-      reference: ['', [Validators.required]],
+      reference: [''],
       designation: ['', [Validators.required]],
       purchasePrice: ['', [Validators.required, Validators.min(0)]],
       sellingPrice: ['' , [Validators.required, Validators.min(0)]],
-      profitMargin: ['0.00 %', [Validators.required, Validators.min(0)]],
-      tax: ['20.00 %', [Validators.required, Validators.min(0)]],
+      profitMargin: ['', [Validators.required, Validators.min(0)]],
+      tax: ['19', [Validators.required, Validators.min(0)]],
       lastUpdated: [new Date(), [Validators.required]]
+    });
+
+    this.productForm.get('purchasePrice')?.valueChanges.subscribe(() => {
+      this.calculateProfitMargin();
+    });
+  
+    this.productForm.get('sellingPrice')?.valueChanges.subscribe(() => {
+      this.calculateProfitMargin();
     });
   }
 
+  calculateProfitMargin(): void {
+    const purchasePrice = parseFloat(this.productForm.get('purchasePrice')?.value);
+    const sellingPrice = parseFloat(this.productForm.get('sellingPrice')?.value);
+  
+    if (!isNaN(purchasePrice) && !isNaN(sellingPrice) && purchasePrice !== 0) {
+      let profitMargin = ((sellingPrice - purchasePrice) / sellingPrice) * 100;
+  
+      profitMargin = Math.min(profitMargin, 100);
+  
+      this.productForm.get('profitMargin')?.setValue(profitMargin.toFixed(2));
+    } else {
+      this.productForm.get('profitMargin')?.setValue('');
+    }
+  }
+  
   formatPrice(event: any): void {
     const inputElement = event.target as HTMLInputElement;
     const selectionStart = inputElement.selectionStart;
@@ -55,6 +78,38 @@ export class ProductCreateModalComponent implements OnInit {
   
     if (parts[0].length > 1 && parts[0][0] === '0' && parts[0][1] !== '.') {
       inputValue = parts[0].substring(1) + inputValue.substring(parts[0].length);
+    }
+  
+    inputElement.value = inputValue;
+  
+    inputElement.setSelectionRange(selectionStart, selectionEnd);
+  }
+
+  formatPercentage(event: any): void {
+    const inputElement = event.target as HTMLInputElement;
+    const selectionStart = inputElement.selectionStart;
+    const selectionEnd = inputElement.selectionEnd;
+  
+    let inputValue = inputElement.value;
+  
+    inputValue = inputValue.replace(/[^0-9.]/g, '');
+    
+    const parts = inputValue.split('.');
+  
+    if (parts[0] && parts[0].length > 2) {
+      parts[0] = parts[0].slice(0, 2);
+    }
+  
+    if (parts[1] && parts[1].length > 2) {
+      parts[1] = parts[1].slice(0, 2);
+    }
+  
+    inputValue = parts.join('.');
+  
+    const dotCount = inputValue.split('.').length - 1;
+    if (dotCount > 1) {
+      const indexOfLastDot = inputValue.lastIndexOf('.');
+      inputValue = inputValue.substring(0, indexOfLastDot) + inputValue.substring(indexOfLastDot + 1);
     }
   
     inputElement.value = inputValue;
