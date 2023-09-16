@@ -2,6 +2,8 @@ package com.magroun.gestiondesfactures.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.magroun.gestiondesfactures.model.Product;
 import com.magroun.gestiondesfactures.repository.ProductRepository;
@@ -25,8 +27,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public Page<Product> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable);
     }
 
     @Override

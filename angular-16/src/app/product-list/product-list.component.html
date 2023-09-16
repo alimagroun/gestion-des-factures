@@ -1,5 +1,49 @@
 <p>product-list works!</p>
 
-
-<!-- In your product-list.component.html or any other component template -->
 <button mat-raised-button color="primary" (click)="openCreateProductModal()">AJOUTER</button>
+
+<div class="mat-elevation-z8">
+    <mat-table [dataSource]="dataSource">
+      <ng-container matColumnDef="reference">
+        <mat-header-cell *matHeaderCellDef> Reference </mat-header-cell>
+        <mat-cell *matCellDef="let product"> {{ product.reference }} </mat-cell>
+      </ng-container>
+  
+      <ng-container matColumnDef="designation">
+        <mat-header-cell *matHeaderCellDef> Designation </mat-header-cell>
+        <mat-cell *matCellDef="let product"> {{ product.designation }} </mat-cell>
+      </ng-container>
+  
+      <ng-container matColumnDef="sellingPrice">
+        <mat-header-cell *matHeaderCellDef> Selling Price </mat-header-cell>
+        <mat-cell *matCellDef="let product"> {{ product.sellingPrice }} </mat-cell>
+      </ng-container>
+  
+      <ng-container matColumnDef="purchasePrice">
+        <mat-header-cell *matHeaderCellDef> Purchase Price </mat-header-cell>
+        <mat-cell *matCellDef="let product"> {{ product.purchasePrice }} </mat-cell>
+      </ng-container>
+  
+      <ng-container matColumnDef="tax">
+        <mat-header-cell *matHeaderCellDef> Tax </mat-header-cell>
+        <mat-cell *matCellDef="let product"> {{ product.tax }} </mat-cell>
+      </ng-container>
+  
+      <ng-container matColumnDef="ttc">
+        <mat-header-cell *matHeaderCellDef> TTC </mat-header-cell>
+        <mat-cell *matCellDef="let product"> {{ product.ttc }} </mat-cell>
+      </ng-container>
+  
+      <ng-container matColumnDef="lastUpdate">
+        <mat-header-cell *matHeaderCellDef> Last Update </mat-header-cell>
+        <mat-cell *matCellDef="let product"> {{ product.lastUpdate | date:'short' }} </mat-cell>
+      </ng-container>
+  
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="10" [length]="paginator?.length" (page)="onPageChange($event)">
+    </mat-paginator>
+  </div>
+  
