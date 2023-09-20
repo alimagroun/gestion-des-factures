@@ -48,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
             existingProduct.setSellingPrice(updatedProduct.getSellingPrice());
             existingProduct.setProfitMargin(updatedProduct.getProfitMargin());
             existingProduct.setTax(updatedProduct.getTax());
-            existingProduct.setLastUpdate(updatedProduct.getLastUpdate());
+     //       existingProduct.setLastUpdate(updatedProduct.getLastUpdate());
                             
             productRepository.save(existingProduct);
             return existingProduct;

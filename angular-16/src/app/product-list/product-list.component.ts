@@ -13,7 +13,7 @@ import { ProductCreateModalComponent } from '../product-create-modal/product-cre
 })
 export class ProductListComponent implements OnInit {
   dataSource!: MatTableDataSource<any>;
-  displayedColumns: string[] = ['reference', 'designation', 'sellingPrice', 'purchasePrice', 'tax', 'ttc', 'lastUpdate'];
+  displayedColumns: string[] = ['select','reference', 'designation', 'sellingPrice', 'purchasePrice', 'tax', 'ttc', 'lastUpdate'];
 
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
 
@@ -44,5 +44,12 @@ openCreateProductModal(): void {
   dialogRef.afterClosed().subscribe(result => {
     console.log(`Dialog result: ${result}`);
   });
+}
+selectAllRows(event: any) {
+
+}
+
+selectRow(row: any) {
+
 }
 }

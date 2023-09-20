@@ -2,6 +2,9 @@ package com.magroun.gestiondesfactures.model;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Table(name = "products")
@@ -17,7 +20,9 @@ public class Product {
     private double sellingPrice;
     private double profitMargin;
     private double tax;
-    private Date lastUpdate;
+    @CreatedDate
+    @Column(name = "last_update")
+    private Date lastUpdate = new Date();
 
     
     public Product(Long id, String reference, String designation, double purchasePrice, double sellingPrice,
@@ -99,5 +104,5 @@ public class Product {
 
     public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
-    }
+    } 
 }
