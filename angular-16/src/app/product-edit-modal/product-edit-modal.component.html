@@ -1,0 +1,56 @@
+<!-- product-edit-modal.component.html -->
+
+<h2 class="modal-title">ÉDITION D'UN ARTICLE</h2>
+
+<form [formGroup]="productForm" (ngSubmit)="saveProduct()">
+  <div class="form-row">
+    <div class="form-group col-md-4">
+      <mat-form-field appearance="fill">
+        <mat-label>Référence</mat-label>
+        <input matInput formControlName="reference" maxlength="20">
+      </mat-form-field>
+    </div>
+
+    <div class="form-group col-md-4">
+      <mat-form-field appearance="fill">
+        <mat-label>Désignation</mat-label>
+        <input matInput formControlName="designation" required maxlength="20">
+      </mat-form-field>
+    </div>
+
+    <div class="form-group col-md-4">
+      <mat-form-field appearance="fill">
+        <mat-label>Prix ​​d'achat</mat-label>
+        <input matInput formControlName="purchasePrice" min="0" maxlength="13" (input)="formatPrice($event)" required>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-4">
+      <mat-form-field appearance="fill">
+        <mat-label>Prix ​​de vente</mat-label>
+        <input matInput formControlName="sellingPrice"  min="0" maxlength="13" (input)="formatPrice($event)" required>
+      </mat-form-field>
+    </div>
+
+    <div class="form-group col-md-4">
+      <mat-form-field appearance="fill">
+        <mat-label>Taux de marge</mat-label>
+        <input matInput formControlName="profitMargin" (input)="formatPercentage($event)" required>
+      </mat-form-field>
+    </div>
+
+    <div class="form-group col-md-4">
+      <mat-form-field appearance="fill">
+        <mat-label>TVA</mat-label>
+        <input matInput formControlName="tax" (input)="formatPercentage($event)" required>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="modal-actions">
+    <button mat-raised-button color="primary" type="submit">Enregistrer</button>
+    <button mat-button (click)="closeDialog()">Annuler</button>
+  </div>
+</form>

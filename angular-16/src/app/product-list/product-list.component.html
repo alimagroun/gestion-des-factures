@@ -1,12 +1,16 @@
 <h2>LISTE DES ARTICLES</h2>
 
-<button mat-raised-button color="primary" (click)="openCreateProductModal()">AJOUTER</button>
+<div class="button-container">
+  <button mat-raised-button color="primary" *ngIf="showModifierButton" (click)="openEditProductModal(product)">Modifier</button>
+  <button mat-raised-button color="warn" *ngIf="showSupprimerButton" (click)="onDeleteProduct(selectedRows)">Supprimer</button>
+  <button mat-raised-button color="primary" (click)="openCreateProductModal()">AJOUTER</button>
+</div>
 
 <div class="mat-elevation-z8">
     <mat-table [dataSource]="dataSource">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
-          <mat-checkbox (change)="selectAllRows($event)"></mat-checkbox>
+          <mat-checkbox [(ngModel)]="selectAllChecked" (change)="selectAllRows($event)"></mat-checkbox>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
           <mat-checkbox [(ngModel)]="row.isSelected" (change)="selectRow(row)"></mat-checkbox>
@@ -29,7 +33,7 @@
       </ng-container>
   
       <ng-container matColumnDef="purchasePrice">
-        <mat-header-cell *matHeaderCellDef> P.A </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef> P.A HT </mat-header-cell>
         <mat-cell *matCellDef="let product"> {{ product.purchasePrice }} </mat-cell>
       </ng-container>
   
@@ -47,7 +51,7 @@
         
       <ng-container matColumnDef="lastUpdate">
         <mat-header-cell *matHeaderCellDef> DERNIÈRE MAJ </mat-header-cell>
-        <mat-cell *matCellDef="let product"> {{ product.lastUpdate | date:'M/d/yyyy' }}
+        <mat-cell *matCellDef="let product"> {{ product.lastUpdate | date:'d/M/yyyy' }}
         </mat-cell>
       </ng-container>
   

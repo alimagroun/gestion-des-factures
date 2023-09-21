@@ -2,12 +2,13 @@ package com.magroun.gestiondesfactures.model;
 
 import jakarta.persistence.*;
 import java.util.Date;
-import java.time.LocalDateTime;
 
-import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "products")
+@EntityListeners(AuditingEntityListener.class)
 public class Product {
 
     @Id
@@ -20,9 +21,10 @@ public class Product {
     private double sellingPrice;
     private double profitMargin;
     private double tax;
-    @CreatedDate
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_update")
-    private Date lastUpdate = new Date();
+    @LastModifiedDate
+    private Date lastUpdate;
 
     
     public Product(Long id, String reference, String designation, double purchasePrice, double sellingPrice,

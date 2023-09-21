@@ -8,23 +8,16 @@ export class Product {
   tax: number;
   lastUpdate: Date;
 
-  constructor(
-    id: number,
-    reference: string,
-    designation: string,
-    purchasePrice: number,
-    sellingPrice: number,
-    profitMargin: number,
-    tax: number,
-    lastUpdate: Date
-  ) {
-    this.id = id;
-    this.reference = reference;
-    this.designation = designation;
-    this.purchasePrice = purchasePrice;
-    this.sellingPrice = sellingPrice;
-    this.profitMargin = profitMargin;
-    this.tax = tax;
-    this.lastUpdate = lastUpdate;
+  constructor() {
+    this.id = 0;
+    this.reference = '';
+    this.designation = '';
+    this.purchasePrice = 0;
+    this.sellingPrice = 0;
+    this.profitMargin = 0;
+    this.tax = 0;
+    this.lastUpdate = new Date();
   }
+  
+  
 }
