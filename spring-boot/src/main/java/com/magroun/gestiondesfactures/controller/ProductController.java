@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.magroun.gestiondesfactures.exception.ResourceNotFoundException;
 import com.magroun.gestiondesfactures.model.Product;
 import com.magroun.gestiondesfactures.service.ProductService;
 
@@ -40,7 +41,7 @@ public class ProductController {
         if (product != null) {
             return new ResponseEntity<>(product, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ResourceNotFoundException("Product with ID " + id + " not found.");
         }
     }
 

@@ -6,6 +6,10 @@ import java.util.Date;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.DecimalMax;
+
 @Entity
 @Table(name = "products")
 @EntityListeners(AuditingEntityListener.class)
@@ -15,11 +19,25 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Reference cannot be blank")
     private String reference;
+
+    @NotBlank(message = "Designation cannot be blank")
     private String designation;
+
+    @DecimalMin(value = "0.0", message = "Purchase price must be greater than or equal to 0.0")
+    @DecimalMax(value = "9999999999999.0", message = "Purchase price cannot exceed 9,999,999,999,999.0")
     private double purchasePrice;
+
+    @DecimalMin(value = "0.0", message = "Selling price must be greater than or equal to 0.0")
     private double sellingPrice;
+
+    @DecimalMin(value = "0.0", message = "Profit margin must be greater than or equal to 0.0")
+    @DecimalMax(value = "100.0", message = "Profit margin cannot exceed 100.0")
     private double profitMargin;
+
+    @DecimalMin(value = "0.0", message = "Tax must be greater than or equal to 0.0")
+    @DecimalMax(value = "100.0", message = "Tax cannot exceed 100.0")
     private double tax;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_update")
