@@ -12,6 +12,8 @@ import com.magroun.gestiondesfactures.exception.ResourceNotFoundException;
 import com.magroun.gestiondesfactures.model.Product;
 import com.magroun.gestiondesfactures.service.ProductService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/products")
 @CrossOrigin(origins = "http://localhost:4200")
@@ -46,7 +48,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product) {
         Product createdProduct = productService.createProduct(product);
         return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
     }

@@ -6,6 +6,8 @@ import java.util.Date;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.magroun.gestiondesfactures.validation.ValidSellingPrice;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.DecimalMax;
@@ -13,6 +15,7 @@ import jakarta.validation.constraints.DecimalMax;
 @Entity
 @Table(name = "products")
 @EntityListeners(AuditingEntityListener.class)
+@ValidSellingPrice
 public class Product {
 
     @Id
@@ -29,6 +32,7 @@ public class Product {
     @DecimalMax(value = "9999999999999.0", message = "Purchase price cannot exceed 9,999,999,999,999.0")
     private double purchasePrice;
 
+   
     @DecimalMin(value = "0.0", message = "Selling price must be greater than or equal to 0.0")
     private double sellingPrice;
 
