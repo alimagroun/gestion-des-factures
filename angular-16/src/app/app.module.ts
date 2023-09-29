@@ -26,6 +26,7 @@ import { ProductCreateModalComponent } from './product-create-modal/product-crea
 import { ReactiveFormsModule } from '@angular/forms';
 import { ProductEditModalComponent } from './product-edit-modal/product-edit-modal.component';
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { CustomerListComponent } from './customer-list/customer-list.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/
     ProductCreateModalComponent,
     ProductEditModalComponent,
     DeleteConfirmationDialogComponent,
+    CustomerListComponent,
     
   ],
   imports: [

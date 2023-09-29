@@ -4,7 +4,6 @@ export class Customer {
     lastName: string;
     email: string;
     phoneNumber: string;
-//  invoices: Invoice[] | undefined;
   
     constructor(
       firstName: string,
@@ -17,7 +16,6 @@ export class Customer {
       this.lastName = lastName;
       this.email = email;
       this.phoneNumber = phoneNumber;
-  //  this.invoices = undefined; 
     }
   }
   

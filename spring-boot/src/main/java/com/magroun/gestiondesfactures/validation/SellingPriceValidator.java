@@ -14,10 +14,9 @@ public class SellingPriceValidator implements ConstraintValidator<ValidSellingPr
     @Override
     public boolean isValid(Product product, ConstraintValidatorContext context) {
         if (product == null) {
-            return true; // Let other validators handle null values
+            return true;
         }
 
-        // Perform the custom validation logic here
         return product.getSellingPrice() > product.getPurchasePrice();
     }
 }

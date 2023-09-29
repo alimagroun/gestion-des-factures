@@ -6,6 +6,7 @@ import { RegisterComponent } from './register/register.component';
 import { InvoiceListComponent } from './invoice-list/invoice-list.component';
 import { InvoiceCreateComponent } from './invoice-create/invoice-create.component';
 import { ProductListComponent } from './product-list/product-list.component';
+import { CustomerListComponent } from './customer-list/customer-list.component';
 
 export const AppRoutes: Routes = [
   {
@@ -37,6 +38,11 @@ export const AppRoutes: Routes = [
       { 
         path: 'product-list',
         component: ProductListComponent
+      },
+
+      {
+        path: 'customer-list',
+        component: CustomerListComponent
       },
     ]
   },

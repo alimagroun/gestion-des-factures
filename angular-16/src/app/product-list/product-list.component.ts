@@ -74,17 +74,32 @@ export class ProductListComponent implements OnInit {
   });
 }
 
-  onDeleteProduct(selectedRows: Product[]): void {
+onDeleteProduct(selectedRows: Product[]): void {
+  const currentPageIndex = this.paginator.pageIndex;
+  const currentPageSize = this.paginator.pageSize;
   const confirmationMessage = `Voulez-vous vraiment supprimer ${selectedRows.length > 1 ? 'ces articles' : 'cet article'} ?`;
 
   this.dialogService
     .openDeleteConfirmationDialog(confirmationMessage)
     .subscribe((confirmed: boolean) => {
       if (confirmed) {
-        selectedRows.forEach((product) => {
+        selectedRows.forEach((product, index) => {
           this.productService.deleteProduct(product.id).subscribe(
             () => {
-              this.loadProducts(this.paginator.pageIndex, this.paginator.pageSize);
+              this.dataSource.data = this.dataSource.data.filter(item => item.id !== product.id);
+
+              const totalProductsCount = this.dataSource.data.length;
+
+              if (totalProductsCount === 0) {
+                if (currentPageIndex > 0) {
+                  this.paginator.pageIndex = currentPageIndex - 1;
+                } else {
+                  this.paginator.pageIndex = 0;
+                }
+              }
+
+              this.loadProducts(this.paginator.pageIndex, currentPageSize);
+              this.selectAllChecked = false;
             },
             (error) => {
               console.error(`Error deleting product ${product.id}:`, error);
@@ -97,16 +112,21 @@ export class ProductListComponent implements OnInit {
     });
 }
 
-  selectAllRows(event: any) {
+selectAllRows(event: any) {
   this.showModifierButton = false;
   this.showSupprimerButton = event.checked;
 
+  this.selectedRows = [];
+
   if (event.checked) {
-    this.dataSource.data.forEach((item) => (item.isSelected = true));
+    this.dataSource.data.forEach((item) => {
+      item.isSelected = true;
+      this.selectedRows.push(item);
+    });
   } else {
     this.dataSource.data.forEach((item) => (item.isSelected = false));
   }
-  }
+}
 
 selectRow(row: any) {
   this.selectedRows = this.dataSource.data.filter((item) => item.isSelected);
@@ -120,6 +140,9 @@ selectRow(row: any) {
   }
 
   this.showSupprimerButton = this.selectedRows.length > 0;
+
+  const allProductsSelected = this.dataSource.data.every((item) => item.isSelected);
+  this.selectAllChecked = allProductsSelected;
 }
 
 }
