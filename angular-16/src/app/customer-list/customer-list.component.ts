@@ -1,11 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-// import { CustomerService } from '../services/customer.service';
+import { Component, OnInit, ViewChild } from '@angular/core'; import { CustomerService } from '../services/customer.service';
 import { Page } from '../models/page';
 import { Customer } from '../models/customer';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
-// import { CustomerCreateModalComponent } from '../customer-create-modal/customer-create-modal.component';
+import { CustomerCreateModalComponent } from '../customer-create-modal/customer-create-modal.component';
 // import { CustomerEditModalComponent } from '../customer-edit-modal/customer-edit-modal.component';
 import { DialogService } from '../services/DialogService';
 
@@ -33,7 +32,7 @@ export class CustomerListComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
- //   private customerService: CustomerService,
+    private customerService: CustomerService,
     private dialogService: DialogService
   ) {}
 
@@ -75,16 +74,16 @@ export class CustomerListComponent implements OnInit {
   }
 
   openEditCustomerModal(customer: Customer): void {
-    const dialogRef = this.dialog.open(CustomerEditModalComponent, {
-      width: 'auto',
-      data: customer,
-    });
+   // const dialogRef = this.dialog.open(CustomerEditModalComponent, {
+   //   width: 'auto',
+   //   data: customer,
+   // });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === true) {
-        this.loadCustomers(this.paginator.pageIndex, this.paginator.pageSize);
-      }
-    });
+  //  dialogRef.afterClosed().subscribe((result) => {
+  //    if (result === true) {
+  //      this.loadCustomers(this.paginator.pageIndex, this.paginator.pageSize);
+  //    }
+  //  });
   }
 
   onDeleteCustomer(selectedRows: Customer[]): void {

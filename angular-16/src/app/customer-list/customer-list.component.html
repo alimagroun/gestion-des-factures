@@ -1,1 +1,68 @@
-<p>customer-list works!</p>
+<!-- customer-list.component.html -->
+
+<div class="container">
+    <h2>Customer List</h2>
+    
+    <div class="button-container">
+    <button mat-raised-button color="primary" (click)="openCreateCustomerModal()">Create Customer</button>
+    </div>
+
+    <mat-table [dataSource]="dataSource" matSort>
+   
+      <ng-container matColumnDef="select">
+        <mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="selectAllRows($event)">Select All</mat-checkbox>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <mat-checkbox (change)="selectRow(row)" [checked]="selectedRows.includes(row)"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      
+  
+      <ng-container matColumnDef="firstName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>First Name</mat-header-cell>
+        <mat-cell *matCellDef="let customer">{{ customer.firstName }}</mat-cell>
+      </ng-container>
+      
+      <ng-container matColumnDef="lastName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</mat-header-cell>
+        <mat-cell *matCellDef="let customer">{{ customer.lastName }}</mat-cell>
+      </ng-container>
+      
+      <ng-container matColumnDef="email">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Email</mat-header-cell>
+        <mat-cell *matCellDef="let customer">{{ customer.email }}</mat-cell>
+      </ng-container>
+      
+      <ng-container matColumnDef="phoneNumber">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Phone Number</mat-header-cell>
+        <mat-cell *matCellDef="let customer">{{ customer.phoneNumber }}</mat-cell>
+      </ng-container>
+      
+ 
+      <ng-container matColumnDef="edit">
+        <mat-header-cell *matHeaderCellDef>Edit</mat-header-cell>
+        <mat-cell *matCellDef="let customer">
+          <button mat-icon-button color="accent" (click)="openEditCustomerModal(customer)">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+      
+      <ng-container matColumnDef="delete">
+        <mat-header-cell *matHeaderCellDef>Delete</mat-header-cell>
+        <mat-cell *matCellDef="let customer">
+          <button mat-icon-button color="warn" (click)="onDeleteCustomer([customer])">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+      
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  
+  
+    <mat-paginator [length]="paginator.length" [pageSizeOptions]="[10, 25, 50]" (page)="onPageChange($event)"></mat-paginator>
+  </div>
+  

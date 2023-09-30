@@ -1,0 +1,39 @@
+<h2 class="modal-title">Création d'un nouveau client</h2>
+<form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+      <div class="form-group col-md-4">
+        <mat-form-field appearance="fill">
+          <mat-label>First Name</mat-label>
+          <input matInput formControlName="firstName" placeholder="First Name" required>
+        </mat-form-field>
+      </div>
+  
+      <div class="form-group col-md-4">
+        <mat-form-field appearance="fill" class="mat-form-field">
+          <mat-label>Last Name</mat-label>
+          <input matInput formControlName="lastName" placeholder="Last Name" required>
+        </mat-form-field>
+      </div>
+  
+      <div class="form-group col-md-4">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" placeholder="Email" required>
+        <mat-error *ngIf="customerForm?.get('email')?.hasError('required')">Email is required</mat-error>
+        <mat-error *ngIf="customerForm?.get('email')?.hasError('email')">Invalid email format</mat-error>
+      </mat-form-field>
+      </div>
+    </div>
+  
+    <div class="form-row">
+      <div class="form-group col-md-4">
+        <mat-form-field appearance="fill" class="mat-form-field">
+            <mat-label>Phone Number</mat-label>
+            <input matInput formControlName="phoneNumber" placeholder="Phone Number">
+          </mat-form-field>
+      </div>
+      
+    <div class="modal-actions">
+      <button mat-button (click)="closeDialog()">Annuler</button>
+      <button mat-raised-button color="primary" type="submit">Enregistrer</button>
+    </div>
+  </form>

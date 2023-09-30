@@ -27,6 +27,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ProductEditModalComponent } from './product-edit-modal/product-edit-modal.component';
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { CustomerListComponent } from './customer-list/customer-list.component';
+import { CustomerCreateModalComponent } from './customer-create-modal/customer-create-modal.component';
+import { CustomerEditModalComponent } from './customer-edit-modal/customer-edit-modal.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +45,8 @@ import { CustomerListComponent } from './customer-list/customer-list.component';
     ProductEditModalComponent,
     DeleteConfirmationDialogComponent,
     CustomerListComponent,
+    CustomerCreateModalComponent,
+    CustomerEditModalComponent,
     
   ],
   imports: [
