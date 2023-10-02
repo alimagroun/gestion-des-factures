@@ -15,20 +15,19 @@ export class CustomerCreateModalComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    public dialogRef: MatDialogRef<CustomerCreateModalComponent>, // Change dialogRef to public
+    public dialogRef: MatDialogRef<CustomerCreateModalComponent>,
     private customerService: CustomerService
   ) { }
 
   ngOnInit(): void {
     this.customerForm = this.formBuilder.group({
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
+      firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      lastName:  ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       email: ['', [Validators.required, Validators.email]],
       phoneNumber: ['']
-      // Add other customer properties and validators here
     });
   }
-
+  
   onSubmit(): void {
     if (this.customerForm.valid) {
       this.isSubmitting = true;
@@ -45,5 +44,9 @@ export class CustomerCreateModalComponent implements OnInit {
           }
         );
     }
+  }
+
+  closeDialog(): void {
+    this.dialogRef.close(false);
   }
 }

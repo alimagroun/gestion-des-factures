@@ -1,24 +1,21 @@
-<!-- customer-list.component.html -->
-
-<div class="container">
-    <h2>Customer List</h2>
+    <h2>LISTE DES CLIENTS</h2>
     
     <div class="button-container">
-    <button mat-raised-button color="primary" (click)="openCreateCustomerModal()">Create Customer</button>
+    <button mat-raised-button color="primary" (click)="openCreateCustomerModal()">NOUVEAU CLIENT</button>
     </div>
 
+    <div class="mat-elevation-z8">
     <mat-table [dataSource]="dataSource" matSort>
    
-      <ng-container matColumnDef="select">
-        <mat-header-cell *matHeaderCellDef>
-          <mat-checkbox (change)="selectAllRows($event)">Select All</mat-checkbox>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <mat-checkbox (change)="selectRow(row)" [checked]="selectedRows.includes(row)"></mat-checkbox>
-        </mat-cell>
-      </ng-container>
+        <ng-container matColumnDef="select">
+          <mat-header-cell *matHeaderCellDef>
+            <mat-checkbox [(ngModel)]="selectAllChecked" (change)="selectAllRows($event)"></mat-checkbox>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <mat-checkbox [(ngModel)]="row.isSelected" (change)="selectRow(row)"></mat-checkbox>
+          </mat-cell>
+        </ng-container>
       
-  
       <ng-container matColumnDef="firstName">
         <mat-header-cell *matHeaderCellDef mat-sort-header>First Name</mat-header-cell>
         <mat-cell *matCellDef="let customer">{{ customer.firstName }}</mat-cell>
@@ -62,7 +59,7 @@
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
   
-  
     <mat-paginator [length]="paginator.length" [pageSizeOptions]="[10, 25, 50]" (page)="onPageChange($event)"></mat-paginator>
   </div>
+
   

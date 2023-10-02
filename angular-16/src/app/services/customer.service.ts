@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Page } from '../models/page'; 
 import { Customer } from '../models/customer'; 
+import { CustomerCreationRequest } from '../models/customer-creation-request';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +12,10 @@ export class CustomerService {
   private readonly apiUrl = 'http://localhost:8080/api/customers';
 
   constructor(private http: HttpClient) {}
+
+  createCustomer1(customerRequest: CustomerCreationRequest): Observable<Customer> {
+    return this.http.post<Customer>(`${this.apiUrl}`, customerRequest);
+  }
 
   createCustomer(customer: Customer): Observable<Customer> {
     return this.http.post<Customer>(`${this.apiUrl}`, customer);

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.magroun.gestiondesfactures.dto.CustomerCreationRequest;
 import com.magroun.gestiondesfactures.model.Customer;
 import com.magroun.gestiondesfactures.service.CustomerService;
 
@@ -24,8 +25,8 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
-        Customer createdCustomer = customerService.createCustomer(customer);
+    public ResponseEntity<Customer> createCustomer(@RequestBody CustomerCreationRequest request) {
+        Customer createdCustomer = customerService.createCustomer(request);
         return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
     }
 
@@ -50,16 +51,16 @@ public class CustomerController {
         return new ResponseEntity<>(customers, HttpStatus.OK);
     }
 
-
     @PutMapping("/{customerId}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Long customerId, @RequestBody Customer updatedCustomer) {
-        Customer updatedCustomerEntity = customerService.updateCustomer(customerId, updatedCustomer);
+    public ResponseEntity<Customer> updateCustomer(@PathVariable Long customerId, @RequestBody CustomerCreationRequest updatedCustomerRequest) {
+        Customer updatedCustomerEntity = customerService.updateCustomer(customerId, updatedCustomerRequest);
+
         if (updatedCustomerEntity != null) {
             return new ResponseEntity<>(updatedCustomerEntity, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-    }  
+    }
 
     @DeleteMapping("/{customerId}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long customerId) {

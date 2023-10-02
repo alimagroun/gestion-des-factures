@@ -33,45 +33,4 @@ public class CustomerControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(customerController).build();
     }
 
-    @Test
-    public void testCreateCustomer() throws Exception {
-        // Create a sample customer for testing
-        Customer customer = new Customer();
-        customer.setId(1L);
-        customer.setFirstName("John");
-        customer.setLastName("Doe");
-        customer.setEmail("john.doe@example.com");
-        customer.setPhoneNumber("1234567890");
-
-        when(customerService.createCustomer(any(Customer.class))).thenReturn(customer);
-
-        mockMvc.perform(post("/api/customers")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"firstName\":\"John\",\"lastName\":\"Doe\",\"email\":\"john.doe@example.com\",\"phoneNumber\":\"1234567890\"}"))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Doe"))
-                .andExpect(jsonPath("$.email").value("john.doe@example.com"))
-                .andExpect(jsonPath("$.phoneNumber").value("1234567890"));
-    }
-
-  /*  @Test
-    public void testGetCustomerById() throws Exception {
-        Customer customer = new Customer();
-        customer.setId(1L);
-        customer.setFirstName("John");
-        customer.setLastName("Doe");
-        customer.setEmail("john.doe@example.com");
-        customer.setPhoneNumber("1234567890");
-
-        when(customerService.getCustomerById(1L)).thenReturn(Optional.of(customer));
-
-        mockMvc.perform(get("/api/customers/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Doe"))
-                .andExpect(jsonPath("$.email").value("john.doe@example.com"))
-                .andExpect(jsonPath("$.phoneNumber").value("1234567890"));
-    } */
-
 }

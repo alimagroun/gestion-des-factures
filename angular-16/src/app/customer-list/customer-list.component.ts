@@ -66,6 +66,7 @@ export class CustomerListComponent implements OnInit {
       width: 'auto',
     });
 
+    
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result === true) {
         this.loadCustomers(this.paginator.pageIndex, this.paginator.pageSize);

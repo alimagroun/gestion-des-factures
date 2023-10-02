@@ -1,21 +1,29 @@
 <h2 class="modal-title">Création d'un nouveau client</h2>
+
 <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
     <div class="form-row">
       <div class="form-group col-md-4">
         <mat-form-field appearance="fill">
           <mat-label>First Name</mat-label>
-          <input matInput formControlName="firstName" placeholder="First Name" required>
+          <input matInput formControlName="firstName" placeholder="First Name" required maxlength="50">
+          <mat-error *ngIf="customerForm?.get('firstName')?.hasError('required')">First Name is required</mat-error>
+          <mat-error *ngIf="customerForm?.get('firstName')?.hasError('minlength')">First Name must be at least 2 characters</mat-error>
+          <mat-error *ngIf="customerForm?.get('firstName')?.hasError('maxlength')">First Name cannot exceed 50 characters</mat-error>
         </mat-form-field>
       </div>
   
       <div class="form-group col-md-4">
-        <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-form-field appearance="fill" >
           <mat-label>Last Name</mat-label>
-          <input matInput formControlName="lastName" placeholder="Last Name" required>
+          <input matInput formControlName="lastName" placeholder="Last Name" required maxlength="50">
+          <mat-error *ngIf="customerForm?.get('lastName')?.hasError('required')">Last Name is required</mat-error>
+          <mat-error *ngIf="customerForm?.get('lastName')?.hasError('minlength')">Last Name must be at least 2 characters</mat-error>
+          <mat-error *ngIf="customerForm?.get('lastName')?.hasError('maxlength')">Last Name cannot exceed 50 characters</mat-error>
         </mat-form-field>
       </div>
   
       <div class="form-group col-md-4">
+        <mat-form-field appearance="fill">
         <mat-label>Email</mat-label>
         <input matInput formControlName="email" placeholder="Email" required>
         <mat-error *ngIf="customerForm?.get('email')?.hasError('required')">Email is required</mat-error>
@@ -26,10 +34,11 @@
   
     <div class="form-row">
       <div class="form-group col-md-4">
-        <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-form-field appearance="fill">
             <mat-label>Phone Number</mat-label>
             <input matInput formControlName="phoneNumber" placeholder="Phone Number">
           </mat-form-field>
+      </div>
       </div>
       
     <div class="modal-actions">
