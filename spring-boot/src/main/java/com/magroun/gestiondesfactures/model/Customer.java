@@ -18,10 +18,15 @@ public class Customer {
     @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String email;
 
     private String phoneNumber;
+    
+    private String companyName;
+
+    @Column(unique = true)
+    private String taxIdentificationNumber;
     
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
@@ -34,12 +39,19 @@ public class Customer {
 
     }
 
-    public Customer(String firstName, String lastName, String email, String phoneNumber) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-    }
+	public Customer(Long id, String firstName, String lastName, String email, String phoneNumber, String companyName,
+			String taxIdentificationNumber, Address address, List<Invoice> invoices) {
+		super();
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.phoneNumber = phoneNumber;
+		this.companyName = companyName;
+		this.taxIdentificationNumber = taxIdentificationNumber;
+		this.address = address;
+		this.invoices = invoices;
+	}
 
 	public String getFirstName() {
 		return firstName;
@@ -87,6 +99,22 @@ public class Customer {
 
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public String getTaxIdentificationNumber() {
+		return taxIdentificationNumber;
+	}
+
+	public void setTaxIdentificationNumber(String taxIdentificationNumber) {
+		this.taxIdentificationNumber = taxIdentificationNumber;
 	}
     
 }

@@ -20,3 +20,14 @@
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
+
+.section-heading {
+  margin-left: 20px;
+}
+
+@media screen and (max-width: 959px) {
+  .scrollable-container {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+}

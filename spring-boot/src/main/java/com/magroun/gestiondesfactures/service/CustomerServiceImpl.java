@@ -32,6 +32,8 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setLastName(request.getLastName());
             customer.setEmail(request.getEmail());
             customer.setPhoneNumber(request.getPhoneNumber());
+            customer.setCompanyName(request.getCompanyName());
+            customer.setTaxIdentificationNumber(request.getTaxIdentificationNumber());
 
             if (request.getStreetAddress() != null || request.getCity() != null ||
                 request.getState() != null || request.getPostalCode() != null) {

@@ -21,12 +21,19 @@ export class CustomerCreateModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.customerForm = this.formBuilder.group({
-      firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-      lastName:  ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-      email: ['', [Validators.required, Validators.email]],
-      phoneNumber: ['']
+      firstName: ['', [Validators.minLength(2), Validators.maxLength(50)]],
+      lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      email: ['', [Validators.email]],
+      phoneNumber: [''],
+      companyName: [''], 
+      taxIdentificationNumber: [''], 
+      streetAddress: [''],
+      city: [''],
+      state: [''],
+      postalCode: ['']
     });
-  }
+}
+
   
   onSubmit(): void {
     if (this.customerForm.valid) {
@@ -40,7 +47,6 @@ export class CustomerCreateModalComponent implements OnInit {
           },
           (error) => {
             this.isSubmitting = false;
-            // Handle error or display a message
           }
         );
     }

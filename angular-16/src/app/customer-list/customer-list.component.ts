@@ -14,7 +14,7 @@ import { DialogService } from '../services/DialogService';
   styleUrls: ['./customer-list.component.scss'],
 })
 export class CustomerListComponent implements OnInit {
-  dataSource!: MatTableDataSource<Customer>;
+  dataSource!: MatTableDataSource<any>;
   displayedColumns: string[] = [
     'select',
     'firstName',
@@ -66,7 +66,6 @@ export class CustomerListComponent implements OnInit {
       width: 'auto',
     });
 
-    
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result === true) {
         this.loadCustomers(this.paginator.pageIndex, this.paginator.pageSize);
@@ -88,7 +87,51 @@ export class CustomerListComponent implements OnInit {
   }
 
   onDeleteCustomer(selectedRows: Customer[]): void {
-    // Implement delete logic here, similar to what you did for products
+    const currentPageIndex = this.paginator.pageIndex;
+    const currentPageSize = this.paginator.pageSize;
+    const confirmationMessage = `Voulez-vous vraiment supprimer ${
+      selectedRows.length > 1 ? 'ces clients' : 'ce client'
+    } ?`;
+  
+    this.dialogService
+      .openDeleteConfirmationDialog(confirmationMessage)
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          selectedRows.forEach((customer, index) => {
+            const customerId = customer.id; // This may be a number or undefined
+            if (customerId !== undefined) {
+              // Use customerId as a valid number
+              this.customerService.deleteCustomer(customerId).subscribe(
+                () => {
+                  this.dataSource.data = this.dataSource.data.filter(
+                    (item) => item.id !== customer.id
+                  );
+  
+                  const totalCustomersCount = this.dataSource.data.length;
+  
+                  if (totalCustomersCount === 0) {
+                    if (currentPageIndex > 0) {
+                      this.paginator.pageIndex = currentPageIndex - 1;
+                    } else {
+                      this.paginator.pageIndex = 0;
+                    }
+                  }
+  
+                  this.loadCustomers(this.paginator.pageIndex, currentPageSize);
+                  this.selectAllChecked = false;
+                },
+                (error) => {
+                  console.error(`Error deleting customer ${customerId}:`, error);
+                }
+              );
+            } else {
+              console.error('Customer ID is undefined');
+            }
+          });
+        } else {
+          console.log('Delete canceled');
+        }
+      });
   }
 
   selectAllRows(event: any) {
@@ -96,6 +139,21 @@ export class CustomerListComponent implements OnInit {
   }
 
   selectRow(row: Customer) {
-    // Implement select row logic here
+  
+    this.selectedRows = this.dataSource.data.filter((item) => item.isSelected);
+  
+    if (this.selectedRows.length === 1) {
+      this.customer = this.selectedRows[0];
+      this.showModifierButton = true;
+    } else {
+      this.customer = new Customer();
+      this.showModifierButton = false;
+    }
+  
+    this.showSupprimerButton = this.selectedRows.length > 0;
+  
+    const allCustomersSelected = this.dataSource.data.every((item) => item.isSelected);
+    this.selectAllChecked = allCustomersSelected;
   }
+  
 }

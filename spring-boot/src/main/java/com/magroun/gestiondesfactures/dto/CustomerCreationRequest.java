@@ -6,6 +6,8 @@ public class CustomerCreationRequest {
     private String lastName;
     private String email;
     private String phoneNumber;
+    private String companyName;
+    private String taxIdentificationNumber;
 
     private String streetAddress;
     private String city;
@@ -60,8 +62,18 @@ public class CustomerCreationRequest {
 	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
 	}
+	public String getCompanyName() {
+		return companyName;
+	}
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+	public String getTaxIdentificationNumber() {
+		return taxIdentificationNumber;
+	}
+	public void setTaxIdentificationNumber(String taxIdentificationNumber) {
+		this.taxIdentificationNumber = taxIdentificationNumber;
+	}
     
-    
-
 }
 
