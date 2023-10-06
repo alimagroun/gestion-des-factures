@@ -1,6 +1,7 @@
     <h2>LISTE DES CLIENTS</h2>
     
     <div class="button-container">
+    <button mat-raised-button color="primary" *ngIf="showModifierButton" (click)="openEditCustomerModal(customer)">Modifier</button>
     <button mat-raised-button color="warn" *ngIf="showSupprimerButton" (click)="onDeleteCustomer(selectedRows)">Supprimer</button>
     <button mat-raised-button color="primary" (click)="openCreateCustomerModal()">NOUVEAU CLIENT</button>
     </div>
@@ -37,7 +38,6 @@
         <mat-cell *matCellDef="let customer">{{ customer.phoneNumber }}</mat-cell>
       </ng-container>
       
- 
       <ng-container matColumnDef="edit">
         <mat-header-cell *matHeaderCellDef>Edit</mat-header-cell>
         <mat-cell *matCellDef="let customer">

@@ -1,0 +1,33 @@
+.modal-title {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .section-heading {
+    margin-left: 20px;
+  }
+  
+  @media screen and (max-width: 959px) {
+    .scrollable-container {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+  }

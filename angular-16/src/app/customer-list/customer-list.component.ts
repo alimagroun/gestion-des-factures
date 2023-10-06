@@ -4,8 +4,7 @@ import { Customer } from '../models/customer';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
-import { CustomerCreateModalComponent } from '../customer-create-modal/customer-create-modal.component';
-// import { CustomerEditModalComponent } from '../customer-edit-modal/customer-edit-modal.component';
+import { CustomerCreateModalComponent } from '../customer-create-modal/customer-create-modal.component'; import { CustomerEditModalComponent } from '../customer-edit-modal/customer-edit-modal.component';
 import { DialogService } from '../services/DialogService';
 
 @Component({
@@ -74,16 +73,16 @@ export class CustomerListComponent implements OnInit {
   }
 
   openEditCustomerModal(customer: Customer): void {
-   // const dialogRef = this.dialog.open(CustomerEditModalComponent, {
-   //   width: 'auto',
-   //   data: customer,
-   // });
+    const dialogRef = this.dialog.open(CustomerEditModalComponent, {
+      width: 'auto',
+      data: customer,
+    });
 
-  //  dialogRef.afterClosed().subscribe((result) => {
-  //    if (result === true) {
-  //      this.loadCustomers(this.paginator.pageIndex, this.paginator.pageSize);
-  //    }
-  //  });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === true) {
+        this.loadCustomers(this.paginator.pageIndex, this.paginator.pageSize);
+      }
+    });
   }
 
   onDeleteCustomer(selectedRows: Customer[]): void {
@@ -135,7 +134,19 @@ export class CustomerListComponent implements OnInit {
   }
 
   selectAllRows(event: any) {
-    // Implement select all logic here
+    this.showModifierButton = false;
+    this.showSupprimerButton = event.checked;
+  
+    this.selectedRows = [];
+  
+    if (event.checked) {
+      this.dataSource.data.forEach((item) => {
+        item.isSelected = true;
+        this.selectedRows.push(item);
+      });
+    } else {
+      this.dataSource.data.forEach((item) => (item.isSelected = false));
+    }
   }
 
   selectRow(row: Customer) {
