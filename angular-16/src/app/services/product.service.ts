@@ -3,12 +3,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Product } from '../models/product';
 import { Page } from '../models/page';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
-  private baseUrl = 'http://localhost:8080/api/products';
+  private readonly apiUrl = environment.apiUrl.products;
 
   constructor(private http: HttpClient) {}
 
@@ -17,22 +18,22 @@ export class ProductService {
       .set('page', page.toString())
       .set('size', size.toString());
   
-    return this.http.get<Page<any>>(`${this.baseUrl}`, { params });
+    return this.http.get<Page<any>>(`${this.apiUrl}`, { params });
   }
   
   getProductById(id: number): Observable<Product> {
-    return this.http.get<Product>(`${this.baseUrl}/${id}`);
+    return this.http.get<Product>(`${this.apiUrl}/${id}`);
   }
 
   createProduct(product: Product): Observable<Product> {
-    return this.http.post<Product>(`${this.baseUrl}`, product);
+    return this.http.post<Product>(`${this.apiUrl}`, product);
   }
 
   updateProduct(id: number, product: Product): Observable<Product> {
-    return this.http.put<Product>(`${this.baseUrl}/${id}`, product);
+    return this.http.put<Product>(`${this.apiUrl}/${id}`, product);
   }
 
   deleteProduct(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

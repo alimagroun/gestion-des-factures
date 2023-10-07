@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  mysql-db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: invoice_management_db
+      MYSQL_USER: ali
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    networks:
+      - my-network
+
+  spring-boot-app:
+    image: gestion-de-factures-spring:latest
+    container_name: spring-boot-container
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/invoice_management_db
+      SPRING_DATASOURCE_USERNAME: ali
+      SPRING_DATASOURCE_PASSWORD: password
+    networks:
+      - my-network
+
+networks:
+  my-network:

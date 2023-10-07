@@ -17,7 +17,7 @@ export class CustomerEditModalComponent implements OnInit {
     private formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<CustomerEditModalComponent>,
     private customerService: CustomerService,
-    @Inject(MAT_DIALOG_DATA) public customer: Customer // Inject the customer data
+    @Inject(MAT_DIALOG_DATA) public customer: Customer 
   ) { }
 
   ngOnInit(): void {
@@ -26,8 +26,8 @@ export class CustomerEditModalComponent implements OnInit {
       lastName: [this.customer.lastName, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       email: [this.customer.email, [Validators.email]],
       phoneNumber: [this.customer.phoneNumber],
-      companyName: [this.customer.companyName], // Add the company name field
-      taxIdentificationNumber: [this.customer.taxIdentificationNumber], // Add the tax identification number field
+      companyName: [this.customer.companyName], 
+      taxIdentificationNumber: [this.customer.taxIdentificationNumber],
       streetAddress: [this.customer.address ? this.customer.address.streetAddress : ''],
       city: [this.customer.address ? this.customer.address.city : ''],
       state: [this.customer.address ? this.customer.address.state : ''],
