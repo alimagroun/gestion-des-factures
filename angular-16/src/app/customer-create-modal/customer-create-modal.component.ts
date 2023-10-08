@@ -43,7 +43,7 @@ export class CustomerCreateModalComponent implements OnInit {
         .subscribe(
           (response) => {
             this.isSubmitting = false;
-            this.dialogRef.close(response);
+            this.dialogRef.close(true);
           },
           (error) => {
             this.isSubmitting = false;

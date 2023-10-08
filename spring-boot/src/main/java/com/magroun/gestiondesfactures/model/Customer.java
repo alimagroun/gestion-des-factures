@@ -25,7 +25,6 @@ public class Customer {
     
     private String companyName;
 
-    @Column(unique = true)
     private String taxIdentificationNumber;
     
     @OneToOne(cascade = CascadeType.ALL)

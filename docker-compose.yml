@@ -28,5 +28,13 @@ services:
     networks:
       - my-network
 
+  angular-app:
+    image: gestion-des-factures-angular
+    container_name: angular-container
+    ports:
+      - "4200:80"  # Corrected port mapping
+    networks:
+      - my-network
+
 networks:
   my-network:

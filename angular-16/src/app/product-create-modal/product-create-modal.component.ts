@@ -122,12 +122,9 @@ export class ProductCreateModalComponent implements OnInit {
       const newProduct: Product = this.productForm.value;
       this.productService.createProduct(newProduct).subscribe(
         (response) => {
-          // Successfully created the product, you can handle the response as needed
-          console.log('Product created:', response);
           this.dialogRef.close(true);
         },
         (error) => {
-          // Handle any errors that occur during the creation process
           console.error('Error creating product:', error);
         }
       );
