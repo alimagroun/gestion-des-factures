@@ -18,10 +18,6 @@ export class CustomerService {
     return this.http.post<Customer>(`${this.apiUrl}`, customerRequest);
   }
 
- /* createCustomer(customer: Customer): Observable<Customer> {
-    return this.http.post<Customer>(`${this.apiUrl}`, customer);
-  } */
-
   getCustomerById(customerId: number): Observable<Customer> {
     return this.http.get<Customer>(`${this.apiUrl}/${customerId}`);
   }
@@ -40,5 +36,10 @@ export class CustomerService {
 
   deleteCustomer(customerId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${customerId}`);
+  }
+
+  searchCustomersByPrefix(prefix: string): Observable<Customer[]> {
+    const searchUrl = `${this.apiUrl}/search?prefix=${prefix}`;
+    return this.http.get<Customer[]>(searchUrl);
   }
 }

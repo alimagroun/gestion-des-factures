@@ -1,5 +1,7 @@
 package com.magroun.gestiondesfactures.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,6 +68,16 @@ public class CustomerController {
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long customerId) {
         customerService.deleteCustomer(customerId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    
+    @GetMapping("/search")
+    public ResponseEntity<List<Customer>> searchCustomersByPrefix(@RequestParam("prefix") String prefix) {
+        List<Customer> customers = customerService.findCustomersByPrefix(prefix);
+        if (customers.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(customers);
+        }
     }
     
 }

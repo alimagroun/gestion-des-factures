@@ -11,6 +11,7 @@ import com.magroun.gestiondesfactures.model.Address;
 import com.magroun.gestiondesfactures.repository.AddressRepository;
 import com.magroun.gestiondesfactures.repository.CustomerRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -94,5 +95,11 @@ public class CustomerServiceImpl implements CustomerService {
     public void deleteCustomer(Long id) {
         customerRepository.deleteById(id);
     }
+    
+    @Override
+    public List<Customer> findCustomersByPrefix(String prefix) {
+        return customerRepository.findByPrefix(prefix);
+    }
+
 
 }
