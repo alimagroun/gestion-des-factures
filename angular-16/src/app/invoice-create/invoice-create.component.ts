@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, tap, filter } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { Customer } from '../models/customer';
 
@@ -13,21 +13,24 @@ import { CustomerService } from '../services/customer.service';
 })
 export class InvoiceCreateComponent {
   customerSearchControl = new FormControl();
-
   customers$!: Observable<Customer[]>;
+  minSearchLength = 3;
 
   constructor(private customerService: CustomerService) {}
 
   ngOnInit() {
     this.customers$ = this.customerSearchControl.valueChanges
       .pipe(
-        debounceTime(300),
+        debounceTime(800),
+        filter(prefix => typeof prefix === 'string'),
+        filter(prefix => prefix.length >= this.minSearchLength),
         distinctUntilChanged(),
+        tap(prefix => console.log('Prefix:', prefix)),
         switchMap(prefix => this.customerService.searchCustomersByPrefix(prefix))
       );
-
+  
     this.customers$.subscribe(data => {
-      console.log('Received data from backend:', data);
+      console.log('Received data from the backend:', data);
     });
   }
 

@@ -68,5 +68,10 @@ public class ProductController {
         productService.deleteProduct(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+    
+    @GetMapping("/search")
+    public Page<Product> searchProductsByPrefix(@RequestParam String prefix, Pageable pageable) {
+        return productService.findProductsByPrefix(prefix, pageable);
+    }
 }
 

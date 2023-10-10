@@ -62,5 +62,10 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteById(id);
     }
 
+    @Override
+    public Page<Product> findProductsByPrefix(String prefix, Pageable pageable) {
+        return productRepository.findProductsByPrefix(prefix, pageable);
+    }
+
 }
 
