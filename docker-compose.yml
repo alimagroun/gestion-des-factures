@@ -14,7 +14,7 @@ services:
       - my-network
 
   spring-boot-app:
-    image: gestion-de-factures-spring:latest
+    image: alimagroun/gestion-de-factures-spring:latest
     container_name: spring-boot-container
     restart: always
     ports:
@@ -29,7 +29,7 @@ services:
       - my-network
 
   angular-app:
-    image: gestion-des-factures-angular
+    image: alimagroun/gestion-des-factures-angular
     container_name: angular-container
     ports:
       - "4200:80"  # Corrected port mapping

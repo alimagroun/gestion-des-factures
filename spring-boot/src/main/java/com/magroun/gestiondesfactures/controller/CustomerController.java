@@ -16,7 +16,7 @@ import com.magroun.gestiondesfactures.service.CustomerService;
 
 @RestController
 @RequestMapping("/api/customers")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*", allowCredentials="true")
 public class CustomerController {
 
     private final CustomerService customerService;
