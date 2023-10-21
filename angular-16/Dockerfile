@@ -1,5 +1,5 @@
 ### STAGE 1: Build ###
-FROM node:alpine AS builder
+FROM node:16-alpine AS builder
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm ci --only=production  # Use npm ci or npm install --only=production
