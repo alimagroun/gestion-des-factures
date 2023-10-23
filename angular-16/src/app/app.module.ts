@@ -30,6 +30,8 @@ import { CustomerListComponent } from './customer-list/customer-list.component';
 import { CustomerCreateModalComponent } from './customer-create-modal/customer-create-modal.component';
 import { CustomerEditModalComponent } from './customer-edit-modal/customer-edit-modal.component';
 
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -58,7 +60,8 @@ import { CustomerEditModalComponent } from './customer-edit-modal/customer-edit-
     SharedModule,
     RouterModule.forRoot(AppRoutes),
     AppSidebarComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    InfiniteScrollModule
   ],
   providers: [
     {

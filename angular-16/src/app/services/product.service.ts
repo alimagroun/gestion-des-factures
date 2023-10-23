@@ -36,4 +36,13 @@ export class ProductService {
   deleteProduct(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  searchProductsByPrefix(prefix: string, page: number, size: number): Observable<Page<Product>> {
+    const params = new HttpParams()
+      .set('prefix', prefix)
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<Page<Product>>(`${this.apiUrl}/search`, { params });
+  }
 }

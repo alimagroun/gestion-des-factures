@@ -1,4 +1,30 @@
 <mat-card>
+  <mat-card-header>
+    <mat-card-title>Create Invoice</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-form-field>
+      <input matInput [formControl]="productSearchControl" placeholder="Search for a product" [matAutocomplete]="auto">
+    </mat-form-field>
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayProductFn">
+      <mat-option *ngFor="let product of (products$ | async)?.content" [value]="product">
+        {{ product.designation }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-card-content>
+</mat-card>
+
+<div infinite-scroll
+[infiniteScrollDistance]="2"
+[infiniteScrollThrottle]="500"
+     (scrolledUp)="loadMore()"
+     (scrolledDown)="loadMore()">
+</div>
+
+
+
+
+<mat-card>
     <mat-card-header>
       <mat-card-title>Create Invoice</mat-card-title>
     </mat-card-header>
