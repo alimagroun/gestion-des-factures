@@ -5,6 +5,7 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { InvoiceListComponent } from './invoice-list/invoice-list.component';
 import { InvoiceCreateComponent } from './invoice-create/invoice-create.component';
+import { QuoteCreateComponent } from './quote-create/quote-create.component';
 import { ProductListComponent } from './product-list/product-list.component';
 import { CustomerListComponent } from './customer-list/customer-list.component';
 
@@ -31,6 +32,10 @@ export const AppRoutes: Routes = [
         path: 'invoice-create',
         component: InvoiceCreateComponent,
       },
+      {
+        path: 'quote-create',
+        component: QuoteCreateComponent,
+      },      
       { 
         path: 'invoice-list',
         component: InvoiceListComponent

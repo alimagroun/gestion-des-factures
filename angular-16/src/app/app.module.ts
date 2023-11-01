@@ -31,6 +31,12 @@ import { CustomerCreateModalComponent } from './customer-create-modal/customer-c
 import { CustomerEditModalComponent } from './customer-edit-modal/customer-edit-modal.component';
 
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { OptionsScrollDirective } from './directives/options-scroll.directive';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { QuoteCreateComponent } from './quote-create/quote-create.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +55,8 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     CustomerListComponent,
     CustomerCreateModalComponent,
     CustomerEditModalComponent,
+    OptionsScrollDirective,
+    QuoteCreateComponent,
     
   ],
   imports: [
@@ -61,7 +69,12 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     RouterModule.forRoot(AppRoutes),
     AppSidebarComponent,
     ReactiveFormsModule,
-    InfiniteScrollModule
+    InfiniteScrollModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    ReactiveFormsModule,
   ],
   providers: [
     {
