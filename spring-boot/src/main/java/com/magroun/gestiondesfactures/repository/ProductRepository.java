@@ -17,6 +17,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	
 	 @Query("SELECT p FROM Product p WHERE p.reference LIKE %:prefix% OR p.designation LIKE %:prefix%")
 	    Page<Product> findProductsByPrefix(String prefix, Pageable pageable);
+	 
+	 Product findByDesignation(String designation);
 
 }
 

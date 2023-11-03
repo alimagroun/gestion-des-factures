@@ -66,6 +66,15 @@ public class ProductServiceImpl implements ProductService {
     public Page<Product> findProductsByPrefix(String prefix, Pageable pageable) {
         return productRepository.findProductsByPrefix(prefix, pageable);
     }
+    
+    @Override
+    public Long findProductIdByDesignation(String designation) {
+        Product product = productRepository.findByDesignation(designation);
+        if (product != null) {
+            return product.getId();
+        }
+        return null;
+    }
 
 }
 

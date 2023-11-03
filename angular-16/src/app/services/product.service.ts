@@ -45,4 +45,8 @@ export class ProductService {
 
     return this.http.get<Page<Product>>(`${this.apiUrl}/search`, { params });
   }
+
+  findProductIdByDesignation(designation: string): Observable<number | null> {
+    return this.http.get<number>(`${this.apiUrl}/findProductIdByDesignation?designation=${designation}`);
+  }
 }

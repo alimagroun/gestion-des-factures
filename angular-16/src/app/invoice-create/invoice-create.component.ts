@@ -37,8 +37,7 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     'taxAmount',
     'totalPriceAfterDiscountTTC'
   ];
-  dataSource!: MatTableDataSource<any>;
-
+  dataSource = new MatTableDataSource<any>([]);
 
   constructor(
     private customerService: CustomerService,
@@ -117,8 +116,6 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     this._onDestroy.complete();
   }
 
-  addProduct(){}
-
   handleInputBlur(): void {
     const enteredValue = this.productSearchControl.value;
 
@@ -127,11 +124,30 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     }
   }
   
-checkProductValidity(): void {
-  const enteredProduct = this.productSearchControl.value;
-
-    console.log('Left the input field without selecting an existing product.');
+  checkProductValidity(): void {
+    const enteredProduct = this.productSearchControl.value;
   
-}
-
+    this.productService.findProductIdByDesignation(enteredProduct).subscribe(
+      (productId) => {
+        if (productId !== null) {
+          console.log('Product found');
+          console.log('Product ID:', productId);
+        } else {
+          console.log('Product not found');
+        }
+      },
+      (error) => {
+        console.error('An error occurred while checking product validity:', error);
+      }
+    );
+  }
+  
+  addProduct() {
+    const selectedProduct = this.productSearchControl.value;
+    console.log(selectedProduct.designation);
+      this.dataSource.data.push(selectedProduct);
+      this.dataSource._updateChangeSubscription();
+    
+  }
+  
 }
