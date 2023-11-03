@@ -71,7 +71,14 @@ public class ProductController {
     
     @GetMapping("/search")
     public Page<Product> searchProductsByPrefix(@RequestParam String prefix, Pageable pageable) {
-        return productService.findProductsByPrefix(prefix, pageable);
+        Page<Product> products = productService.findProductsByPrefix(prefix, pageable);
+
+        // Print the designations of products to the console
+        for (Product product : products.getContent()) {
+            System.out.println("Product Designation: " + product.getDesignation());
+        }
+
+        return products;
     }
 }
 

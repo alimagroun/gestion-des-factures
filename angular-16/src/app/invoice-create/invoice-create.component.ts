@@ -1,22 +1,14 @@
-import { Component, ViewChild, ElementRef, HostListener,OnInit, OnDestroy } from '@angular/core';
-import { FormControl, FormBuilder } from '@angular/forms';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormControl} from '@angular/forms';
 import { Observable, tap, filter, Subject, of  } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, map, exhaustMap, scan, startWith, takeWhile} from 'rxjs/operators';
-import { takeWhileInclusive } from 'rxjs-take-while-inclusive';
 import { Page } from '../models/page';
 import { Customer } from '../models/customer';
 import { Product } from '../models/product';
-
+import { MatTableDataSource } from '@angular/material/table';
 
 import { CustomerService } from '../services/customer.service';
 import { ProductService } from '../services/product.service';
-import { MatAutocomplete } from '@angular/material/autocomplete';
-import { MatInput } from '@angular/material/input';
-
-export interface StudentsClass {
-  id: number;
-  name: string;
-}
 
 @Component({
   selector: 'app-invoice-create',
@@ -26,19 +18,31 @@ export interface StudentsClass {
 export class InvoiceCreateComponent implements OnInit, OnDestroy  {
   customerSearchControl = new FormControl();
   productSearchControl = new FormControl();
+  quantityControl = new FormControl();
   customers$!: Observable<Customer[]>;
-  products$!: Observable<Page<Product>>;
-  minSearchLength = 3;
-  productPage = 0;
-  searchText = new FormControl();
   filteredProducts$!: Observable<Product[]>;
+  minSearchLength = 3;
   private nextPage$ = new Subject();
   private _onDestroy = new Subject();
+  displayedColumns: string[] = [
+    'reference',
+    'designation',
+    'quantity',
+    'unitPriceHT',
+    'totalPriceHT',
+    'discountPercentage',
+    'discountAmount',
+    'totalPriceAfterDiscountHT',
+    'taxPercentage',
+    'taxAmount',
+    'totalPriceAfterDiscountTTC'
+  ];
+  dataSource!: MatTableDataSource<any>;
+
 
   constructor(
     private customerService: CustomerService,
     private productService: ProductService,
-    private formBuilder: FormBuilder,
     ) {}
 
   ngOnInit() {
@@ -52,14 +56,13 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
         switchMap(prefix => this.customerService.searchCustomersByPrefix(prefix))
       );
 
-      const filter$ = this.searchText.valueChanges.pipe(
+      const filter$ = this.productSearchControl.valueChanges.pipe(
         debounceTime(800),
         filter(prefix => typeof prefix === 'string'),
         filter(prefix => prefix.length >= this.minSearchLength),
         distinctUntilChanged(),
         switchMap((q) => (typeof q === 'string' ? of(q) : of('')))
       );
-
 
       this.filteredProducts$ = filter$.pipe(
         switchMap((filter) => {
@@ -76,36 +79,20 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
           );
         })
       ); 
-
-
-
-      this.products$ = this.productSearchControl.valueChanges
-      .pipe(
-        debounceTime(800),
-        filter(prefix => typeof prefix === 'string'),
-        filter(prefix => prefix.length >= this.minSearchLength),
-        distinctUntilChanged(),
-        tap(prefix => console.log('Product Prefix:', prefix)),
-        switchMap(prefix => this.productService.searchProductsByPrefix(prefix, 0, 10)) // Adjust page and size as needed
-      ); 
-  
-    this.customers$.subscribe(data => {
-      console.log('Received data from the backend:', data);
-    });
-
-
   }
 
   displayCustomerFn(customer: Customer): string {
     return customer ? `${customer.firstName} ${customer.lastName}` : '';
   }
 
-  displayProductFn(product: Product): string {
-    return product ? product.designation : '';
+  displayProductFn(product: Product | null): string {
+    if (!product) {
+      return '';
+    }
+    return product.designation;
   }
 
   private searchProducts(prefix: string, page: number): Observable<Product[]> {
- 
     return this.productService
       .searchProductsByPrefix(prefix, page, 10)
       .pipe(
@@ -119,14 +106,6 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
       );
   }
 
-  displayWith(product: Product | null): string {
-   
-    if (!product) {
-      return '';
-    }
-    return product.designation;
-  }
-
   onScroll() {
 
     this.nextPage$.next(null);
@@ -137,5 +116,22 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     this._onDestroy.next(null);
     this._onDestroy.complete();
   }
+
+  addProduct(){}
+
+  handleInputBlur(): void {
+    const enteredValue = this.productSearchControl.value;
+
+    if (enteredValue.trim().length > 0) {
+      this.checkProductValidity();
+    }
+  }
+  
+checkProductValidity(): void {
+  const enteredProduct = this.productSearchControl.value;
+
+    console.log('Left the input field without selecting an existing product.');
+  
+}
 
 }

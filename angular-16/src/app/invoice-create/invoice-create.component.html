@@ -1,48 +1,117 @@
 <mat-card>
   <mat-card-header>
-    <mat-card-title>choose a product</mat-card-title>
+    <mat-card-title>Choisissez un produit</mat-card-title>
   </mat-card-header>
   <mat-card-content>
     <mat-form-field>
-      <input #productInput matInput [formControl]="productSearchControl" placeholder="Search for a product" [matAutocomplete]="auto">
+      <input matInput type="text" placeholder="Choisissez un produit" #text aria-label="Numéro" [formControl]="productSearchControl" matInput [matAutocomplete]="productAuto" (blur)="handleInputBlur()"/>
+      <mat-autocomplete #productAuto="matAutocomplete" showPanel="true" (optionsScroll)="onScroll()" [displayWith]="displayProductFn">
+        <mat-option *ngFor="let product of filteredProducts$ | async" [value]="product">
+          {{ product.designation }}
+        </mat-option>
+      </mat-autocomplete>
     </mat-form-field>
-    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayProductFn" #productAuto>
-      <mat-option *ngFor="let product of (products$ | async)?.content" [value]="product">
-        {{ product.designation }}
-      </mat-option>
-    </mat-autocomplete>
+
+    <!-- Input for Quantité (Quantity) -->
+    <mat-form-field>
+      <input matInput type="number" placeholder="Quantité" [formControl]="quantityControl" min="1">
+    </mat-form-field>
+
+    <!-- Button to add the product -->
+    <button mat-raised-button (click)="addProduct()">Ajouter le produit</button>
   </mat-card-content>
 </mat-card>
 
 
 <mat-card>
     <mat-card-header>
-      <mat-card-title>Choose a customer</mat-card-title>
+      <mat-card-title>Choisissez un client</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <mat-form-field>
-        <input matInput [formControl]="customerSearchControl" placeholder="Search for a customer" [matAutocomplete]="auto" >
+        <input matInput [formControl]="customerSearchControl" placeholder="Search for a customer" [matAutocomplete]="customerAuto" >
       </mat-form-field>
-      <mat-autocomplete #auto="matAutocomplete"  [displayWith]="displayCustomerFn">
+      <mat-autocomplete #customerAuto="matAutocomplete"  [displayWith]="displayCustomerFn">
         <mat-option *ngFor="let customer of customers$ | async" [value]="customer">
           {{ customer.firstName }} {{ customer.lastName }}
         </mat-option>
       </mat-autocomplete>      
     </mat-card-content>
   </mat-card>
+
+  <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <!-- Reference Column -->
+    <ng-container matColumnDef="reference">
+      <mat-header-cell *matHeaderCellDef>Référence</mat-header-cell>
+      <mat-cell *matCellDef="let item">{{ item.reference }}</mat-cell>
+    </ng-container>
+  
+    <!-- Designation Column -->
+    <ng-container matColumnDef="designation">
+      <mat-header-cell *matHeaderCellDef>Désignation</mat-header-cell>
+      <mat-cell *matCellDef="let item">{{ item.designation }}</mat-cell>
+    </ng-container>
+  
+    <!-- Quantity Column -->
+    <ng-container matColumnDef="quantity">
+      <mat-header-cell *matHeaderCellDef>Quantité</mat-header-cell>
+      <mat-cell *matCellDef="let item">{{ item.quantity }}</mat-cell>
+    </ng-container>
+  
+    <!-- Unit Price (HT) Column -->
+    <ng-container matColumnDef="unitPriceHT">
+      <mat-header-cell *matHeaderCellDef>Prix Un. HT</mat-header-cell>
+      <mat-cell *matCellDef="let item">{{ item.unitPriceHT }}</mat-cell>
+    </ng-container>
+  
+    <!-- Total Price (HT) Column -->
+    <ng-container matColumnDef="totalPriceHT">
+      <mat-header-cell *matHeaderCellDef>Prix Tot. HT</mat-header-cell>
+      <mat-cell *matCellDef="let item">{{ item.totalPriceHT }}</mat-cell>
+    </ng-container>
+  
+    <!-- Discount Percentage Column -->
+    <ng-container matColumnDef="discountPercentage">
+      <mat-header-cell *matHeaderCellDef>% Rem.</mat-header-cell>
+      <mat-cell *matCellDef="let item">{{ item.discountPercentage }}</mat-cell>
+    </ng-container>
+  
+    <!-- Discount Amount Column -->
+    <ng-container matColumnDef="discountAmount">
+      <mat-header-cell *matHeaderCellDef>Mont. Rem.</mat-header-cell>
+      <mat-cell *matCellDef="let item">{{ item.discountAmount }}</mat-cell>
+    </ng-container>
+  
+    <!-- Total Price After Discount (HT) Column -->
+    <ng-container matColumnDef="totalPriceAfterDiscountHT">
+      <mat-header-cell *matHeaderCellDef>HT apr. Remise</mat-header-cell>
+      <mat-cell *matCellDef="let item">{{ item.totalPriceAfterDiscountHT }}</mat-cell>
+    </ng-container>
+  
+    <!-- Tax Percentage Column -->
+    <ng-container matColumnDef="taxPercentage">
+      <mat-header-cell *matHeaderCellDef>% TVA</mat-header-cell>
+      <mat-cell *matCellDef="let item">{{ item.taxPercentage }}</mat-cell>
+    </ng-container>
+  
+    <!-- Tax Amount Column -->
+    <ng-container matColumnDef="taxAmount">
+      <mat-header-cell *matHeaderCellDef>Mont. TVA</mat-header-cell>
+      <mat-cell *matCellDef="let item">{{ item.taxAmount }}</mat-cell>
+    </ng-container>
+  
+    <!-- Total Price After Discount (TTC) Column -->
+    <ng-container matColumnDef="totalPriceAfterDiscountTTC">
+      <mat-header-cell *matHeaderCellDef>TTC apr. Remise</mat-header-cell>
+      <mat-cell *matCellDef="let item">{{ item.totalPriceAfterDiscountTTC }}</mat-cell>
+    </ng-container>
+  
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+  </mat-table>
+  
   
 
-  <br>
-  choose a product
-  <div>
-    <mat-form-field>
-      <input matInput type="text" placeholder="Pick one" #text aria-label="Number" [formControl]="searchText" matInput [matAutocomplete]="auto" />
-      <mat-autocomplete #auto="matAutocomplete" showPanel="true" (optionsScroll)="onScroll()" [displayWith]="displayWith">
-        <mat-option *ngFor="let product of filteredProducts$ | async" [value]="product">
-          {{ product.designation }}
-        </mat-option>
-      </mat-autocomplete>
-      <br /> <br />
-    </mat-form-field>
-  </div>
+
+
   
