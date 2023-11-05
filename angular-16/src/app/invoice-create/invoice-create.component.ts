@@ -5,6 +5,7 @@ import { debounceTime, distinctUntilChanged, switchMap, map, exhaustMap, scan, s
 import { Page } from '../models/page';
 import { Customer } from '../models/customer';
 import { Product } from '../models/product';
+import { LineItem } from '../models/lineItem';
 import { MatTableDataSource } from '@angular/material/table';
 
 import { CustomerService } from '../services/customer.service';
@@ -18,7 +19,9 @@ import { ProductService } from '../services/product.service';
 export class InvoiceCreateComponent implements OnInit, OnDestroy  {
   customerSearchControl = new FormControl();
   productSearchControl = new FormControl();
-  quantityControl = new FormControl();
+  quantityControl = new FormControl(1);
+  discountPercentageControl = new FormControl(0);
+
   customers$!: Observable<Customer[]>;
   filteredProducts$!: Observable<Product[]>;
   minSearchLength = 3;
@@ -142,12 +145,65 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     );
   }
   
+  formatPercentage(event: any): void {
+    const inputElement = event.target as HTMLInputElement;
+    const selectionStart = inputElement.selectionStart;
+    const selectionEnd = inputElement.selectionEnd;
+  
+    let inputValue = inputElement.value;
+  
+    inputValue = inputValue.replace(/[^0-9.]/g, '');
+    
+    const parts = inputValue.split('.');
+  
+    if (parts[0] && parts[0].length > 2) {
+      parts[0] = parts[0].slice(0, 2);
+    }
+  
+    if (parts[1] && parts[1].length > 2) {
+      parts[1] = parts[1].slice(0, 2);
+    }
+  
+    inputValue = parts.join('.');
+  
+    const dotCount = inputValue.split('.').length - 1;
+    if (dotCount > 1) {
+      const indexOfLastDot = inputValue.lastIndexOf('.');
+      inputValue = inputValue.substring(0, indexOfLastDot) + inputValue.substring(indexOfLastDot + 1);
+    }
+  
+    inputElement.value = inputValue;
+  
+    inputElement.setSelectionRange(selectionStart, selectionEnd);
+  }
+
   addProduct() {
     const selectedProduct = this.productSearchControl.value;
-    console.log(selectedProduct.designation);
-      this.dataSource.data.push(selectedProduct);
-      this.dataSource._updateChangeSubscription();
-    
+    const selectedQuantity = this.quantityControl.value!;
+    const discountPercentage = this.discountPercentageControl.value!;
+  
+    const subtotal = selectedProduct.sellingPrice * selectedQuantity;
+  
+    // Calculate the discount amount based on the discount percentage
+    const discountAmount = (subtotal * discountPercentage) / 100;
+  
+    // Round the discount amount to three decimal places
+    const roundedDiscountAmount = parseFloat(discountAmount.toFixed(3));
+  
+    // Create a LineItem object with the rounded discount amount
+    const lineItem = {
+      product: selectedProduct,
+      quantity: selectedQuantity,
+      subtotal: subtotal,
+      discountPercentage: discountPercentage,
+      discountAmount: roundedDiscountAmount
+    };
+  
+    this.dataSource.data.push(lineItem);
+  
+    this.dataSource._updateChangeSubscription();
   }
+  
+  
   
 }

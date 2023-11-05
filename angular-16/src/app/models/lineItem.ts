@@ -8,11 +8,9 @@ export class LineItem {
 
   constructor(
     quantity: number,
-    subtotal: number,
-    id?: number,
-    product?: Product
+    product: Product,
+    subtotal: number
   ) {
-    this.id = id;
     this.product = product;
     this.quantity = quantity;
     this.subtotal = subtotal;

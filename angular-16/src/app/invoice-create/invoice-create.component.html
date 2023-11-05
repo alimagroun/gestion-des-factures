@@ -13,10 +13,17 @@
     </mat-form-field>
 
     <!-- Input for Quantité (Quantity) -->
+    Quantité
     <mat-form-field>
-      <input matInput type="number" placeholder="Quantité" [formControl]="quantityControl" min="1">
+      <input matInput type="number" placeholder="Quantité" [formControl]="quantityControl" min="1" value="1" matTooltip="Entrez la quantité">
     </mat-form-field>
 
+    Pourcentage de réduction
+    <mat-form-field>
+      <input matInput type="text" placeholder="pourcentage de réduction" [formControl]="discountPercentageControl" min="0" max="100" value="0" (input)="formatPercentage($event)" required>
+   <!--   <mat-hint>Enter a discount percentage (0-100)</mat-hint> -->
+    </mat-form-field>
+        
     <!-- Button to add the product -->
     <button mat-raised-button (click)="addProduct()">Ajouter le produit</button>
   </mat-card-content>
@@ -43,13 +50,13 @@
     <!-- Reference Column -->
     <ng-container matColumnDef="reference">
       <mat-header-cell *matHeaderCellDef>Référence</mat-header-cell>
-      <mat-cell *matCellDef="let item">{{ item.reference }}</mat-cell>
+      <mat-cell *matCellDef="let item">{{ item.product.reference }}</mat-cell>
     </ng-container>
   
     <!-- Designation Column -->
     <ng-container matColumnDef="designation">
       <mat-header-cell *matHeaderCellDef>Désignation</mat-header-cell>
-      <mat-cell *matCellDef="let item">{{ item.designation }}</mat-cell>
+      <mat-cell *matCellDef="let item">{{ item.product.designation }}</mat-cell>
     </ng-container>
   
     <!-- Quantity Column -->
@@ -61,13 +68,13 @@
     <!-- Unit Price (HT) Column -->
     <ng-container matColumnDef="unitPriceHT">
       <mat-header-cell *matHeaderCellDef>Prix Un. HT</mat-header-cell>
-      <mat-cell *matCellDef="let item">{{ item.unitPriceHT }}</mat-cell>
+      <mat-cell *matCellDef="let item">{{ item.product.sellingPrice }}</mat-cell>
     </ng-container>
   
     <!-- Total Price (HT) Column -->
     <ng-container matColumnDef="totalPriceHT">
       <mat-header-cell *matHeaderCellDef>Prix Tot. HT</mat-header-cell>
-      <mat-cell *matCellDef="let item">{{ item.totalPriceHT }}</mat-cell>
+      <mat-cell *matCellDef="let item">{{ item.subtotal }}</mat-cell>
     </ng-container>
   
     <!-- Discount Percentage Column -->
