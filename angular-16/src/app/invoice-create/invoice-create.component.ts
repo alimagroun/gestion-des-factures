@@ -171,10 +171,11 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
       const indexOfLastDot = inputValue.lastIndexOf('.');
       inputValue = inputValue.substring(0, indexOfLastDot) + inputValue.substring(indexOfLastDot + 1);
     }
+
+    this.discountPercentageControl.setValue(parseFloat(inputValue));
   
     inputElement.value = inputValue;
   
-    inputElement.setSelectionRange(selectionStart, selectionEnd);
   }
 
   addProduct() {
@@ -184,26 +185,29 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
   
     const subtotal = selectedProduct.sellingPrice * selectedQuantity;
   
-    // Calculate the discount amount based on the discount percentage
     const discountAmount = (subtotal * discountPercentage) / 100;
   
-    // Round the discount amount to three decimal places
     const roundedDiscountAmount = parseFloat(discountAmount.toFixed(3));
   
-    // Create a LineItem object with the rounded discount amount
+    const totalPriceAfterDiscountHT = subtotal - roundedDiscountAmount;
+
+    const taxAmount = (totalPriceAfterDiscountHT * selectedProduct.tax) / 100;
+
+    const roundedTaxAmount = parseFloat(taxAmount.toFixed(3));
+  
     const lineItem = {
       product: selectedProduct,
       quantity: selectedQuantity,
       subtotal: subtotal,
       discountPercentage: discountPercentage,
-      discountAmount: roundedDiscountAmount
+      discountAmount: roundedDiscountAmount,
+      totalPriceAfterDiscountHT: totalPriceAfterDiscountHT,
+      taxAmount: roundedTaxAmount
     };
   
     this.dataSource.data.push(lineItem);
   
     this.dataSource._updateChangeSubscription();
   }
-  
-  
   
 }

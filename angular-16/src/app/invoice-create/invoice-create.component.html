@@ -80,7 +80,7 @@
     <!-- Discount Percentage Column -->
     <ng-container matColumnDef="discountPercentage">
       <mat-header-cell *matHeaderCellDef>% Rem.</mat-header-cell>
-      <mat-cell *matCellDef="let item">{{ item.discountPercentage }}</mat-cell>
+      <mat-cell *matCellDef="let item">{{ item.discountPercentage }}%</mat-cell>
     </ng-container>
   
     <!-- Discount Amount Column -->
@@ -98,7 +98,7 @@
     <!-- Tax Percentage Column -->
     <ng-container matColumnDef="taxPercentage">
       <mat-header-cell *matHeaderCellDef>% TVA</mat-header-cell>
-      <mat-cell *matCellDef="let item">{{ item.taxPercentage }}</mat-cell>
+      <mat-cell *matCellDef="let item">{{ item.product.tax }}%</mat-cell>
     </ng-container>
   
     <!-- Tax Amount Column -->
