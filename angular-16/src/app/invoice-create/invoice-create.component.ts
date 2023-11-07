@@ -21,13 +21,13 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
   productSearchControl = new FormControl();
   quantityControl = new FormControl(1);
   discountPercentageControl = new FormControl(0);
-
   customers$!: Observable<Customer[]>;
   filteredProducts$!: Observable<Product[]>;
   minSearchLength = 3;
   private nextPage$ = new Subject();
   private _onDestroy = new Subject();
   displayedColumns: string[] = [
+    'select',
     'reference',
     'designation',
     'quantity',
@@ -41,7 +41,7 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     'totalPriceAfterDiscountTTC'
   ];
   dataSource = new MatTableDataSource<any>([]);
-
+  selected: boolean = false;
   constructor(
     private customerService: CustomerService,
     private productService: ProductService,
@@ -109,7 +109,6 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
   }
 
   onScroll() {
-
     this.nextPage$.next(null);
   }
 
@@ -131,12 +130,12 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     const enteredProduct = this.productSearchControl.value;
   
     this.productService.findProductIdByDesignation(enteredProduct).subscribe(
-      (productId) => {
-        if (productId !== null) {
-          console.log('Product found');
-          console.log('Product ID:', productId);
+      (product) => {
+        if (product !== null) {
+          this.productSearchControl.setValue(product);
         } else {
-          console.log('Product not found');
+          console.log("Product not found.");
+          this.productSearchControl.setErrors({ 'productNotFound': true });
         }
       },
       (error) => {
@@ -145,6 +144,7 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     );
   }
   
+    
   formatPercentage(event: any): void {
     const inputElement = event.target as HTMLInputElement;
     const selectionStart = inputElement.selectionStart;
@@ -175,7 +175,6 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     this.discountPercentageControl.setValue(parseFloat(inputValue));
   
     inputElement.value = inputValue;
-  
   }
 
   addProduct() {
@@ -183,31 +182,93 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     const selectedQuantity = this.quantityControl.value!;
     const discountPercentage = this.discountPercentageControl.value!;
   
-    const subtotal = selectedProduct.sellingPrice * selectedQuantity;
-  
-    const discountAmount = (subtotal * discountPercentage) / 100;
-  
-    const roundedDiscountAmount = parseFloat(discountAmount.toFixed(3));
-  
-    const totalPriceAfterDiscountHT = subtotal - roundedDiscountAmount;
+    const subtotal = parseFloat((selectedProduct.sellingPrice * selectedQuantity).toFixed(3));
+    const discountAmount = parseFloat(((subtotal * discountPercentage) / 100).toFixed(3));
+    const totalPriceAfterDiscountHT = subtotal - discountAmount;
+    const taxAmount = parseFloat(((totalPriceAfterDiscountHT * selectedProduct.tax) / 100).toFixed(3));
+    const totalPriceAfterDiscountTTC = parseFloat((totalPriceAfterDiscountHT + taxAmount).toFixed(3));
 
-    const taxAmount = (totalPriceAfterDiscountHT * selectedProduct.tax) / 100;
-
-    const roundedTaxAmount = parseFloat(taxAmount.toFixed(3));
-  
     const lineItem = {
       product: selectedProduct,
       quantity: selectedQuantity,
-      subtotal: subtotal,
+      subtotal: subtotal.toFixed(3),
       discountPercentage: discountPercentage,
-      discountAmount: roundedDiscountAmount,
-      totalPriceAfterDiscountHT: totalPriceAfterDiscountHT,
-      taxAmount: roundedTaxAmount
+      discountAmount: discountAmount.toFixed(3),
+      totalPriceAfterDiscountHT: totalPriceAfterDiscountHT.toFixed(3),
+      taxAmount: taxAmount.toFixed(3),
+      totalPriceAfterDiscountTTC: totalPriceAfterDiscountTTC.toFixed(3),
+      selected: false
     };
-  
+    
     this.dataSource.data.push(lineItem);
-  
     this.dataSource._updateChangeSubscription();
+
+    this.productSearchControl.reset();
+    this.quantityControl.setValue(1);
+    this.discountPercentageControl.setValue(0);    
+  }
+
+  updateProduct() {
+    const selectedProduct = this.productSearchControl.value;
+    const selectedQuantity = this.quantityControl.value;
+    const discountPercentage = this.discountPercentageControl.value;
+
+    const selectedItem = this.dataSource.data.find(item => item.selected);
+  
+    if (selectedItem) {
+      const subtotal = parseFloat((selectedProduct.sellingPrice * selectedQuantity!).toFixed(3));
+      const discountAmount = parseFloat(((subtotal * discountPercentage!) / 100).toFixed(3));
+      const totalPriceAfterDiscountHT = subtotal - discountAmount;
+      const taxAmount = parseFloat(((totalPriceAfterDiscountHT * selectedProduct.tax) / 100).toFixed(3));
+      const totalPriceAfterDiscountTTC = parseFloat((totalPriceAfterDiscountHT + taxAmount).toFixed(3));
+  
+      selectedItem.product = selectedProduct;
+      selectedItem.quantity = selectedQuantity;
+      selectedItem.discountPercentage = discountPercentage;
+      selectedItem.subtotal = subtotal.toFixed(3);
+      selectedItem.discountAmount = discountAmount.toFixed(3);
+      selectedItem.totalPriceAfterDiscountHT = totalPriceAfterDiscountHT.toFixed(3);
+      selectedItem.taxAmount = taxAmount.toFixed(3);
+      selectedItem.totalPriceAfterDiscountTTC = totalPriceAfterDiscountTTC.toFixed(3);
+  
+    }
+  }
+
+  deleteProduct() {
+    const selectedItemIndex = this.dataSource.data.findIndex(item => item.selected);
+  
+    if (selectedItemIndex !== -1) {
+
+      this.dataSource.data.splice(selectedItemIndex, 1);
+      
+      this.dataSource._updateChangeSubscription();
+      this.productSearchControl.reset();
+      this.quantityControl.setValue(1);
+      this.discountPercentageControl.setValue(0);
+      this.selected=false;
+    }
+  }
+  
+  onProductSelected(item: any, checkbox: any) {
+    this.dataSource.data.forEach(dataItem => {
+      if (dataItem !== item) {
+        dataItem.selected = false;
+      }
+    });
+  
+    item.selected = checkbox.checked;
+  
+    if (checkbox.checked) {
+      this.productSearchControl.setValue(item.product);
+      this.quantityControl.setValue(item.quantity);
+      this.discountPercentageControl.setValue(item.discountPercentage);
+      this.selected=true;
+    } else {
+      this.productSearchControl.reset();
+      this.quantityControl.setValue(1);
+      this.discountPercentageControl.setValue(0);
+      this.selected=false;
+    }
   }
   
 }

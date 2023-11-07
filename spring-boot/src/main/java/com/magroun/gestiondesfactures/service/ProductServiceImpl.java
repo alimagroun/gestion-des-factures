@@ -68,10 +68,10 @@ public class ProductServiceImpl implements ProductService {
     }
     
     @Override
-    public Long findProductIdByDesignation(String designation) {
+    public Product findProductIdByDesignation(String designation) {
         Product product = productRepository.findByDesignation(designation);
         if (product != null) {
-            return product.getId();
+            return product;
         }
         return null;
     }

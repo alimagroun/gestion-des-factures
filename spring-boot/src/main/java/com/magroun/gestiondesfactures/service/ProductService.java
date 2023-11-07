@@ -12,6 +12,6 @@ public interface ProductService {
     Product updateProduct(Long id, Product updatedProduct);
     void deleteProduct(Long id);
     Page<Product> findProductsByPrefix(String prefix, Pageable pageable);
-    Long findProductIdByDesignation(String designation);
+    Product findProductIdByDesignation(String designation);
 }
 

@@ -82,10 +82,10 @@ public class ProductController {
     }
     
     @GetMapping("/findProductIdByDesignation")
-    public ResponseEntity<Long> findProductIdByDesignation(@RequestParam String designation) {
-        Long productId = productService.findProductIdByDesignation(designation);
-        if (productId != null) {
-            return ResponseEntity.ok(productId);
+    public ResponseEntity<Product> findProductIdByDesignation(@RequestParam String designation) {
+        Product product = productService.findProductIdByDesignation(designation);
+        if (product != null) {
+            return ResponseEntity.ok(product);
         }
         return ResponseEntity.notFound().build();
     }

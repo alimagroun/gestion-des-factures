@@ -4,13 +4,15 @@
   </mat-card-header>
   <mat-card-content>
     <mat-form-field>
-      <input matInput type="text" placeholder="Choisissez un produit" #text aria-label="Numéro" [formControl]="productSearchControl" matInput [matAutocomplete]="productAuto" (blur)="handleInputBlur()"/>
+      <input matInput type="text" placeholder="Choisissez un produit" #text aria-label="Numéro" [formControl]="productSearchControl" matInput [matAutocomplete]="productAuto" (blur)="handleInputBlur()" />
       <mat-autocomplete #productAuto="matAutocomplete" showPanel="true" (optionsScroll)="onScroll()" [displayWith]="displayProductFn">
         <mat-option *ngFor="let product of filteredProducts$ | async" [value]="product">
           {{ product.designation }}
         </mat-option>
       </mat-autocomplete>
+      <mat-error *ngIf="productSearchControl.hasError('productNotFound')">Produit introuvable.</mat-error>
     </mat-form-field>
+    
 
     <!-- Input for Quantité (Quantity) -->
     Quantité
@@ -24,8 +26,9 @@
    <!--   <mat-hint>Enter a discount percentage (0-100)</mat-hint> -->
     </mat-form-field>
         
-    <!-- Button to add the product -->
-    <button mat-raised-button (click)="addProduct()">Ajouter le produit</button>
+    <button mat-raised-button (click)="addProduct()" *ngIf="!selected">Ajouter le produit</button>
+    <button mat-raised-button (click)="updateProduct()" *ngIf="selected">Modifier le produit</button>
+
   </mat-card-content>
 </mat-card>
 
@@ -46,7 +49,15 @@
     </mat-card-content>
   </mat-card>
 
+  <button mat-raised-button (click)="deleteProduct()" *ngIf="selected" class="mat-warn">Delete</button>
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <ng-container matColumnDef="select">
+      <mat-header-cell *matHeaderCellDef>Select</mat-header-cell>
+      <mat-cell *matCellDef="let item">
+        <mat-checkbox #checkbox [checked]="item.selected" (change)="onProductSelected(item, checkbox)"></mat-checkbox>
+      </mat-cell>
+    </ng-container>
+    
     <!-- Reference Column -->
     <ng-container matColumnDef="reference">
       <mat-header-cell *matHeaderCellDef>Référence</mat-header-cell>
