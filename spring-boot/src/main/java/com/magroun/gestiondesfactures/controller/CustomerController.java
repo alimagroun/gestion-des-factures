@@ -80,5 +80,16 @@ public class CustomerController {
         }
     }
     
+    @GetMapping("/findSingleCustomer")
+    public ResponseEntity<Customer> findSingleCustomer(@RequestParam("prefix") String prefix) {
+        Customer customer = customerService.findSingleCustomerByPrefix(prefix);
+
+        if (customer != null) {
+            return ResponseEntity.ok(customer);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
 }
 

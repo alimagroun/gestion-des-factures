@@ -42,4 +42,8 @@ export class CustomerService {
     const searchUrl = `${this.apiUrl}/search?prefix=${prefix}`;
     return this.http.get<Customer[]>(searchUrl);
   }
+
+  findSingleCustomer(prefix: string): Observable<Customer | null> {
+    return this.http.get<Customer | null>(`${this.apiUrl}/findSingleCustomer?prefix=${prefix}`);
+  }
 }

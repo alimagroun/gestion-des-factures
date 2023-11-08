@@ -101,5 +101,9 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findByPrefix(prefix);
     }
 
+    @Override
+    public Customer findSingleCustomerByPrefix(String prefix) {
+        return customerRepository.findSingleCustomerByPrefix(prefix);
+    }
 
 }

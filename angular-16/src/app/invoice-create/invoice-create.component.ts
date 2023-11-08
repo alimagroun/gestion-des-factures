@@ -42,6 +42,8 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
   ];
   dataSource = new MatTableDataSource<any>([]);
   selected: boolean = false;
+  totalHT = 0;
+  total = 0;
   constructor(
     private customerService: CustomerService,
     private productService: ProductService,
@@ -84,9 +86,16 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
   }
 
   displayCustomerFn(customer: Customer): string {
-    return customer ? `${customer.firstName} ${customer.lastName}` : '';
+    if (customer) {
+      if (customer.companyName && customer.companyName.trim() !== '') {
+        return customer.companyName;
+      } else {
+        return `${customer.firstName} ${customer.lastName}`;
+      }
+    }
+    return '';
   }
-
+  
   displayProductFn(product: Product | null): string {
     if (!product) {
       return '';
@@ -120,12 +129,12 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
 
   handleInputBlur(): void {
     const enteredValue = this.productSearchControl.value;
-
-    if (enteredValue.trim().length > 0) {
+  
+    if (typeof enteredValue === 'string' && enteredValue.trim().length > 0) {
       this.checkProductValidity();
     }
   }
-  
+    
   checkProductValidity(): void {
     const enteredProduct = this.productSearchControl.value;
   
@@ -133,18 +142,15 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
       (product) => {
         if (product !== null) {
           this.productSearchControl.setValue(product);
-        } else {
-          console.log("Product not found.");
-          this.productSearchControl.setErrors({ 'productNotFound': true });
         }
       },
       (error) => {
+        this.productSearchControl.setErrors({ 'productNotFound': true });
         console.error('An error occurred while checking product validity:', error);
       }
     );
   }
   
-    
   formatPercentage(event: any): void {
     const inputElement = event.target as HTMLInputElement;
     const selectionStart = inputElement.selectionStart;
@@ -183,10 +189,12 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     const discountPercentage = this.discountPercentageControl.value!;
   
     const subtotal = parseFloat((selectedProduct.sellingPrice * selectedQuantity).toFixed(3));
+    this.totalHT += subtotal;
     const discountAmount = parseFloat(((subtotal * discountPercentage) / 100).toFixed(3));
     const totalPriceAfterDiscountHT = subtotal - discountAmount;
     const taxAmount = parseFloat(((totalPriceAfterDiscountHT * selectedProduct.tax) / 100).toFixed(3));
     const totalPriceAfterDiscountTTC = parseFloat((totalPriceAfterDiscountHT + taxAmount).toFixed(3));
+    this.total += totalPriceAfterDiscountTTC;
 
     const lineItem = {
       product: selectedProduct,
@@ -270,5 +278,41 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
       this.selected=false;
     }
   }
+
+  addCustomer() {
+    const enteredValue = this.customerSearchControl.value;
+  // for testing
+    if (enteredValue) {
+  
+      if (enteredValue.firstName) {
+        console.log('Customer First Name:', enteredValue.firstName);
+      }
+  
+      if (enteredValue.id) {
+        console.log('Customer ID:', enteredValue.id);
+      }
+    }
+  }
+  
+  checkCustomerExists() {
+    const enteredValue = this.customerSearchControl.value;
+  
+    if (typeof enteredValue === 'string' && enteredValue.trim().length > 0) {
+      this.customerService.findSingleCustomer(enteredValue).subscribe(
+        (customer) => {
+          if (customer) {
+            this.customerSearchControl.setValue(customer);
+            console.log('Customer First Name:', customer.firstName);
+          }
+        },
+        (error) => {
+          if (error.status === 404) {
+            this.customerSearchControl.setErrors({ 'customerNotFound': true });
+          }
+        }
+      );
+    }
+  }
+  
   
 }

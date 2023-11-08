@@ -24,7 +24,12 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     	       "CONCAT(c.firstName, ' ', c.lastName) LIKE %:prefix% OR " +
     	       "CONCAT(c.lastName, ' ', c.firstName) LIKE %:prefix%)")
     	List<Customer> findByPrefix(@Param("prefix") String prefix);
-
+    
+    @Query("SELECT c FROM Customer c " +
+    	       "WHERE c.companyName = :prefix OR " +
+    	       "CONCAT(c.firstName, ' ', c.lastName) = :prefix OR " +
+    	       "CONCAT(c.lastName, ' ', c.firstName) = :prefix")
+    	Customer findSingleCustomerByPrefix(@Param("prefix") String prefix);
 
 
 }

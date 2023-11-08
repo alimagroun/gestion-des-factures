@@ -14,5 +14,6 @@ public interface CustomerService {
     Customer getCustomerById(Long id);
     Customer updateCustomer(Long id, CustomerCreationRequest updatedCustomer);
     void deleteCustomer(Long id);
+    Customer findSingleCustomerByPrefix(String prefix);
     List<Customer> findCustomersByPrefix(String prefix);
 }

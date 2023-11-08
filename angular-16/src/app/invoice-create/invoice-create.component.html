@@ -13,11 +13,9 @@
       <mat-error *ngIf="productSearchControl.hasError('productNotFound')">Produit introuvable.</mat-error>
     </mat-form-field>
     
-
-    <!-- Input for Quantité (Quantity) -->
     Quantité
     <mat-form-field>
-      <input matInput type="number" placeholder="Quantité" [formControl]="quantityControl" min="1" value="1" matTooltip="Entrez la quantité">
+      <input matInput type="number" placeholder="Quantité" [formControl]="quantityControl" min="1" max ="999" value="1">
     </mat-form-field>
 
     Pourcentage de réduction
@@ -26,12 +24,11 @@
    <!--   <mat-hint>Enter a discount percentage (0-100)</mat-hint> -->
     </mat-form-field>
         
-    <button mat-raised-button (click)="addProduct()" *ngIf="!selected">Ajouter le produit</button>
-    <button mat-raised-button (click)="updateProduct()" *ngIf="selected">Modifier le produit</button>
+    <button mat-raised-button color="primary" (click)="addProduct()" *ngIf="!selected">Ajouter le produit</button>
+    <button mat-raised-button color="primary" (click)="updateProduct()" *ngIf="selected">Modifier le produit</button>
 
   </mat-card-content>
 </mat-card>
-
 
 <mat-card>
     <mat-card-header>
@@ -39,13 +36,16 @@
     </mat-card-header>
     <mat-card-content>
       <mat-form-field>
-        <input matInput [formControl]="customerSearchControl" placeholder="Search for a customer" [matAutocomplete]="customerAuto" >
-      </mat-form-field>
+        <input matInput [formControl]="customerSearchControl" placeholder="Search for a customer" [matAutocomplete]="customerAuto" (blur)="checkCustomerExists()" required>
       <mat-autocomplete #customerAuto="matAutocomplete"  [displayWith]="displayCustomerFn">
         <mat-option *ngFor="let customer of customers$ | async" [value]="customer">
-          {{ customer.firstName }} {{ customer.lastName }}
+          {{ customer.companyName ? customer.companyName : (customer.firstName + ' ' + customer.lastName) }}
         </mat-option>
-      </mat-autocomplete>      
+      </mat-autocomplete>
+      <mat-error *ngIf="customerSearchControl.hasError('required')">Ce champ est obligatoire.</mat-error>
+      <mat-error *ngIf="customerSearchControl.hasError('customerNotFound')">Client introuvable.</mat-error>
+    </mat-form-field>
+      <button mat-raised-button color="primary" (click)="addCustomer()" [disabled]="customerSearchControl.invalid">Ajouter un client</button>      
     </mat-card-content>
   </mat-card>
 
@@ -58,67 +58,56 @@
       </mat-cell>
     </ng-container>
     
-    <!-- Reference Column -->
     <ng-container matColumnDef="reference">
       <mat-header-cell *matHeaderCellDef>Référence</mat-header-cell>
       <mat-cell *matCellDef="let item">{{ item.product.reference }}</mat-cell>
     </ng-container>
   
-    <!-- Designation Column -->
     <ng-container matColumnDef="designation">
       <mat-header-cell *matHeaderCellDef>Désignation</mat-header-cell>
       <mat-cell *matCellDef="let item">{{ item.product.designation }}</mat-cell>
     </ng-container>
   
-    <!-- Quantity Column -->
     <ng-container matColumnDef="quantity">
       <mat-header-cell *matHeaderCellDef>Quantité</mat-header-cell>
       <mat-cell *matCellDef="let item">{{ item.quantity }}</mat-cell>
     </ng-container>
   
-    <!-- Unit Price (HT) Column -->
     <ng-container matColumnDef="unitPriceHT">
       <mat-header-cell *matHeaderCellDef>Prix Un. HT</mat-header-cell>
       <mat-cell *matCellDef="let item">{{ item.product.sellingPrice }}</mat-cell>
     </ng-container>
   
-    <!-- Total Price (HT) Column -->
     <ng-container matColumnDef="totalPriceHT">
       <mat-header-cell *matHeaderCellDef>Prix Tot. HT</mat-header-cell>
       <mat-cell *matCellDef="let item">{{ item.subtotal }}</mat-cell>
     </ng-container>
   
-    <!-- Discount Percentage Column -->
     <ng-container matColumnDef="discountPercentage">
       <mat-header-cell *matHeaderCellDef>% Rem.</mat-header-cell>
       <mat-cell *matCellDef="let item">{{ item.discountPercentage }}%</mat-cell>
     </ng-container>
   
-    <!-- Discount Amount Column -->
     <ng-container matColumnDef="discountAmount">
       <mat-header-cell *matHeaderCellDef>Mont. Rem.</mat-header-cell>
       <mat-cell *matCellDef="let item">{{ item.discountAmount }}</mat-cell>
     </ng-container>
   
-    <!-- Total Price After Discount (HT) Column -->
     <ng-container matColumnDef="totalPriceAfterDiscountHT">
       <mat-header-cell *matHeaderCellDef>HT apr. Remise</mat-header-cell>
       <mat-cell *matCellDef="let item">{{ item.totalPriceAfterDiscountHT }}</mat-cell>
     </ng-container>
   
-    <!-- Tax Percentage Column -->
     <ng-container matColumnDef="taxPercentage">
       <mat-header-cell *matHeaderCellDef>% TVA</mat-header-cell>
       <mat-cell *matCellDef="let item">{{ item.product.tax }}%</mat-cell>
     </ng-container>
   
-    <!-- Tax Amount Column -->
     <ng-container matColumnDef="taxAmount">
       <mat-header-cell *matHeaderCellDef>Mont. TVA</mat-header-cell>
       <mat-cell *matCellDef="let item">{{ item.taxAmount }}</mat-cell>
     </ng-container>
   
-    <!-- Total Price After Discount (TTC) Column -->
     <ng-container matColumnDef="totalPriceAfterDiscountTTC">
       <mat-header-cell *matHeaderCellDef>TTC apr. Remise</mat-header-cell>
       <mat-cell *matCellDef="let item">{{ item.totalPriceAfterDiscountTTC }}</mat-cell>
@@ -127,6 +116,14 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
   </mat-table>
+  <mat-list>
+    <mat-list-item><strong>Total HT:</strong> {{totalHT}}</mat-list-item>
+    <mat-list-item><strong>Total TTC:</strong> {{total}}</mat-list-item>
+    <mat-list-item><strong>Timbre:</strong></mat-list-item>
+    <mat-list-item><strong>Total à Payer:</strong></mat-list-item>
+  </mat-list>
+  
+
   
   
 
