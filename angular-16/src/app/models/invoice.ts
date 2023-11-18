@@ -1,33 +1,33 @@
 import { Customer } from './customer';
-import { LineItem } from './lineItem'; 
+import { LineItem } from './lineItem';
 
 export class Invoice {
-//  id: number | undefined;
-  invoiceNumber: string;
-  dateIssued: Date | undefined;
-  dueDate: Date | undefined;
+  invoiceNumber?: string;
+  dateIssued: Date;
+  dueDate: Date;
   totalAmount: number;
   status: string;
-//  lineItems: LineItem[] | undefined;
-//  customer: Customer | undefined;
+  stamp: number;
+  customer: Customer; // Use the Customer model
+  lineItems: LineItem[]; // Use the LineItem model
 
   constructor(
-    invoiceNumber: string,
+  //  invoiceNumber: string,
+    dateIssued: Date,
+    dueDate: Date,
     totalAmount: number,
     status: string,
- //   id?: number,
-    dateIssued?: Date,
-    dueDate?: Date,
-    lineItems?: LineItem[],
-    customer?: Customer
+    stamp: number,
+    customer: Customer,
+    lineItems: LineItem[]
   ) {
- //   this.id = id;
-    this.invoiceNumber = invoiceNumber;
+ //   this.invoiceNumber = invoiceNumber;
     this.dateIssued = dateIssued;
     this.dueDate = dueDate;
     this.totalAmount = totalAmount;
     this.status = status;
-//    this.lineItems = lineItems;
-//    this.customer = customer;
+    this.stamp = stamp;
+    this.customer = customer;
+    this.lineItems = lineItems;
   }
 }

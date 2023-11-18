@@ -11,6 +11,7 @@
         </mat-option>
       </mat-autocomplete>
       <mat-error *ngIf="productSearchControl.hasError('productNotFound')">Produit introuvable.</mat-error>
+      <mat-error *ngIf="productSearchControl.hasError('duplicateProduct')">Ce produit est déjà dans la facture.</mat-error>
     </mat-form-field>
     
     Quantité
@@ -49,6 +50,13 @@
     </mat-card-content>
   </mat-card>
 
+  <mat-form-field>
+    <mat-label>Choisissez une date</mat-label>
+    <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate">
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+  
   <button mat-raised-button (click)="deleteProduct()" *ngIf="selected" class="mat-warn">Delete</button>
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
     <ng-container matColumnDef="select">
@@ -122,6 +130,9 @@
     <mat-list-item><strong>Timbre:</strong></mat-list-item>
     <mat-list-item><strong>Total à Payer:</strong></mat-list-item>
   </mat-list>
+
+  <button mat-raised-button color="primary" color="primary" (click)="saveInvoice()">Enregistrer la Facture</button>
+
   
 
   

@@ -6,10 +6,12 @@ import { Page } from '../models/page';
 import { Customer } from '../models/customer';
 import { Product } from '../models/product';
 import { LineItem } from '../models/lineItem';
+import {Invoice} from '../models/invoice';
 import { MatTableDataSource } from '@angular/material/table';
 
 import { CustomerService } from '../services/customer.service';
 import { ProductService } from '../services/product.service';
+import { InvoiceService } from '../services/invoice.service';
 
 @Component({
   selector: 'app-invoice-create',
@@ -44,12 +46,16 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
   selected: boolean = false;
   totalHT = 0;
   total = 0;
+  selectedDate!: Date;
   constructor(
     private customerService: CustomerService,
     private productService: ProductService,
+    private invoiceService: InvoiceService
     ) {}
 
   ngOnInit() {
+    this.selectedDate = new Date();
+
     this.customers$ = this.customerSearchControl.valueChanges
       .pipe(
         debounceTime(800),
@@ -132,6 +138,20 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
   
     if (typeof enteredValue === 'string' && enteredValue.trim().length > 0) {
       this.checkProductValidity();
+    }
+
+    if (enteredValue && enteredValue.id !== undefined) {
+    
+      const productExists = this.dataSource.data.some(item => {
+        const lineItemProduct = item.product;
+        return lineItemProduct && lineItemProduct.id === enteredValue.id;
+      });
+    
+      if (productExists) {
+        this.productSearchControl.setErrors({
+          'duplicateProduct': true
+        });
+      }
     }
   }
     
@@ -314,5 +334,46 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     }
   }
   
+  saveInvoice(): void {
+    const dueDateString = '2023-12-16T00:00:00Z'; // for testing purpose
+    
+    const customer = this.customerSearchControl.value;
+    const customerIdOnly = Customer.createWithId(customer.id);
+
+    const lineItems = this.dataSource.data.map(item => {
+      const productId = item.product.id;
+      const productIdOnly = Product.createWithId(productId);
+    
+      const lineItem = {
+        product: productIdOnly,
+        quantity: item.quantity,
+        unitPrice: item.product.sellingPrice,
+        discountPercentage: item.discountPercentage,
+        tax: item.product.tax,
+        subtotal: item.subtotal,
+      };
+      return lineItem;
+    });
+    
+    const invoiceData: Invoice = {
+      dateIssued: this.selectedDate,
+      dueDate: new Date(dueDateString),
+      totalAmount: this.total+1,
+      status: 'paid', // for testing purpose
+      stamp: 1, // for testing purpose
+      customer: customerIdOnly,
+      lineItems: lineItems
+    };
+    
+    this.invoiceService.createInvoice(invoiceData)
+      .subscribe(
+        (response) => {
+          console.log('Invoice created successfully:', response);
+        },
+        (error) => {
+          console.error('Error creating invoice:', error);
+        }
+      );
+  }
   
 }

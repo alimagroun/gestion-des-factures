@@ -32,7 +32,6 @@ public class Product {
     @DecimalMax(value = "9999999999999.0", message = "Purchase price cannot exceed 9,999,999,999,999.0")
     private double purchasePrice;
 
-   
     @DecimalMin(value = "0.0", message = "Selling price must be greater than or equal to 0.0")
     private double sellingPrice;
 
@@ -48,7 +47,6 @@ public class Product {
     @LastModifiedDate
     private Date lastUpdate;
 
-    
     public Product(Long id, String reference, String designation, double purchasePrice, double sellingPrice,
 			double profitMargin, double tax, Date lastUpdate) {
 		super();

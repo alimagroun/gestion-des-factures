@@ -10,6 +10,6 @@ public interface InvoiceService {
     Invoice getInvoiceById(Long id);
     Invoice updateInvoice(Long id, Invoice updatedInvoice);
     void deleteInvoice(Long id);
- 
+    String generateInvoiceNumber();
 }
 

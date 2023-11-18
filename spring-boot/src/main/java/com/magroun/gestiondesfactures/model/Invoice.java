@@ -16,6 +16,7 @@ public class Invoice {
     private Date dueDate;
     private double totalAmount;
     private String status;
+    private float stamp;
 
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
     private List<LineItem> lineItems;
@@ -86,6 +87,14 @@ public class Invoice {
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
+	}
+
+	public float getStamp() {
+		return stamp;
+	}
+
+	public void setStamp(float stamp) {
+		this.stamp = stamp;
 	}
 
 }

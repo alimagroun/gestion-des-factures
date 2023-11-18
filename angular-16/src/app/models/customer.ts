@@ -28,4 +28,11 @@ export class Customer {
     this.taxIdentificationNumber = taxIdentificationNumber;
     this.address = address;
   }
+
+  static createWithId(id: number): Customer {
+    const customer = new Customer();
+    customer.id = id;
+    return customer;
+  }
+  
 }

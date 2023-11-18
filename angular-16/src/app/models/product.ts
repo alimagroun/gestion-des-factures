@@ -18,6 +18,11 @@ export class Product {
     this.tax = 0;
     this.lastUpdate = new Date();
   }
-  
+
+  static createWithId(id: number): Product {
+    const product = new Product();
+    product.id=id;
+    return product;
+  }
   
 }
