@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { FormControl} from '@angular/forms';
 import { Observable, tap, filter, Subject, of  } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, map, exhaustMap, scan, startWith, takeWhile} from 'rxjs/operators';
@@ -45,8 +45,10 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
   dataSource = new MatTableDataSource<any>([]);
   selected: boolean = false;
   totalHT = 0;
+  totalDiscount =0;
   total = 0;
   selectedDate!: Date;
+  productInputIsValid: boolean = false;
   constructor(
     private customerService: CustomerService,
     private productService: ProductService,
@@ -133,21 +135,29 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     this._onDestroy.complete();
   }
 
-  handleInputBlur(): void {
+  onProductInputFocus() {
+    this.productInputIsValid = false;
+  }
+  
+  validateProductExistence(): void {
     const enteredValue = this.productSearchControl.value;
   
-    if (typeof enteredValue === 'string' && enteredValue.trim().length > 0) {
-      this.checkProductValidity();
-    }
+    setTimeout(() => {
+      const enteredValue = this.productSearchControl.value;
+      if (typeof enteredValue === 'string' && enteredValue.trim().length > 0) {
+        this.checkProductValidity();
+      }
+    }, 100);
 
     if (enteredValue && enteredValue.id !== undefined) {
-    
+      this.productInputIsValid =true;
       const productExists = this.dataSource.data.some(item => {
         const lineItemProduct = item.product;
         return lineItemProduct && lineItemProduct.id === enteredValue.id;
       });
     
       if (productExists) {
+        this.productInputIsValid =false;
         this.productSearchControl.setErrors({
           'duplicateProduct': true
         });
@@ -161,10 +171,25 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     this.productService.findProductIdByDesignation(enteredProduct).subscribe(
       (product) => {
         if (product !== null) {
+          this.productInputIsValid =true;
           this.productSearchControl.setValue(product);
+          if(!this.selected){
+          const productExists = this.dataSource.data.some(item => {
+            const lineItemProduct = item.product;
+            return lineItemProduct && lineItemProduct.id === product.id;
+          });
+        
+          if (productExists) {
+            this.productInputIsValid =false;
+            this.productSearchControl.setErrors({
+              'duplicateProduct': true
+            });
+          }
         }
+      }
       },
       (error) => {
+        this.productInputIsValid =false;
         this.productSearchControl.setErrors({ 'productNotFound': true });
         console.error('An error occurred while checking product validity:', error);
       }
@@ -209,12 +234,10 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     const discountPercentage = this.discountPercentageControl.value!;
   
     const subtotal = parseFloat((selectedProduct.sellingPrice * selectedQuantity).toFixed(3));
-    this.totalHT += subtotal;
     const discountAmount = parseFloat(((subtotal * discountPercentage) / 100).toFixed(3));
     const totalPriceAfterDiscountHT = subtotal - discountAmount;
     const taxAmount = parseFloat(((totalPriceAfterDiscountHT * selectedProduct.tax) / 100).toFixed(3));
     const totalPriceAfterDiscountTTC = parseFloat((totalPriceAfterDiscountHT + taxAmount).toFixed(3));
-    this.total += totalPriceAfterDiscountTTC;
 
     const lineItem = {
       product: selectedProduct,
@@ -231,9 +254,28 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     this.dataSource.data.push(lineItem);
     this.dataSource._updateChangeSubscription();
 
+    const totalHT = this.dataSource.data.reduce((acc, item) => {
+      return acc + parseFloat(item.subtotal);
+    }, 0);
+  
+    this.totalHT = totalHT.toFixed(3);
+
+    const totalDiscount = this.dataSource.data.reduce((acc, item) => {
+      return acc + parseFloat(item.discountAmount);
+    }, 0) + discountAmount;
+  
+    this.totalDiscount = totalDiscount.toFixed(3);
+
+    const totalTTC = this.dataSource.data.reduce((acc, item) => {
+      return acc + parseFloat(item.totalPriceAfterDiscountTTC);
+    }, 0);
+  
+    this.total = totalTTC.toFixed(3);
+   
     this.productSearchControl.reset();
     this.quantityControl.setValue(1);
-    this.discountPercentageControl.setValue(0);    
+    this.discountPercentageControl.setValue(0);
+    this.productInputIsValid =false;    
   }
 
   updateProduct() {
@@ -242,7 +284,6 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     const discountPercentage = this.discountPercentageControl.value;
 
     const selectedItem = this.dataSource.data.find(item => item.selected);
-  
     if (selectedItem) {
       const subtotal = parseFloat((selectedProduct.sellingPrice * selectedQuantity!).toFixed(3));
       const discountAmount = parseFloat(((subtotal * discountPercentage!) / 100).toFixed(3));
@@ -258,7 +299,24 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
       selectedItem.totalPriceAfterDiscountHT = totalPriceAfterDiscountHT.toFixed(3);
       selectedItem.taxAmount = taxAmount.toFixed(3);
       selectedItem.totalPriceAfterDiscountTTC = totalPriceAfterDiscountTTC.toFixed(3);
+
+      const totalHT = this.dataSource.data.reduce((acc, item) => {
+        return acc + parseFloat(item.subtotal);
+      }, 0);
+    
+      this.totalHT = totalHT.toFixed(3);
+
+      const totalDiscount = this.dataSource.data.reduce((acc, item) => {
+        return acc + parseFloat(item.discountAmount);
+      }, 0) + discountAmount;
+    
+      this.totalDiscount = totalDiscount.toFixed(3);
+
+      const total = this.dataSource.data.reduce((acc, item) => {
+        return acc + parseFloat(item.totalPriceAfterDiscountTTC);
+      }, 0);
   
+      this.total = total.toFixed(3);
     }
   }
 
@@ -298,23 +356,9 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
       this.selected=false;
     }
   }
-
-  addCustomer() {
-    const enteredValue = this.customerSearchControl.value;
-  // for testing
-    if (enteredValue) {
-  
-      if (enteredValue.firstName) {
-        console.log('Customer First Name:', enteredValue.firstName);
-      }
-  
-      if (enteredValue.id) {
-        console.log('Customer ID:', enteredValue.id);
-      }
-    }
-  }
   
   checkCustomerExists() {
+    setTimeout(() => {
     const enteredValue = this.customerSearchControl.value;
   
     if (typeof enteredValue === 'string' && enteredValue.trim().length > 0) {
@@ -332,6 +376,7 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
         }
       );
     }
+  }, 100);
   }
   
   saveInvoice(): void {

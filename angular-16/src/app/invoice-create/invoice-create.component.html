@@ -4,7 +4,7 @@
   </mat-card-header>
   <mat-card-content>
     <mat-form-field>
-      <input matInput type="text" placeholder="Choisissez un produit" #text aria-label="Numéro" [formControl]="productSearchControl" matInput [matAutocomplete]="productAuto" (blur)="handleInputBlur()" />
+      <input matInput type="text" placeholder="Choisissez un produit" #text aria-label="Numéro" [formControl]="productSearchControl" matInput [matAutocomplete]="productAuto" (blur)="validateProductExistence()" (focus)="onProductInputFocus()" [readonly]="selected"required/>
       <mat-autocomplete #productAuto="matAutocomplete" showPanel="true" (optionsScroll)="onScroll()" [displayWith]="displayProductFn">
         <mat-option *ngFor="let product of filteredProducts$ | async" [value]="product">
           {{ product.designation }}
@@ -25,7 +25,7 @@
    <!--   <mat-hint>Enter a discount percentage (0-100)</mat-hint> -->
     </mat-form-field>
         
-    <button mat-raised-button color="primary" (click)="addProduct()" *ngIf="!selected">Ajouter le produit</button>
+    <button mat-raised-button color="primary" (click)="addProduct()" [disabled]="!productInputIsValid" *ngIf="!selected">Ajouter le produit</button>
     <button mat-raised-button color="primary" (click)="updateProduct()" *ngIf="selected">Modifier le produit</button>
 
   </mat-card-content>
@@ -45,8 +45,7 @@
       </mat-autocomplete>
       <mat-error *ngIf="customerSearchControl.hasError('required')">Ce champ est obligatoire.</mat-error>
       <mat-error *ngIf="customerSearchControl.hasError('customerNotFound')">Client introuvable.</mat-error>
-    </mat-form-field>
-      <button mat-raised-button color="primary" (click)="addCustomer()" [disabled]="customerSearchControl.invalid">Ajouter un client</button>      
+    </mat-form-field>      
     </mat-card-content>
   </mat-card>
 
