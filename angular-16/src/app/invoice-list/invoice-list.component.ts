@@ -9,16 +9,14 @@ import { InvoiceService } from '../services/invoice.service';
 })
 export class InvoiceListComponent implements OnInit {
   displayedColumns: string[] = [
-    'numero', // Numéro
-    'date', // Date
-    'client', // Client
-    'tva', // TVA
-    'montantHt', // Montant HT
-    'montantTtc', // Montant TTC
-    'etat', // État
-    'modeReglement', // Mode de Règlement
+    'select',
+    'invoiceNumber',
+    'customer',
+    'date',
+    'totalAmount',
+    'state',
+    'action',
   ];
-
   invoices: Invoice[] = [];
 
   constructor(private invoiceService: InvoiceService) {}

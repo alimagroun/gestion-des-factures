@@ -33,6 +33,11 @@ export const AppRoutes: Routes = [
         component: InvoiceCreateComponent,
       },
       {
+        path: 'invoice/:id',
+        component: InvoiceCreateComponent,
+      },
+      
+      {
         path: 'quote-create',
         component: QuoteCreateComponent,
       },      

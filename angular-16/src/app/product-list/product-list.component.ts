@@ -70,6 +70,8 @@ export class ProductListComponent implements OnInit {
   dialogRef.afterClosed().subscribe(result => {
     if (result === true) {
       this.loadProducts(this.paginator.pageIndex, this.paginator.pageSize);
+      this.showModifierButton = false;
+      this.showSupprimerButton = false;
     }
   });
 }

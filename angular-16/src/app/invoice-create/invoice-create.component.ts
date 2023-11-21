@@ -8,6 +8,7 @@ import { Product } from '../models/product';
 import { LineItem } from '../models/lineItem';
 import {Invoice} from '../models/invoice';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
 
 import { CustomerService } from '../services/customer.service';
 import { ProductService } from '../services/product.service';
@@ -49,15 +50,24 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
   total = 0;
   selectedDate!: Date;
   productInputIsValid: boolean = false;
+  invoiceId!: number | null;
+  invoice!: Invoice | null;
   constructor(
     private customerService: CustomerService,
     private productService: ProductService,
-    private invoiceService: InvoiceService
+    private invoiceService: InvoiceService,
+    private route: ActivatedRoute
     ) {}
 
   ngOnInit() {
-    this.selectedDate = new Date();
+    const id = this.route.snapshot.paramMap.get('id');
+    this.invoiceId = id ? +id : null; // Check for null before assigning to this.invoiceId
 
+    if (this.invoiceId) {
+      this.getInvoiceDetails(this.invoiceId); // Call function to fetch invoice details
+    }
+
+    this.selectedDate = new Date();
     this.customers$ = this.customerSearchControl.valueChanges
       .pipe(
         debounceTime(800),
@@ -91,6 +101,19 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
           );
         })
       ); 
+  }
+
+  getInvoiceDetails(id: number) {
+    this.invoiceService.getInvoiceById(id).subscribe(
+      (invoice: Invoice) => {
+        this.invoice = invoice; 
+        this.selectedDate = invoice.dateIssued;
+      },
+      (error) => {
+        console.error('Error fetching invoice details:', error);
+  
+      }
+    );
   }
 
   displayCustomerFn(customer: Customer): string {
@@ -156,7 +179,7 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
         return lineItemProduct && lineItemProduct.id === enteredValue.id;
       });
     
-      if (productExists) {
+      if (productExists && !this.selected) {
         this.productInputIsValid =false;
         this.productSearchControl.setErrors({
           'duplicateProduct': true
@@ -254,24 +277,8 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     this.dataSource.data.push(lineItem);
     this.dataSource._updateChangeSubscription();
 
-    const totalHT = this.dataSource.data.reduce((acc, item) => {
-      return acc + parseFloat(item.subtotal);
-    }, 0);
-  
-    this.totalHT = totalHT.toFixed(3);
+    this.calculateTotals();
 
-    const totalDiscount = this.dataSource.data.reduce((acc, item) => {
-      return acc + parseFloat(item.discountAmount);
-    }, 0) + discountAmount;
-  
-    this.totalDiscount = totalDiscount.toFixed(3);
-
-    const totalTTC = this.dataSource.data.reduce((acc, item) => {
-      return acc + parseFloat(item.totalPriceAfterDiscountTTC);
-    }, 0);
-  
-    this.total = totalTTC.toFixed(3);
-   
     this.productSearchControl.reset();
     this.quantityControl.setValue(1);
     this.discountPercentageControl.setValue(0);
@@ -300,23 +307,8 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
       selectedItem.taxAmount = taxAmount.toFixed(3);
       selectedItem.totalPriceAfterDiscountTTC = totalPriceAfterDiscountTTC.toFixed(3);
 
-      const totalHT = this.dataSource.data.reduce((acc, item) => {
-        return acc + parseFloat(item.subtotal);
-      }, 0);
-    
-      this.totalHT = totalHT.toFixed(3);
+      this.calculateTotals();
 
-      const totalDiscount = this.dataSource.data.reduce((acc, item) => {
-        return acc + parseFloat(item.discountAmount);
-      }, 0) + discountAmount;
-    
-      this.totalDiscount = totalDiscount.toFixed(3);
-
-      const total = this.dataSource.data.reduce((acc, item) => {
-        return acc + parseFloat(item.totalPriceAfterDiscountTTC);
-      }, 0);
-  
-      this.total = total.toFixed(3);
     }
   }
 
@@ -328,6 +320,7 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
       this.dataSource.data.splice(selectedItemIndex, 1);
       
       this.dataSource._updateChangeSubscription();
+      this.calculateTotals();
       this.productSearchControl.reset();
       this.quantityControl.setValue(1);
       this.discountPercentageControl.setValue(0);
@@ -355,6 +348,24 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
       this.discountPercentageControl.setValue(0);
       this.selected=false;
     }
+  }
+
+  calculateTotals() {
+    const totalHT = this.dataSource.data.reduce((acc, item) => {
+      return acc + parseFloat(item.subtotal);
+    }, 0);
+    this.totalHT = totalHT.toFixed(3);
+  
+    const totalDiscount = this.dataSource.data.reduce((acc, item) => {
+      return acc + parseFloat(item.discountAmount);
+    }, 0);
+  
+    this.totalDiscount = totalDiscount.toFixed(3);
+  
+    const totalTTC = this.dataSource.data.reduce((acc, item) => {
+      return acc + parseFloat(item.totalPriceAfterDiscountTTC);
+    }, 0);
+    this.total = totalTTC.toFixed(3);
   }
   
   checkCustomerExists() {
