@@ -2,6 +2,7 @@ package com.magroun.gestiondesfactures.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.magroun.gestiondesfactures.model.Invoice;
 import com.magroun.gestiondesfactures.model.LineItem;
@@ -10,15 +11,19 @@ import com.magroun.gestiondesfactures.repository.InvoiceRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
+    private final LineItemService lineItemService;
 
     @Autowired
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, LineItemService lineItemService) {
         this.invoiceRepository = invoiceRepository;
+        this.lineItemService = lineItemService;
     }
 
     @Override
@@ -47,20 +52,69 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
     
     @Override
+    @Transactional
     public Invoice updateInvoice(Long id, Invoice updatedInvoice) {
         Optional<Invoice> existingInvoiceOptional = invoiceRepository.findById(id);
 
         if (existingInvoiceOptional.isPresent()) {
             Invoice existingInvoice = existingInvoiceOptional.get();
 
-            existingInvoice.setInvoiceNumber(updatedInvoice.getInvoiceNumber());
             existingInvoice.setDateIssued(updatedInvoice.getDateIssued());
             existingInvoice.setDueDate(updatedInvoice.getDueDate());
             existingInvoice.setTotalAmount(updatedInvoice.getTotalAmount());
 
-            invoiceRepository.save(existingInvoice);
+            List<LineItem> updatedLineItems = updatedInvoice.getLineItems();
             
-            return existingInvoice;
+            for (LineItem lineItem : updatedLineItems) {
+                System.out.println("LineItem ID: " + lineItem.getId());
+            }
+
+            Set<Long> updatedLineItemIds = updatedLineItems.stream()
+                    .map(LineItem::getId)
+                    .collect(Collectors.toSet());
+
+            existingInvoice.getLineItems().removeIf(existingLineItem ->
+                    !updatedLineItemIds.contains(existingLineItem.getId()));
+
+            List<LineItem> lineItemsToDelete = existingInvoice.getLineItems().stream()
+                    .filter(existingLineItem -> !updatedLineItemIds.contains(existingLineItem.getId()))
+                    .collect(Collectors.toList());
+
+            for (LineItem lineItem : lineItemsToDelete) {
+                lineItemService.deleteLineItem(lineItem.getId());
+            }
+
+            for (LineItem updatedLineItem : updatedLineItems) {
+                if (updatedLineItem.getId() != null) {
+                    boolean existsInExistingInvoice = existingInvoice.getLineItems().stream()
+                            .filter(existingLineItem -> existingLineItem.getId() != null)
+                            .anyMatch(existingLineItem -> existingLineItem.getId().equals(updatedLineItem.getId()));
+
+                    if (existsInExistingInvoice) {
+                        for (LineItem existingLineItem : existingInvoice.getLineItems()) {
+                            if (existingLineItem.getId() != null && existingLineItem.getId().equals(updatedLineItem.getId())) {
+                                existingLineItem.setProduct(updatedLineItem.getProduct());
+                                // ... update other fields as needed ...
+                                break;
+                            }
+                        }
+                    } else {
+                        LineItem newLineItem = new LineItem();
+                        newLineItem.setId(updatedLineItem.getId());
+                        newLineItem.setProduct(updatedLineItem.getProduct());
+            
+                        existingInvoice.getLineItems().add(newLineItem);
+                    }
+                } else {
+                    LineItem newLineItem = new LineItem();
+                    newLineItem.setProduct(updatedLineItem.getProduct());
+      
+                    existingInvoice.getLineItems().add(newLineItem);
+                }
+            }
+
+            Invoice savedInvoice = invoiceRepository.save(existingInvoice);
+            return savedInvoice;
         } else {
             return null;
         }

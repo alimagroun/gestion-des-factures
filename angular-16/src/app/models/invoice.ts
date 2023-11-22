@@ -2,6 +2,7 @@ import { Customer } from './customer';
 import { LineItem } from './lineItem';
 
 export class Invoice {
+  id?: number;
   invoiceNumber?: string;
   dateIssued: Date;
   dueDate: Date;
@@ -12,6 +13,7 @@ export class Invoice {
   lineItems: LineItem[]; // Use the LineItem model
 
   constructor(
+    id: number,
   //  invoiceNumber: string,
     dateIssued: Date,
     dueDate: Date,
@@ -21,6 +23,7 @@ export class Invoice {
     customer: Customer,
     lineItems: LineItem[]
   ) {
+    this.id = id;
  //   this.invoiceNumber = invoiceNumber;
     this.dateIssued = dateIssued;
     this.dueDate = dueDate;

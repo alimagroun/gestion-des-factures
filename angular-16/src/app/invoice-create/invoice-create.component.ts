@@ -50,6 +50,7 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
   total = 0;
   selectedDate!: Date;
   productInputIsValid: boolean = false;
+  isUpdateMode: boolean = false;
   invoiceId!: number | null;
   invoice!: Invoice | null;
   constructor(
@@ -61,10 +62,11 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
-    this.invoiceId = id ? +id : null; // Check for null before assigning to this.invoiceId
+    this.invoiceId = id ? +id : null; 
 
     if (this.invoiceId) {
-      this.getInvoiceDetails(this.invoiceId); // Call function to fetch invoice details
+      this.getInvoiceDetails(this.invoiceId);
+      this.isUpdateMode=true;
     }
 
     this.selectedDate = new Date();
@@ -103,18 +105,44 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
       ); 
   }
 
-  getInvoiceDetails(id: number) {
-    this.invoiceService.getInvoiceById(id).subscribe(
-      (invoice: Invoice) => {
-        this.invoice = invoice; 
-        this.selectedDate = invoice.dateIssued;
-      },
-      (error) => {
-        console.error('Error fetching invoice details:', error);
-  
-      }
-    );
-  }
+getInvoiceDetails(id: number) {
+  this.invoiceService.getInvoiceById(id).subscribe(
+    (invoice: Invoice) => {
+      this.invoice = invoice; 
+      this.customerSearchControl.setValue(invoice.customer);
+      this.selectedDate = invoice.dateIssued;
+
+      invoice.lineItems.forEach((item) => {
+       const discountAmount = parseFloat(((item.subtotal * item.discountPercentage) / 100).toFixed(3));
+       const totalPriceAfterDiscountHT = item.subtotal - discountAmount;
+       const taxAmount = parseFloat(((totalPriceAfterDiscountHT * item.tax) / 100).toFixed(3));
+       const totalPriceAfterDiscountTTC = parseFloat((totalPriceAfterDiscountHT + taxAmount).toFixed(3));
+       item.product.sellingPrice = item.unitPrice;
+       item.product.tax = item.tax;
+        const newDataItem = {
+          id: item.id,
+          product: item.product,
+          quantity: item.quantity,
+          unitPrice: item.product.sellingPrice,
+          discountPercentage: item.discountPercentage,
+          discountAmount: discountAmount.toFixed(3),
+          totalPriceAfterDiscountHT: totalPriceAfterDiscountHT.toFixed(3),
+          taxAmount: taxAmount.toFixed(3),
+          tax: item.product.tax,
+          subtotal: item.subtotal,
+          totalPriceAfterDiscountTTC: totalPriceAfterDiscountTTC.toFixed(3)
+        };
+        this.dataSource.data.push(newDataItem);
+      });
+
+      this.dataSource._updateChangeSubscription();
+      this.calculateTotals();
+    },
+    (error) => {
+      console.error('Error fetching invoice details:', error);
+    }
+  );
+}
 
   displayCustomerFn(customer: Customer): string {
     if (customer) {
@@ -431,5 +459,51 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
         }
       );
   }
+
+  updateInvoice() {
+    const dueDateString = '2023-12-16T00:00:00Z'; // for testing purpose
+    const customer = this.customerSearchControl.value;
+    const customerIdOnly = Customer.createWithId(customer.id);
+  
+    const lineItems = this.dataSource.data.map(item => {
+      const productId = item.product.id;
+      const productIdOnly = Product.createWithId(productId);
+  
+      const lineItem = {
+        id: item.id,
+        product: productIdOnly,
+        quantity: item.quantity,
+        unitPrice: item.product.sellingPrice,
+        discountPercentage: item.discountPercentage,
+        tax: item.product.tax,
+        subtotal: item.subtotal,
+      };
+      return lineItem;
+    });
+    if (this.invoice && this.invoice.id) {
+    const updatedInvoiceData: Invoice = {
+      id: this.invoice.id,
+      dateIssued: this.selectedDate,
+      dueDate: new Date(dueDateString),
+      totalAmount: this.total + 1,
+      status: 'paid', // for testing purpose
+      stamp: 1, // for testing purpose
+      customer: customerIdOnly,
+      lineItems: lineItems
+    };
+  
+    // Call the service method to update the invoice directly with the new data
+    this.invoiceService.updateInvoice(this.invoice.id, updatedInvoiceData)
+      .subscribe(
+        (response) => {
+          console.log('Invoice updated successfully:', response);
+          // Perform any necessary actions after successful update
+        },
+        (error) => {
+          console.error('Error updating invoice:', error);
+        }
+      );
+  }
+}
   
 }
