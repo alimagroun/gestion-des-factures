@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -52,7 +54,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
     
     @Override
-    @Transactional
+  @Transactional
     public Invoice updateInvoice(Long id, Invoice updatedInvoice) {
         Optional<Invoice> existingInvoiceOptional = invoiceRepository.findById(id);
 
@@ -62,62 +64,58 @@ public class InvoiceServiceImpl implements InvoiceService {
             existingInvoice.setDateIssued(updatedInvoice.getDateIssued());
             existingInvoice.setDueDate(updatedInvoice.getDueDate());
             existingInvoice.setTotalAmount(updatedInvoice.getTotalAmount());
+            existingInvoice.setCustomer(updatedInvoice.getCustomer());
 
             List<LineItem> updatedLineItems = updatedInvoice.getLineItems();
-            
-            for (LineItem lineItem : updatedLineItems) {
-                System.out.println("LineItem ID: " + lineItem.getId());
+
+            if (updatedLineItems != null) {
+                List<LineItem> existingLineItems = existingInvoice.getLineItems();
+
+                for (LineItem updatedLineItem : updatedLineItems) {
+                    boolean found = false;
+                    if (updatedLineItem.getId() != null) {
+                        for (LineItem existingLineItem : existingLineItems) {
+                            if (existingLineItem.getId().equals(updatedLineItem.getId())) {
+                                existingLineItem.setDiscountPercentage(updatedLineItem.getDiscountPercentage());
+                                existingLineItem.setQuantity(updatedLineItem.getQuantity());
+                           
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!found) {
+                    	updatedLineItem.setInvoice(existingInvoice);
+                    	existingInvoice.getLineItems().add(updatedLineItem);
+                   
+                    }
+                }
+         
+            } else {
+                existingInvoice.setLineItems(new ArrayList<>());
             }
 
+            List<LineItem> existingLineItems = existingInvoice.getLineItems();      
             Set<Long> updatedLineItemIds = updatedLineItems.stream()
                     .map(LineItem::getId)
                     .collect(Collectors.toSet());
 
-            existingInvoice.getLineItems().removeIf(existingLineItem ->
-                    !updatedLineItemIds.contains(existingLineItem.getId()));
-
-            List<LineItem> lineItemsToDelete = existingInvoice.getLineItems().stream()
-                    .filter(existingLineItem -> !updatedLineItemIds.contains(existingLineItem.getId()))
-                    .collect(Collectors.toList());
-
-            for (LineItem lineItem : lineItemsToDelete) {
-                lineItemService.deleteLineItem(lineItem.getId());
-            }
-
-            for (LineItem updatedLineItem : updatedLineItems) {
-                if (updatedLineItem.getId() != null) {
-                    boolean existsInExistingInvoice = existingInvoice.getLineItems().stream()
-                            .filter(existingLineItem -> existingLineItem.getId() != null)
-                            .anyMatch(existingLineItem -> existingLineItem.getId().equals(updatedLineItem.getId()));
-
-                    if (existsInExistingInvoice) {
-                        for (LineItem existingLineItem : existingInvoice.getLineItems()) {
-                            if (existingLineItem.getId() != null && existingLineItem.getId().equals(updatedLineItem.getId())) {
-                                existingLineItem.setProduct(updatedLineItem.getProduct());
-                                // ... update other fields as needed ...
-                                break;
-                            }
-                        }
-                    } else {
-                        LineItem newLineItem = new LineItem();
-                        newLineItem.setId(updatedLineItem.getId());
-                        newLineItem.setProduct(updatedLineItem.getProduct());
-            
-                        existingInvoice.getLineItems().add(newLineItem);
-                    }
-                } else {
-                    LineItem newLineItem = new LineItem();
-                    newLineItem.setProduct(updatedLineItem.getProduct());
-      
-                    existingInvoice.getLineItems().add(newLineItem);
+            Iterator<LineItem> iterator = existingLineItems.iterator();
+            while (iterator.hasNext()) {
+                LineItem existingLineItem = iterator.next();
+                if (!updatedLineItemIds.contains(existingLineItem.getId())) {
+                    System.out.println(existingLineItem.getId());
+                    lineItemService.deleteLineItem(existingLineItem.getId());
+                    
+                    iterator.remove();
                 }
             }
 
             Invoice savedInvoice = invoiceRepository.save(existingInvoice);
             return savedInvoice;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     @Override

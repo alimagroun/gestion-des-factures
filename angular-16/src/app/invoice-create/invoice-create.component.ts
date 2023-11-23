@@ -492,18 +492,25 @@ getInvoiceDetails(id: number) {
       lineItems: lineItems
     };
   
-    // Call the service method to update the invoice directly with the new data
     this.invoiceService.updateInvoice(this.invoice.id, updatedInvoiceData)
-      .subscribe(
-        (response) => {
-          console.log('Invoice updated successfully:', response);
-          // Perform any necessary actions after successful update
-        },
-        (error) => {
-          console.error('Error updating invoice:', error);
+    .subscribe(
+      (response) => {
+        if (response && response.lineItems) {
+          const dataSourceItems = this.dataSource.data;
+          response.lineItems.forEach(updatedLineItem => {
+            const index = dataSourceItems.findIndex(item => item.product.id === updatedLineItem.product.id && !item.id);
+            if (index !== -1) {
+              dataSourceItems[index].id = updatedLineItem.id;
+            }
+          });
+          this.dataSource.data = dataSourceItems;
         }
-      );
+      },
+      (error) => {
+        console.error('Error updating invoice:', error);
+      }
+    );  
   }
 }
-  
+ 
 }
