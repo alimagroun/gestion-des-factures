@@ -8,7 +8,7 @@ import { Product } from '../models/product';
 import { LineItem } from '../models/lineItem';
 import {Invoice} from '../models/invoice';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { CustomerService } from '../services/customer.service';
 import { ProductService } from '../services/product.service';
@@ -52,12 +52,14 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
   productInputIsValid: boolean = false;
   isUpdateMode: boolean = false;
   invoiceId!: number | null;
-  invoice!: Invoice | null;
+  hasProductInInvoice: boolean = false;
+  isCustomerSelected: boolean = false;
   constructor(
     private customerService: CustomerService,
     private productService: ProductService,
     private invoiceService: InvoiceService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
     ) {}
 
   ngOnInit() {
@@ -67,6 +69,8 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     if (this.invoiceId) {
       this.getInvoiceDetails(this.invoiceId);
       this.isUpdateMode=true;
+      this.hasProductInInvoice=true;
+      this.isCustomerSelected=true;
     }
 
     this.selectedDate = new Date();
@@ -108,7 +112,6 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
 getInvoiceDetails(id: number) {
   this.invoiceService.getInvoiceById(id).subscribe(
     (invoice: Invoice) => {
-      this.invoice = invoice; 
       this.customerSearchControl.setValue(invoice.customer);
       this.selectedDate = invoice.dateIssued;
 
@@ -310,7 +313,8 @@ getInvoiceDetails(id: number) {
     this.productSearchControl.reset();
     this.quantityControl.setValue(1);
     this.discountPercentageControl.setValue(0);
-    this.productInputIsValid =false;    
+    this.productInputIsValid =false;
+    this.hasProductInInvoice = true;
   }
 
   updateProduct() {
@@ -353,6 +357,7 @@ getInvoiceDetails(id: number) {
       this.quantityControl.setValue(1);
       this.discountPercentageControl.setValue(0);
       this.selected=false;
+      this.hasProductInInvoice = this.dataSource.data.length > 0;
     }
   }
   
@@ -399,13 +404,15 @@ getInvoiceDetails(id: number) {
   checkCustomerExists() {
     setTimeout(() => {
     const enteredValue = this.customerSearchControl.value;
-  
+    if (enteredValue && enteredValue.id) {
+      this.isCustomerSelected = true;
+    }
     if (typeof enteredValue === 'string' && enteredValue.trim().length > 0) {
       this.customerService.findSingleCustomer(enteredValue).subscribe(
         (customer) => {
           if (customer) {
             this.customerSearchControl.setValue(customer);
-            console.log('Customer First Name:', customer.firstName);
+    this.isCustomerSelected = true;
           }
         },
         (error) => {
@@ -417,10 +424,13 @@ getInvoiceDetails(id: number) {
     }
   }, 100);
   }
+
+  onCustomerInputFocus() {
+    this.isCustomerSelected = false;
+  }
   
   saveInvoice(): void {
     const dueDateString = '2023-12-16T00:00:00Z'; // for testing purpose
-    
     const customer = this.customerSearchControl.value;
     const customerIdOnly = Customer.createWithId(customer.id);
 
@@ -451,8 +461,11 @@ getInvoiceDetails(id: number) {
     
     this.invoiceService.createInvoice(invoiceData)
       .subscribe(
-        (response) => {
-          console.log('Invoice created successfully:', response);
+        (createdInvoice) => {
+          this.isUpdateMode=true;
+          if (createdInvoice.id !== undefined) {
+            this.invoiceId = createdInvoice.id;
+          }
         },
         (error) => {
           console.error('Error creating invoice:', error);
@@ -464,7 +477,6 @@ getInvoiceDetails(id: number) {
     const dueDateString = '2023-12-16T00:00:00Z'; // for testing purpose
     const customer = this.customerSearchControl.value;
     const customerIdOnly = Customer.createWithId(customer.id);
-  
     const lineItems = this.dataSource.data.map(item => {
       const productId = item.product.id;
       const productIdOnly = Product.createWithId(productId);
@@ -480,9 +492,9 @@ getInvoiceDetails(id: number) {
       };
       return lineItem;
     });
-    if (this.invoice && this.invoice.id) {
+    if (this.invoiceId) {
     const updatedInvoiceData: Invoice = {
-      id: this.invoice.id,
+      id: this.invoiceId,
       dateIssued: this.selectedDate,
       dueDate: new Date(dueDateString),
       totalAmount: this.total + 1,
@@ -492,7 +504,7 @@ getInvoiceDetails(id: number) {
       lineItems: lineItems
     };
   
-    this.invoiceService.updateInvoice(this.invoice.id, updatedInvoiceData)
+    this.invoiceService.updateInvoice(this.invoiceId, updatedInvoiceData)
     .subscribe(
       (response) => {
         if (response && response.lineItems) {

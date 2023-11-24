@@ -125,19 +125,15 @@ public class InvoiceServiceImpl implements InvoiceService {
     
     @Override
     public String generateInvoiceNumber() {
-        // Get the last used invoice number for the current year
         int currentYear = LocalDate.now().getYear() % 100;
         Integer lastInvoiceNumber = invoiceRepository.findLastInvoiceNumberByYear(String.format("%02d", currentYear));
 
-        // If no invoice number is found for the current year, start with 1
         if (lastInvoiceNumber == null) {
             lastInvoiceNumber = 0;
         }
 
-        // Increment the last invoice number
         int newInvoiceNumber = lastInvoiceNumber + 1;
 
-        // Format the invoice number
         String formattedInvoiceNumber = String.format("%02d%06d", currentYear, newInvoiceNumber);
 
         return formattedInvoiceNumber;

@@ -38,7 +38,7 @@
     </mat-card-header>
     <mat-card-content>
       <mat-form-field>
-        <input matInput [formControl]="customerSearchControl" placeholder="Search for a customer" [matAutocomplete]="customerAuto" (blur)="checkCustomerExists()" required>
+        <input matInput [formControl]="customerSearchControl" placeholder="Search for a customer" [matAutocomplete]="customerAuto" (blur)="checkCustomerExists()" (focus)="onCustomerInputFocus()" required>
       <mat-autocomplete #customerAuto="matAutocomplete"  [displayWith]="displayCustomerFn">
         <mat-option *ngFor="let customer of customers$ | async" [value]="customer">
           {{ customer.companyName ? customer.companyName : (customer.firstName + ' ' + customer.lastName) }}
@@ -134,8 +134,10 @@
     <mat-list-item><strong>Total à Payer:</strong></mat-list-item>
   </mat-list>
 
-<button mat-raised-button color="primary" *ngIf="!isUpdateMode" (click)="saveInvoice()">Enregistrer la Facture</button>
-<button mat-raised-button color="primary" *ngIf="isUpdateMode" (click)="updateInvoice()">Modifier la Facture</button>
+  <button mat-raised-button color="primary" [disabled]="!hasProductInInvoice || !isCustomerSelected" *ngIf="!isUpdateMode" (click)="saveInvoice()">
+    Enregistrer la Facture
+  </button>  
+<button mat-raised-button color="primary" [disabled]="!hasProductInInvoice || !isCustomerSelected" *ngIf="isUpdateMode" (click)="updateInvoice()">Modifier la Facture</button>
 
 
   
