@@ -104,7 +104,6 @@ public class InvoiceServiceImpl implements InvoiceService {
             while (iterator.hasNext()) {
                 LineItem existingLineItem = iterator.next();
                 if (!updatedLineItemIds.contains(existingLineItem.getId())) {
-                    System.out.println(existingLineItem.getId());
                     lineItemService.deleteLineItem(existingLineItem.getId());
                     
                     iterator.remove();

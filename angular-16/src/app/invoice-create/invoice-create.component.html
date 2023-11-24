@@ -134,7 +134,7 @@
     <mat-list-item><strong>Total à Payer:</strong></mat-list-item>
   </mat-list>
 
-  <button mat-raised-button color="primary" [disabled]="!hasProductInInvoice || !isCustomerSelected" *ngIf="!isUpdateMode" (click)="saveInvoice()">
+  <button mat-raised-button color="primary" [disabled]="!hasProductInInvoice || !isCustomerSelected || isSaving" *ngIf="!isUpdateMode" (click)="saveInvoice()">
     Enregistrer la Facture
   </button>  
 <button mat-raised-button color="primary" [disabled]="!hasProductInInvoice || !isCustomerSelected" *ngIf="isUpdateMode" (click)="updateInvoice()">Modifier la Facture</button>

@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy} from '@angular/core';
 import { FormControl} from '@angular/forms';
-import { Observable, tap, filter, Subject, of  } from 'rxjs';
+import { Observable, tap, filter, Subject, of} from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, map, exhaustMap, scan, startWith, takeWhile} from 'rxjs/operators';
 import { Page } from '../models/page';
 import { Customer } from '../models/customer';
@@ -54,6 +54,7 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
   invoiceId!: number | null;
   hasProductInInvoice: boolean = false;
   isCustomerSelected: boolean = false;
+  isSaving = false;
   constructor(
     private customerService: CustomerService,
     private productService: ProductService,
@@ -430,6 +431,7 @@ getInvoiceDetails(id: number) {
   }
   
   saveInvoice(): void {
+    this.isSaving = true;
     const dueDateString = '2023-12-16T00:00:00Z'; // for testing purpose
     const customer = this.customerSearchControl.value;
     const customerIdOnly = Customer.createWithId(customer.id);
@@ -463,12 +465,13 @@ getInvoiceDetails(id: number) {
       .subscribe(
         (createdInvoice) => {
           this.isUpdateMode=true;
+          this.updateDataSourceWithInvoiceItems(createdInvoice);
           if (createdInvoice.id !== undefined) {
             this.invoiceId = createdInvoice.id;
           }
         },
         (error) => {
-          console.error('Error creating invoice:', error);
+          this.isSaving = false;
         }
       );
   }
@@ -506,16 +509,9 @@ getInvoiceDetails(id: number) {
   
     this.invoiceService.updateInvoice(this.invoiceId, updatedInvoiceData)
     .subscribe(
-      (response) => {
-        if (response && response.lineItems) {
-          const dataSourceItems = this.dataSource.data;
-          response.lineItems.forEach(updatedLineItem => {
-            const index = dataSourceItems.findIndex(item => item.product.id === updatedLineItem.product.id && !item.id);
-            if (index !== -1) {
-              dataSourceItems[index].id = updatedLineItem.id;
-            }
-          });
-          this.dataSource.data = dataSourceItems;
+      (invoice) => {
+        if (invoice && invoice.lineItems) {
+          this.updateDataSourceWithInvoiceItems(invoice);
         }
       },
       (error) => {
@@ -523,6 +519,19 @@ getInvoiceDetails(id: number) {
       }
     );  
   }
+}
+
+updateDataSourceWithInvoiceItems(invoice: Invoice): void {
+  const dataSourceItems = this.dataSource.data;
+
+  invoice.lineItems.forEach(updatedLineItem => {
+    const index = dataSourceItems.findIndex(item => item.product.id === updatedLineItem.product.id && !item.id);
+    if (index !== -1) {
+      dataSourceItems[index].id = updatedLineItem.id;
+    }
+  });
+
+  this.dataSource.data = dataSourceItems;
 }
  
 }
