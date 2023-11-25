@@ -139,6 +139,12 @@
   </button>  
 <button mat-raised-button color="primary" [disabled]="!hasProductInInvoice || !isCustomerSelected" *ngIf="isUpdateMode" (click)="updateInvoice()">Modifier la Facture</button>
 
+<div>
+  <!-- Other components, form inputs, etc. for creating the invoice -->
+  
+  <button *ngIf="invoiceId !== null" (click)="generateInvoicePdf(invoiceId)">Generate PDF</button>
+</div>
+
 
   
 

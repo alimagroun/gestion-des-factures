@@ -54,7 +54,8 @@ public class SecurityConfiguration {
                 "api/invoices/**",
                 "api/products/**",
                 "/api/customers/**",
-                "api/invoices/**"
+                "api/invoices/**",
+                "api/pdf/**" //for testing
         )
           .permitAll()
 

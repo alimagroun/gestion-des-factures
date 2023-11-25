@@ -11,5 +11,6 @@ public interface InvoiceService {
     Invoice updateInvoice(Long id, Invoice updatedInvoice);
     void deleteInvoice(Long id);
     String generateInvoiceNumber();
+    String generateInvoicePdfContent();
 }
 

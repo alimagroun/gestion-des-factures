@@ -13,6 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CustomerService } from '../services/customer.service';
 import { ProductService } from '../services/product.service';
 import { InvoiceService } from '../services/invoice.service';
+import { PdfService } from '../services/pdf.service';
 
 @Component({
   selector: 'app-invoice-create',
@@ -59,6 +60,7 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     private customerService: CustomerService,
     private productService: ProductService,
     private invoiceService: InvoiceService,
+    private pdfService: PdfService,
     private route: ActivatedRoute,
     private router: Router
     ) {}
@@ -534,4 +536,17 @@ updateDataSourceWithInvoiceItems(invoice: Invoice): void {
   this.dataSource.data = dataSourceItems;
 }
  
+generateInvoicePdf(invoiceId: number): void {
+  this.pdfService.generateInvoicePdf(invoiceId).subscribe(
+    (response: any) => {
+      const blob = new Blob([response.body], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      window.open(url);
+    },
+    (error: any) => {
+      console.error('Error generating PDF: ', error);
+      // Handle error, show error message, etc.
+    }
+  );
+}
 }

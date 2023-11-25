@@ -137,5 +137,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         return formattedInvoiceNumber;
     }
+    
+    public String generateInvoicePdfContent() {
+        // Generate invoice content (customer details, product details, etc.)
+        return "Invoice Content: Customer - XYZ, Products - ABC, Total - $100";
+    }
 }
 
