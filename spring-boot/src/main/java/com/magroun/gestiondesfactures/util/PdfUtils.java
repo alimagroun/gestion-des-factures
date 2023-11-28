@@ -5,6 +5,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.magroun.gestiondesfactures.model.Invoice;
 import com.magroun.gestiondesfactures.model.LineItem;
+import com.itextpdf.text.pdf.PdfPCell;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 public class PdfUtils {
 
     public static byte[] generatePdfFromInvoice(Invoice invoice) {
-        Document document = new Document(PageSize.A4.rotate());
+        Document document = new Document();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         try {
@@ -20,7 +21,7 @@ public class PdfUtils {
             document.open();
 
             addInvoiceDetails(document, invoice);
-            document.add(Chunk.NEWLINE);
+            document.add(new Paragraph(" "));
             addLineItemsTable(document, invoice.getLineItems());
 
             document.close();
@@ -32,51 +33,77 @@ public class PdfUtils {
     }
 
     private static void addInvoiceDetails(Document document, Invoice invoice) throws DocumentException {
-        Paragraph invoiceDetails = new Paragraph();
-        invoiceDetails.add(new Paragraph("Invoice Details:"));
+    	
+        PdfPTable table = new PdfPTable(2);
+        table.setWidthPercentage(100);
+        table.setWidths(new float[] { 3, 1 });
+        table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 
-        Paragraph leftAligned = new Paragraph("Customer: " + invoice.getCustomer().getFirstName());
-        invoiceDetails.add(leftAligned);
+        PdfPCell customerCell = new PdfPCell();
+        customerCell.setBorder(PdfPCell.NO_BORDER);
 
-        Paragraph rightAligned = new Paragraph("Invoice ID: " + invoice.getInvoiceNumber());
-        rightAligned.setAlignment(Element.ALIGN_RIGHT);
-        invoiceDetails.add(rightAligned);
+        String firstName = invoice.getCustomer().getFirstName();
+        String lastName = invoice.getCustomer().getLastName();
+        String companyName = invoice.getCustomer().getCompanyName();
 
-        document.add(invoiceDetails);
+        String customerInfo = "Customer: " + firstName + " " + lastName;
+
+        if (companyName != null && !companyName.isEmpty()) {
+            customerInfo += "\n" + companyName; 
+        }
+
+        customerCell.addElement(new Phrase(customerInfo));
+
+        PdfPCell invoiceIdCell = new PdfPCell();
+        invoiceIdCell.setBorder(PdfPCell.NO_BORDER);
+        Chunk invoiceIdChunk = new Chunk("Invoice ID: " + invoice.getInvoiceNumber());
+        Phrase invoiceIdPhrase = new Phrase(invoiceIdChunk);
+        invoiceIdCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        invoiceIdCell.addElement(invoiceIdPhrase);
+
+        table.addCell(customerCell);
+        table.addCell(invoiceIdCell);
+
+        document.add(table);
     }
-
 
     private static void addLineItemsTable(Document document, List<LineItem> lineItems) throws DocumentException {
         PdfPTable table = new PdfPTable(11);
+        table.setWidthPercentage(100);
+        table.setHorizontalAlignment(Element.ALIGN_LEFT);
+        Font smallFont = new Font(Font.FontFamily.HELVETICA, 10);
 
-        table.addCell("Reference");
-        table.addCell("Designation");
-        table.addCell("Quantity");
-        table.addCell("Unit Price HT");
-        table.addCell("Total Price HT");
-        table.addCell("Discount (%)");
-        table.addCell("Discount Amount");
-        table.addCell("Total Price After Discount HT");
-        table.addCell("Tax (%)");
-        table.addCell("Tax Amount");
-        table.addCell("Total Price After Discount TTC");
+        table.addCell(new Phrase("Reference", smallFont));
+        table.addCell(new Phrase("Designation", smallFont));
+        table.addCell(new Phrase("Quantity", smallFont));
+        table.addCell(new Phrase("Unit Price HT", smallFont));
+        table.addCell(new Phrase("Total Price HT", smallFont));
+        table.addCell(new Phrase("Discount (%)", smallFont));
+        table.addCell(new Phrase("Discount Amount", smallFont));
+        table.addCell(new Phrase("Total Price After Discount HT", smallFont));
+        table.addCell(new Phrase("Tax (%)", smallFont));
+        table.addCell(new Phrase("Tax Amount", smallFont));
+        table.addCell(new Phrase("Total Price After Discount TTC", smallFont));
 
         for (LineItem lineItem : lineItems) {
-        	table.addCell(lineItem.getProduct().getReference());
-            table.addCell(lineItem.getProduct().getDesignation());
-            table.addCell(String.valueOf(lineItem.getQuantity()));
-            table.addCell(String.valueOf(lineItem.getUnitPrice()));
-            table.addCell(String.valueOf(lineItem.getSubtotal()));
-            table.addCell(String.valueOf(lineItem.getDiscountPercentage()));
+            table.addCell(new Phrase(lineItem.getProduct().getReference(), smallFont));
+            table.addCell(new Phrase(lineItem.getProduct().getDesignation(), smallFont));
+            table.addCell(new Phrase(String.valueOf(lineItem.getQuantity()), smallFont));
+            table.addCell(new Phrase(String.valueOf(lineItem.getUnitPrice()), smallFont));
+            table.addCell(new Phrase(String.valueOf(lineItem.getSubtotal()), smallFont));
+            table.addCell(new Phrase(String.valueOf(lineItem.getDiscountPercentage()), smallFont));
             double discountAmount = lineItem.getSubtotal() * (lineItem.getDiscountPercentage() / 100.0);
-            table.addCell(String.valueOf(discountAmount));
+            String formattedDiscountAmount = String.format("%.3f", discountAmount);
+            table.addCell(new Phrase(formattedDiscountAmount, smallFont));
             double totalPriceAfterDiscountHT = lineItem.getSubtotal() - discountAmount;
-            table.addCell(String.valueOf(totalPriceAfterDiscountHT));
-            table.addCell(String.valueOf(lineItem.getTax()));
+            table.addCell(new Phrase(String.valueOf(totalPriceAfterDiscountHT), smallFont));
+            table.addCell(new Phrase(String.valueOf(lineItem.getTax()), smallFont));
             double taxAmount = (totalPriceAfterDiscountHT * lineItem.getTax()) / 100.0;
-            table.addCell(String.valueOf(taxAmount));
+            String formattedTaxAmount = String.format("%.3f", taxAmount);
+            table.addCell(new Phrase(formattedTaxAmount, smallFont));
             double totalPriceAfterDiscountTTC = totalPriceAfterDiscountHT + taxAmount;
-            table.addCell(String.valueOf(totalPriceAfterDiscountTTC));
+            String formattedTotalPriceAfterDiscountTTC = String.format("%.3f", totalPriceAfterDiscountTTC);
+            table.addCell(new Phrase(formattedTotalPriceAfterDiscountTTC, smallFont));
         }
 
         document.add(table);

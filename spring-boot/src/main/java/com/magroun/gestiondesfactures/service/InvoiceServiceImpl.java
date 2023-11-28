@@ -78,6 +78,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                             if (existingLineItem.getId().equals(updatedLineItem.getId())) {
                                 existingLineItem.setDiscountPercentage(updatedLineItem.getDiscountPercentage());
                                 existingLineItem.setQuantity(updatedLineItem.getQuantity());
+                                existingLineItem.setSubtotal(updatedLineItem.getSubtotal());
                            
                                 found = true;
                                 break;
