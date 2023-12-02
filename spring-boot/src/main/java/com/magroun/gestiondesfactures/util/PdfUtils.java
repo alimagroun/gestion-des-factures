@@ -5,6 +5,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.magroun.gestiondesfactures.model.Invoice;
 import com.magroun.gestiondesfactures.model.LineItem;
+import com.magroun.gestiondesfactures.model.Address;
 import com.itextpdf.text.pdf.PdfPCell;
 
 import java.io.ByteArrayOutputStream;
@@ -45,18 +46,53 @@ public class PdfUtils {
         String firstName = invoice.getCustomer().getFirstName();
         String lastName = invoice.getCustomer().getLastName();
         String companyName = invoice.getCustomer().getCompanyName();
+        String taxIdentificationNumber = invoice.getCustomer().getTaxIdentificationNumber();
+        Address address = invoice.getCustomer().getAddress();
 
-        String customerInfo = "Customer: " + firstName + " " + lastName;
+        StringBuilder customerInfo = new StringBuilder("Nom : ");
+        if (firstName != null && !firstName.isEmpty() && lastName != null && !lastName.isEmpty()) {
+            customerInfo.append(firstName).append(" ").append(lastName);
+        }
+        customerInfo.append("\n");
 
+        customerInfo.append("Nom Société : ");
         if (companyName != null && !companyName.isEmpty()) {
-            customerInfo += "\n" + companyName; 
+            customerInfo.append(companyName);
+        }
+        customerInfo.append("\n");
+
+        customerInfo.append("Mat. Fiscale : ");
+        if (taxIdentificationNumber != null && !taxIdentificationNumber.isEmpty()) {
+            customerInfo.append(taxIdentificationNumber);
+        }
+        customerInfo.append("\n");
+
+        customerInfo.append("Adresse : ");
+        if (address != null) {
+            String streetAddress = address.getStreetAddress();
+            String city = address.getCity();
+            String state = address.getState();
+
+            if (streetAddress != null && !streetAddress.isEmpty()) {
+                customerInfo.append(streetAddress).append(" ");
+            }
+
+            if (city != null && !city.isEmpty()) {
+                customerInfo.append(city).append(" ");
+            }
+
+            if (state != null && !state.isEmpty()) {
+                customerInfo.append(state);
+            }
         }
 
-        customerCell.addElement(new Phrase(customerInfo));
+        String finalCustomerInfo = customerInfo.toString();
+
+        customerCell.addElement(new Phrase(finalCustomerInfo));
 
         PdfPCell invoiceIdCell = new PdfPCell();
         invoiceIdCell.setBorder(PdfPCell.NO_BORDER);
-        Chunk invoiceIdChunk = new Chunk("Invoice ID: " + invoice.getInvoiceNumber());
+        Chunk invoiceIdChunk = new Chunk("N° de facture : " + invoice.getInvoiceNumber());
         Phrase invoiceIdPhrase = new Phrase(invoiceIdChunk);
         invoiceIdCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
         invoiceIdCell.addElement(invoiceIdPhrase);
@@ -71,7 +107,7 @@ public class PdfUtils {
         PdfPTable table = new PdfPTable(11);
         table.setWidthPercentage(100);
         table.setHorizontalAlignment(Element.ALIGN_LEFT);
-        Font smallFont = new Font(Font.FontFamily.HELVETICA, 10);
+        Font smallFont = new Font(Font.FontFamily.HELVETICA, 9);
 
         table.addCell(new Phrase("Reference", smallFont));
         table.addCell(new Phrase("Designation", smallFont));
@@ -84,6 +120,9 @@ public class PdfUtils {
         table.addCell(new Phrase("Tax (%)", smallFont));
         table.addCell(new Phrase("Tax Amount", smallFont));
         table.addCell(new Phrase("Total Price After Discount TTC", smallFont));
+        
+        double totalHT = 0.0;
+        double totalDiscount =0.0;
 
         for (LineItem lineItem : lineItems) {
             table.addCell(new Phrase(lineItem.getProduct().getReference(), smallFont));
@@ -104,7 +143,29 @@ public class PdfUtils {
             double totalPriceAfterDiscountTTC = totalPriceAfterDiscountHT + taxAmount;
             String formattedTotalPriceAfterDiscountTTC = String.format("%.3f", totalPriceAfterDiscountTTC);
             table.addCell(new Phrase(formattedTotalPriceAfterDiscountTTC, smallFont));
+            
+       
+            totalHT += lineItem.getSubtotal();
+            totalDiscount += discountAmount;
         }
+        
+        PdfPCell totalCell = new PdfPCell();
+        totalCell.setBorder(Rectangle.NO_BORDER);
+        totalCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        totalCell.setColspan(11);
+
+        Font monoFont = FontFactory.getFont(FontFactory.COURIER, 10);
+
+        Paragraph totalHTParagraph = new Paragraph(String.format("Total HT:               %.3f", totalHT), monoFont);
+        totalHTParagraph.setAlignment(Element.ALIGN_RIGHT);
+
+        Paragraph totalDiscountParagraph = new Paragraph(String.format("Total Discount:        %.3f", totalDiscount), monoFont);
+        totalDiscountParagraph.setAlignment(Element.ALIGN_RIGHT);
+
+        totalCell.addElement(totalHTParagraph);
+        totalCell.addElement(totalDiscountParagraph);
+
+        table.addCell(totalCell);
 
         document.add(table);
     }
