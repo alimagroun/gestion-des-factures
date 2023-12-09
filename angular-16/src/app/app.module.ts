@@ -29,6 +29,7 @@ import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/
 import { CustomerListComponent } from './customer-list/customer-list.component';
 import { CustomerCreateModalComponent } from './customer-create-modal/customer-create-modal.component';
 import { CustomerEditModalComponent } from './customer-edit-modal/customer-edit-modal.component';
+import { QuoteCreateComponent } from './quote-create/quote-create.component';
 
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -36,7 +37,7 @@ import { OptionsScrollDirective } from './directives/options-scroll.directive';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { QuoteCreateComponent } from './quote-create/quote-create.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -75,6 +76,7 @@ import { QuoteCreateComponent } from './quote-create/quote-create.component';
     MatInputModule,
     MatSelectModule,
     ReactiveFormsModule,
+    MatSnackBarModule,
   ],
   providers: [
     {

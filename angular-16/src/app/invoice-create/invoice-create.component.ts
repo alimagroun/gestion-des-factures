@@ -8,11 +8,12 @@ import { Product } from '../models/product';
 import { LineItem } from '../models/lineItem';
 import {Invoice} from '../models/invoice';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 import { CustomerService } from '../services/customer.service';
 import { ProductService } from '../services/product.service';
 import { InvoiceService } from '../services/invoice.service';
+import { SnackbarService } from '../services/snackbar.service';
 import { PdfService } from '../services/pdf.service';
 
 @Component({
@@ -62,7 +63,7 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     private invoiceService: InvoiceService,
     private pdfService: PdfService,
     private route: ActivatedRoute,
-    private router: Router
+    private snackbarService: SnackbarService
     ) {}
 
   ngOnInit() {
@@ -318,6 +319,7 @@ getInvoiceDetails(id: number) {
     this.discountPercentageControl.setValue(0);
     this.productInputIsValid =false;
     this.hasProductInInvoice = true;
+    this.snackbarService.openSnackBar('L\'article a été ajouté à la facture.', 'Fermer');
   }
 
   updateProduct() {
@@ -343,7 +345,7 @@ getInvoiceDetails(id: number) {
       selectedItem.totalPriceAfterDiscountTTC = totalPriceAfterDiscountTTC.toFixed(3);
 
       this.calculateTotals();
-
+      this.snackbarService.openSnackBar('La ligne de l\'article a été mise à jour.', 'Fermer');
     }
   }
 
@@ -362,6 +364,7 @@ getInvoiceDetails(id: number) {
       this.selected=false;
       this.hasProductInInvoice = this.dataSource.data.length > 0;
     }
+    this.snackbarService.openSnackBar('Article retiré de la facture.', 'Fermer');
   }
   
   onProductSelected(item: any, checkbox: any) {

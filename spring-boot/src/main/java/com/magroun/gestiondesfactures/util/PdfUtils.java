@@ -23,7 +23,7 @@ public class PdfUtils {
 
             addInvoiceDetails(document, invoice);
             document.add(new Paragraph(" "));
-            addLineItemsTable(document, invoice.getLineItems());
+            addLineItemsTable(document, invoice.getLineItems(), invoice.getStamp());
 
             document.close();
         } catch (DocumentException e) {
@@ -103,7 +103,7 @@ public class PdfUtils {
         document.add(table);
     }
 
-    private static void addLineItemsTable(Document document, List<LineItem> lineItems) throws DocumentException {
+    private static void addLineItemsTable(Document document, List<LineItem> lineItems, double stamp) throws DocumentException {
         PdfPTable table = new PdfPTable(11);
         table.setWidthPercentage(100);
         table.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -123,19 +123,26 @@ public class PdfUtils {
         
         double totalHT = 0.0;
         double totalDiscount =0.0;
-
+        double totalHTAfterDiscount =0.0;
+        double totalTax =0.0;
+        double totalTTC =0.0;
+        double totalTopay =0.0;
+        
         for (LineItem lineItem : lineItems) {
             table.addCell(new Phrase(lineItem.getProduct().getReference(), smallFont));
             table.addCell(new Phrase(lineItem.getProduct().getDesignation(), smallFont));
             table.addCell(new Phrase(String.valueOf(lineItem.getQuantity()), smallFont));
-            table.addCell(new Phrase(String.valueOf(lineItem.getUnitPrice()), smallFont));
+            double unitPrice = lineItem.getUnitPrice();
+            String formattedUnitPrice = String.format("%.3f", unitPrice);
+            table.addCell(new Phrase(formattedUnitPrice, smallFont));
             table.addCell(new Phrase(String.valueOf(lineItem.getSubtotal()), smallFont));
             table.addCell(new Phrase(String.valueOf(lineItem.getDiscountPercentage()), smallFont));
             double discountAmount = lineItem.getSubtotal() * (lineItem.getDiscountPercentage() / 100.0);
             String formattedDiscountAmount = String.format("%.3f", discountAmount);
             table.addCell(new Phrase(formattedDiscountAmount, smallFont));
             double totalPriceAfterDiscountHT = lineItem.getSubtotal() - discountAmount;
-            table.addCell(new Phrase(String.valueOf(totalPriceAfterDiscountHT), smallFont));
+            String formattedTotalPriceAfterDiscountHT = String.format("%.3f", totalPriceAfterDiscountHT);
+            table.addCell(new Phrase(formattedTotalPriceAfterDiscountHT, smallFont));
             table.addCell(new Phrase(String.valueOf(lineItem.getTax()), smallFont));
             double taxAmount = (totalPriceAfterDiscountHT * lineItem.getTax()) / 100.0;
             String formattedTaxAmount = String.format("%.3f", taxAmount);
@@ -147,26 +154,51 @@ public class PdfUtils {
        
             totalHT += lineItem.getSubtotal();
             totalDiscount += discountAmount;
+            totalHTAfterDiscount += totalPriceAfterDiscountHT;
+            totalTax += taxAmount;
+            totalTTC += totalPriceAfterDiscountTTC;
         }
         
-        PdfPCell totalCell = new PdfPCell();
-        totalCell.setBorder(Rectangle.NO_BORDER);
-        totalCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        totalCell.setColspan(11);
+        	totalTopay =totalTTC + stamp;
+        
+     PdfPCell emptyCell = new PdfPCell(new Phrase(""));
+     emptyCell.setColspan(5);
+     emptyCell.setBorder(Rectangle.NO_BORDER);
 
-        Font monoFont = FontFactory.getFont(FontFactory.COURIER, 10);
+     PdfPCell nestedCell = new PdfPCell();
+     nestedCell.setBorder(Rectangle.NO_BORDER);
+     nestedCell.setColspan(6);
 
-        Paragraph totalHTParagraph = new Paragraph(String.format("Total HT:               %.3f", totalHT), monoFont);
-        totalHTParagraph.setAlignment(Element.ALIGN_RIGHT);
+     PdfPTable nestedTable = new PdfPTable(2);
+     nestedTable.setWidthPercentage(100);
+     nestedTable.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+     
+     nestedTable.addCell("Total HT");
+     nestedTable.addCell(String.format("%.3f", totalHT));
 
-        Paragraph totalDiscountParagraph = new Paragraph(String.format("Total Discount:        %.3f", totalDiscount), monoFont);
-        totalDiscountParagraph.setAlignment(Element.ALIGN_RIGHT);
+     nestedTable.addCell("Total Remise HT");
+     nestedTable.addCell(String.format("%.3f", totalDiscount));
+     
+     nestedTable.addCell("Total HT Après Remise");
+     nestedTable.addCell(String.format("%.3f", totalHTAfterDiscount));
+     
+     nestedTable.addCell("TVA");
+     nestedTable.addCell(String.format("%.3f", totalTax));
+     
+     nestedTable.addCell("Total TTC");
+     nestedTable.addCell(String.format("%.3f", totalTTC));
+     
+     nestedTable.addCell("Timbre");
+     nestedTable.addCell(String.format("%.3f", stamp));
+     
+     nestedTable.addCell("Total à Payer");
+     nestedTable.addCell(String.format("%.3f", totalTopay));
+     
+     nestedCell.addElement(nestedTable);
+   
+     table.addCell(emptyCell);
+     table.addCell(nestedCell);
 
-        totalCell.addElement(totalHTParagraph);
-        totalCell.addElement(totalDiscountParagraph);
-
-        table.addCell(totalCell);
-
-        document.add(table);
+     document.add(table);
     }
 }
