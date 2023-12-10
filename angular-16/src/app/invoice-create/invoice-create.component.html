@@ -57,9 +57,14 @@
   </mat-card>
 </div>
 
-
+<div class="button-container">
+  <button mat-raised-button (click)="deleteProduct()" *ngIf="selected" class="delete-button mat-warn">Delete</button>
+  <button mat-button color="primary" *ngIf="invoiceId !== null" (click)="generateInvoicePdf(invoiceId)" class="download-button">
+    <mat-icon>cloud_download</mat-icon>
+    Télécharger
+  </button>
+</div>
   
-  <button mat-raised-button (click)="deleteProduct()" *ngIf="selected" class="mat-warn">Delete</button>
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef>Select</mat-header-cell>
@@ -126,25 +131,26 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
   </mat-table>
-  <mat-list>
-    <mat-list-item><strong>Total HT:</strong> {{totalHT}}</mat-list-item>
-    <mat-list-item><strong>Total Remise:</strong> {{totalDiscount}}</mat-list-item>
-    <mat-list-item><strong>Total TTC:</strong> {{total}}</mat-list-item>
-    <mat-list-item><strong>Timbre:</strong></mat-list-item>
-    <mat-list-item><strong>Total à Payer:</strong></mat-list-item>
-  </mat-list>
 
-  <button mat-raised-button color="primary" [disabled]="!hasProductInInvoice || !isCustomerSelected || isSaving" *ngIf="!isUpdateMode" (click)="saveInvoice()">
-    Enregistrer la Facture
-  </button>  
-<button mat-raised-button color="primary" [disabled]="!hasProductInInvoice || !isCustomerSelected" *ngIf="isUpdateMode" (click)="updateInvoice()">Modifier la Facture</button>
-
-<div>
-  <!-- Other components, form inputs, etc. for creating the invoice -->
+  <div class="totals-and-button">
+    <div class="totals">
+      <mat-list>
+        <mat-list-item><strong>Total HT:</strong> {{totalHT}}</mat-list-item>
+        <mat-list-item><strong>Total Remise:</strong> {{totalDiscount}}</mat-list-item>
+        <mat-list-item><strong>Total TTC:</strong> {{total}}</mat-list-item>
+        <mat-list-item><strong>Timbre:</strong></mat-list-item>
+        <mat-list-item><strong>Total à Payer:</strong></mat-list-item>
+      </mat-list>
+    </div>
   
-  <button *ngIf="invoiceId !== null" (click)="generateInvoicePdf(invoiceId)">Generate PDF</button>
-</div>
-
+    <div class="save-button">
+      <button mat-raised-button color="primary" [disabled]="!hasProductInInvoice || !isCustomerSelected || isSaving" *ngIf="!isUpdateMode" (click)="saveInvoice()">
+        Enregistrer la Facture
+      </button>  
+      <button mat-raised-button color="primary" [disabled]="!hasProductInInvoice || !isCustomerSelected" *ngIf="isUpdateMode" (click)="updateInvoice()">Modifier la Facture</button>
+    </div>
+  </div>
+  
 
   
 

@@ -16,3 +16,23 @@
     }
   }
   
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  .delete-button {
+    margin-right: 8px;
+  }
+
+  .download-button {
+    margin-left: auto;
+  }
+}
+
+.totals-and-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px; /* Adjust margin as needed */
+}

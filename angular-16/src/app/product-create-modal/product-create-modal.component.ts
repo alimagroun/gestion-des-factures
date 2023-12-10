@@ -95,8 +95,6 @@ export class ProductCreateModalComponent implements OnInit {
   
   formatPercentage(event: any): void {
     const inputElement = event.target as HTMLInputElement;
-    const selectionStart = inputElement.selectionStart;
-    const selectionEnd = inputElement.selectionEnd;
   
     let inputValue = inputElement.value;
   
@@ -119,10 +117,13 @@ export class ProductCreateModalComponent implements OnInit {
       const indexOfLastDot = inputValue.lastIndexOf('.');
       inputValue = inputValue.substring(0, indexOfLastDot) + inputValue.substring(indexOfLastDot + 1);
     }
-  
+
+    const taxControl = this.productForm.get('tax');
+    if (taxControl) {
+    taxControl.setValue(parseFloat(inputValue));
+    }
+
     inputElement.value = inputValue;
-  
-    inputElement.setSelectionRange(selectionStart, selectionEnd);
   }
   
   saveProduct(): void {

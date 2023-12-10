@@ -256,8 +256,6 @@ getInvoiceDetails(id: number) {
   
   formatPercentage(event: any): void {
     const inputElement = event.target as HTMLInputElement;
-    const selectionStart = inputElement.selectionStart;
-    const selectionEnd = inputElement.selectionEnd;
   
     let inputValue = inputElement.value;
   
