@@ -17,6 +17,7 @@ public class Invoice {
     private double totalAmount;
     private String status;
     private float stamp;
+    private boolean quote;
 
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
     private List<LineItem> lineItems;
@@ -97,4 +98,11 @@ public class Invoice {
 		this.stamp = stamp;
 	}
 
+	public boolean isQuote() {
+		return quote;
+	}
+
+	public void setQuote(boolean quote) {
+		this.quote = quote;
+	}
 }

@@ -1,11 +1,153 @@
-<div>
-  <mat-form-field>
-    <input matInput type="text" placeholder="Pick one" #text aria-label="Number" [formControl]="searchText" matInput [matAutocomplete]="auto" />
-    <mat-autocomplete #auto="matAutocomplete" showPanel="true" (optionsScroll)="onScroll()" [displayWith]="displayWith">
-      <mat-option *ngFor="let product of filteredProducts$ | async" [value]="product">
-        {{ product.designation }}
-      </mat-option>
-    </mat-autocomplete>
-    <br /> <br />
-  </mat-form-field>
-</div>
+<h2>Créer un Devis</h2>
+<div class="card-container">
+  <mat-card class="card">
+    <mat-card-header>
+      <mat-card-title>Choisissez un produit</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field>
+        <input matInput type="text" placeholder="Choisissez un produit" #text aria-label="Numéro" [formControl]="productSearchControl" matInput [matAutocomplete]="productAuto" (blur)="validateProductExistence()" (focus)="onProductInputFocus()" [readonly]="selected"/>
+        <mat-autocomplete #productAuto="matAutocomplete" showPanel="true" (optionsScroll)="onScroll()" [displayWith]="displayProductFn">
+          <mat-option *ngFor="let product of filteredProducts$ | async" [value]="product">
+            {{ product.designation }}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="productSearchControl.hasError('productNotFound')">Produit introuvable.</mat-error>
+        <mat-error *ngIf="productSearchControl.hasError('duplicateProduct')">Ce produit est déjà dans la facture.</mat-error>
+      </mat-form-field>
+      
+      Quantité
+      <mat-form-field>
+        <input matInput type="number" placeholder="Quantité" [formControl]="quantityControl" min="1" max ="999" value="1">
+      </mat-form-field>
+  
+      Pourcentage de réduction
+      <mat-form-field>
+        <input matInput type="text" placeholder="pourcentage de réduction" [formControl]="discountPercentageControl" min="0" max="100" value="0" (input)="formatPercentage($event)" required>
+     <!--   <mat-hint>Enter a discount percentage (0-100)</mat-hint> -->
+      </mat-form-field>
+          
+      <button mat-raised-button color="primary" (click)="addProduct()" [disabled]="!productInputIsValid" *ngIf="!selected">Ajouter le produit</button>
+      <button mat-raised-button color="primary" (click)="updateProduct()" *ngIf="selected">Modifier le produit</button>
+  
+    </mat-card-content>
+  </mat-card>
+  
+  <mat-card class="card">
+      <mat-card-header>
+        <mat-card-title>Choisissez un client</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field>
+          <input matInput [formControl]="customerSearchControl" placeholder="Search for a customer" [matAutocomplete]="customerAuto" (blur)="checkCustomerExists()" (focus)="onCustomerInputFocus()" required>
+        <mat-autocomplete #customerAuto="matAutocomplete"  [displayWith]="displayCustomerFn">
+          <mat-option *ngFor="let customer of customers$ | async" [value]="customer">
+            {{ customer.companyName ? customer.companyName : (customer.firstName + ' ' + customer.lastName) }}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="customerSearchControl.hasError('required')">Ce champ est obligatoire.</mat-error>
+        <mat-error *ngIf="customerSearchControl.hasError('customerNotFound')">Client introuvable.</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Choisissez une date</mat-label>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate">
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>      
+      </mat-card-content>
+    </mat-card>
+  </div>
+  
+  <div class="button-container">
+    <button mat-raised-button (click)="deleteProduct()" *ngIf="selected" class="delete-button mat-warn">Delete</button>
+    <button mat-button color="primary" *ngIf="invoiceId !== null" (click)="generateInvoicePdf(invoiceId)" class="download-button">
+      <mat-icon>cloud_download</mat-icon>
+      Télécharger
+    </button>
+  </div>
+    
+    <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <ng-container matColumnDef="select">
+        <mat-header-cell *matHeaderCellDef>Select</mat-header-cell>
+        <mat-cell *matCellDef="let item">
+          <mat-checkbox #checkbox [checked]="item.selected" (change)="onProductSelected(item, checkbox)"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      
+      <ng-container matColumnDef="reference">
+        <mat-header-cell *matHeaderCellDef>Référence</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{ item.product.reference }}</mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="designation">
+        <mat-header-cell *matHeaderCellDef>Désignation</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{ item.product.designation }}</mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="quantity">
+        <mat-header-cell *matHeaderCellDef>Quantité</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{ item.quantity }}</mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="unitPriceHT">
+        <mat-header-cell *matHeaderCellDef>Prix Un. HT</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{ item.product.sellingPrice }}</mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="totalPriceHT">
+        <mat-header-cell *matHeaderCellDef>Prix Tot. HT</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{ item.subtotal }}</mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="discountPercentage">
+        <mat-header-cell *matHeaderCellDef>% Rem.</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{ item.discountPercentage }}%</mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="discountAmount">
+        <mat-header-cell *matHeaderCellDef>Mont. Rem.</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{ item.discountAmount }}</mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="totalPriceAfterDiscountHT">
+        <mat-header-cell *matHeaderCellDef>HT apr. Remise</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{ item.totalPriceAfterDiscountHT }}</mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="taxPercentage">
+        <mat-header-cell *matHeaderCellDef>% TVA</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{ item.product.tax }}%</mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="taxAmount">
+        <mat-header-cell *matHeaderCellDef>Mont. TVA</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{ item.taxAmount }}</mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="totalPriceAfterDiscountTTC">
+        <mat-header-cell *matHeaderCellDef>TTC apr. Remise</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{ item.totalPriceAfterDiscountTTC }}</mat-cell>
+      </ng-container>
+    
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+    </mat-table>
+  
+    <div class="totals-and-button">
+      <div class="totals">
+        <mat-list>
+          <mat-list-item><strong>Total HT:</strong> {{totalHT}}</mat-list-item>
+          <mat-list-item><strong>Total Remise:</strong> {{totalDiscount}}</mat-list-item>
+          <mat-list-item><strong>Total TTC:</strong> {{total}}</mat-list-item>
+          <mat-list-item><strong>Timbre:</strong></mat-list-item>
+          <mat-list-item><strong>Total à Payer:</strong></mat-list-item>
+        </mat-list>
+      </div>
+    
+      <div class="save-button">
+        <button mat-raised-button color="primary" [disabled]="!hasProductInInvoice || !isCustomerSelected || isSaving" *ngIf="!isUpdateMode" (click)="saveInvoice()">
+          Enregistrer le devis
+        </button>  
+        <button mat-raised-button color="primary" [disabled]="!hasProductInInvoice || !isCustomerSelected" *ngIf="isUpdateMode" (click)="updateInvoice()">Modifier le devis</button>
+      </div>
+    </div>

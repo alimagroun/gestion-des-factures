@@ -7,11 +7,11 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
-  selector: 'app-invoice-list',
-  templateUrl: './invoice-list.component.html',
-  styleUrls: ['./invoice-list.component.scss']
+  selector: 'app-quote-list',
+  templateUrl: './quote-list.component.html',
+  styleUrls: ['./quote-list.component.scss']
 })
-export class InvoiceListComponent implements OnInit {
+export class QuoteListComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   invoicesDataSource = new MatTableDataSource<Invoice>();
@@ -50,3 +50,4 @@ export class InvoiceListComponent implements OnInit {
     this.loadInvoices(pageIndex, pageSize);
   }
 }
+

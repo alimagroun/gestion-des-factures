@@ -45,7 +45,7 @@
       <ng-container matColumnDef="ttc">
         <mat-header-cell *matHeaderCellDef> P.V TTC </mat-header-cell>
         <mat-cell *matCellDef="let product"> 
-        {{ (product.sellingPrice + (product.sellingPrice * (product.tax / 100))).toFixed(2) }}
+        {{ (product.sellingPrice + (product.sellingPrice * (product.tax / 100))).toFixed(3) }}
         </mat-cell>
       </ng-container>
         

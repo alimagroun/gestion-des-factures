@@ -1,5 +1,7 @@
 package com.magroun.gestiondesfactures.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,13 +41,12 @@ public class InvoiceServiceImpl implements InvoiceService {
                 lineItem.setInvoice(invoice);
             }
         }
-
         return invoiceRepository.save(invoice);
     }
 
     @Override
-    public List<Invoice> getAllInvoices() {
-        return invoiceRepository.findAll();
+    public Page<Invoice> getAllInvoices(Pageable pageable) {
+    	return invoiceRepository.findByQuoteFalse(pageable);
     }
 
     @Override
@@ -54,7 +55,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
     
     @Override
-  @Transactional
+    @Transactional
     public Invoice updateInvoice(Long id, Invoice updatedInvoice) {
         Optional<Invoice> existingInvoiceOptional = invoiceRepository.findById(id);
 
@@ -137,11 +138,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         String formattedInvoiceNumber = String.format("%02d%06d", currentYear, newInvoiceNumber);
 
         return formattedInvoiceNumber;
-    }
-    
-    public String generateInvoicePdfContent() {
-        // Generate invoice content (customer details, product details, etc.)
-        return "Invoice Content: Customer - XYZ, Products - ABC, Total - $100";
     }
 }
 

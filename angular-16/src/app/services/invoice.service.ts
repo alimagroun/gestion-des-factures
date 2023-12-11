@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Invoice } from '../models/invoice';
+import { Page } from '../models/page';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +12,20 @@ export class InvoiceService {
 
   constructor(private http: HttpClient) { }
 
-  getAllInvoices(): Observable<Invoice[]> {
-    return this.http.get<Invoice[]>(`${this.baseUrl}`);
+  getAllInvoices(page: number, size: number): Observable<Page<any>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<Page<any>>(`${this.baseUrl}`,{ params });
+  }
+
+  getAllQuotes(page: number, size: number): Observable<Page<any>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<Page<any>>(`${this.baseUrl}`,{ params });
   }
 
   getInvoiceById(id: number): Observable<Invoice> {

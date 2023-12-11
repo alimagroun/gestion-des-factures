@@ -1,16 +1,15 @@
 package com.magroun.gestiondesfactures.service;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import com.magroun.gestiondesfactures.model.Invoice;
 
 public interface InvoiceService {
     Invoice createInvoice(Invoice invoice);
-    List<Invoice> getAllInvoices();
+    Page<Invoice> getAllInvoices(Pageable pageable);
     Invoice getInvoiceById(Long id);
     Invoice updateInvoice(Long id, Invoice updatedInvoice);
     void deleteInvoice(Long id);
     String generateInvoiceNumber();
-    String generateInvoicePdfContent();
 }
 

@@ -461,7 +461,7 @@ getInvoiceDetails(id: number) {
       status: 'paid', // for testing purpose
       stamp: 1, // for testing purpose
       customer: customerIdOnly,
-      lineItems: lineItems
+      lineItems: lineItems,
     };
     
     this.invoiceService.createInvoice(invoiceData)
@@ -507,7 +507,7 @@ getInvoiceDetails(id: number) {
       status: 'paid', // for testing purpose
       stamp: 1, // for testing purpose
       customer: customerIdOnly,
-      lineItems: lineItems
+      lineItems: lineItems,
     };
   
     this.invoiceService.updateInvoice(this.invoiceId, updatedInvoiceData)

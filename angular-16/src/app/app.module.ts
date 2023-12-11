@@ -38,6 +38,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSortModule } from '@angular/material/sort';
+import { QuoteListComponent } from './quote-list/quote-list.component';
 
 @NgModule({
   declarations: [
@@ -58,6 +60,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     CustomerEditModalComponent,
     OptionsScrollDirective,
     QuoteCreateComponent,
+    QuoteListComponent,
     
   ],
   imports: [
@@ -77,6 +80,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatSelectModule,
     ReactiveFormsModule,
     MatSnackBarModule,
+    MatSortModule,
   ],
   providers: [
     {

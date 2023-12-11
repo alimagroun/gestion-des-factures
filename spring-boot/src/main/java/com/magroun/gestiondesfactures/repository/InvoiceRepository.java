@@ -1,5 +1,7 @@
 package com.magroun.gestiondesfactures.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -17,6 +19,8 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     
     @Query("SELECT li FROM LineItem li WHERE li.invoice = :invoice")
     List<LineItem> getLineItemsByInvoice(@Param("invoice") Invoice invoice);
-  
+    
+    Page<Invoice> findByQuoteFalse(Pageable pageable);
+ 
 }
 

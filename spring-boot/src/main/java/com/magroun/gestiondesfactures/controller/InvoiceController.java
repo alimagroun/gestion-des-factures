@@ -1,5 +1,8 @@
 package com.magroun.gestiondesfactures.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -24,8 +27,9 @@ public class InvoiceController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Invoice>> getAllInvoices() {
-        List<Invoice> invoices = invoiceService.getAllInvoices();
+    public ResponseEntity<Page<Invoice>> getAllInvoices(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    	Pageable pageable = PageRequest.of(page, size);
+    	Page<Invoice> invoices = invoiceService.getAllInvoices(pageable);
         return new ResponseEntity<>(invoices, HttpStatus.OK);
     }
 
