@@ -45,12 +45,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       }
 
       String jwt = null;
+      String refreshToken = null;
+
       Cookie[] cookies = request.getCookies();
       if (cookies != null) {
           for (Cookie cookie : cookies) {
               if ("access_token".equals(cookie.getName())) {
                   jwt = cookie.getValue();
                   System.out.println("JWT Token: " + jwt);
+              } else if ("refresh_token".equals(cookie.getName())) {
+                  refreshToken = cookie.getValue();
+                  System.out.println("Refresh Token: " + refreshToken);
+              }
+              
+              if (jwt != null && refreshToken != null) {
                   break;
               }
           }
@@ -64,6 +72,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                   .map(t -> !t.isExpired() && !t.isRevoked())
                   .orElse(false);
           System.out.println(isTokenValid);
+                    
           if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
               UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                       userDetails,

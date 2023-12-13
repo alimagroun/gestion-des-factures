@@ -54,25 +54,20 @@ public class AuthenticationController {
 
   @PostMapping("/logout7")
   public ResponseEntity<Void> logout(HttpServletResponse response) {
-      // Remove the access token cookie
+
       Cookie accessTokenCookie = new Cookie("access_token", null);
-      accessTokenCookie.setMaxAge(0); // Set the cookie's max age to zero to delete it
-      accessTokenCookie.setPath("/api"); // Make sure the path matches the original cookie path
+      accessTokenCookie.setMaxAge(0); 
+      accessTokenCookie.setPath("/api"); 
       response.addCookie(accessTokenCookie);
 
-      // Remove the refresh token cookie
       Cookie refreshTokenCookie = new Cookie("refresh_token", null);
-      refreshTokenCookie.setMaxAge(0); // Set the cookie's max age to zero to delete it
-      refreshTokenCookie.setPath("/api"); // Make sure the path matches the original cookie path
+      refreshTokenCookie.setMaxAge(0);
+      refreshTokenCookie.setPath("/api"); 
       response.addCookie(refreshTokenCookie);
 
-      // Optionally, you can perform additional actions like invalidating a session or clearing server-side tokens
-
-      // Return a successful response with a status code (e.g., 200 OK)
       return ResponseEntity.ok().build();
   }
   
-
       @GetMapping("/check-login")
       public ResponseEntity<String> checkLogin(Authentication authentication) {
           if (authentication != null && authentication.isAuthenticated()) {
