@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.magroun.gestiondesfactures.repository.TokenRepository;
+import com.magroun.gestiondesfactures.service.AuthenticationService;
 import com.magroun.gestiondesfactures.service.JwtService;
 
 @Component
@@ -65,6 +66,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       }
 
       if (jwt != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+          
+          if(jwtService.isTokenExpired(jwt)&&!jwtService.isTokenExpired(refreshToken)) {
+        	  System.out.println("in this case we must update the jwt");
+        	jwt=  jwtService.refreshToken(response, refreshToken);
+          }
+        
           String userEmail = jwtService.extractUsername(jwt);
           System.out.println(userEmail);
           UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);

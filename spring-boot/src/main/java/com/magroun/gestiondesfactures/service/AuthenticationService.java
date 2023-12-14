@@ -139,4 +139,29 @@ public class AuthenticationService {
       }
     }
   }
+  
+  
+  public void refreshToken2(HttpServletResponse response, String refreshToken) {
+	  final String userEmail;
+	    userEmail = jwtService.extractUsername(refreshToken);
+	    if (userEmail != null) {
+	      var user = this.repository.findByEmail(userEmail)
+	              .orElseThrow();
+	      if (jwtService.isTokenValid(refreshToken, user)) {
+	        var accessToken = jwtService.generateToken(user);
+	        revokeAllUserTokens(user);
+	        saveUserToken(user, accessToken, TokenType.ACCESS);
+	        
+	        ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", accessToken)
+	                .httpOnly(true)
+	                .secure(true)   
+	                .path("/api")      
+	                .maxAge(24 * 60 * 60) 
+	                .build();
+	            response.addHeader("Set-Cookie", accessTokenCookie.toString());
+	        
+  }}}
+  
+  
+  
 }
