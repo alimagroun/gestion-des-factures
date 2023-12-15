@@ -68,17 +68,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       if (jwt != null && SecurityContextHolder.getContext().getAuthentication() == null) {
           
           if(jwtService.isTokenExpired(jwt)&&!jwtService.isTokenExpired(refreshToken)) {
-        	  System.out.println("in this case we must update the jwt");
+        	  System.out.println("acces token still valid : "+jwtService.isTokenExpired(jwt));
+        	  
+        	  System.out.println("old"+jwt);
         	jwt=  jwtService.refreshToken(response, refreshToken);
+        	
           }
-        
+          System.out.println("new"+jwt);
           String userEmail = jwtService.extractUsername(jwt);
           System.out.println(userEmail);
           UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
           boolean isTokenValid = tokenRepository.findByToken(jwt)
                   .map(t -> !t.isExpired() && !t.isRevoked())
                   .orElse(false);
-          System.out.println(isTokenValid);
+          System.out.println("is token valid :"+isTokenValid);
                     
           if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
               UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(

@@ -22,7 +22,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.magroun.gestiondesfactures.model.Token;
 import com.magroun.gestiondesfactures.model.TokenType;
+import com.magroun.gestiondesfactures.model.User;
 import com.magroun.gestiondesfactures.repository.TokenRepository;
 import com.magroun.gestiondesfactures.repository.UserRepository;
 
@@ -38,6 +40,7 @@ public class JwtService {
   private long refreshExpiration;
   
   private final UserRepository repository;
+  private final TokenRepository tokenRepository;
 
   public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);
@@ -121,6 +124,7 @@ public class JwtService {
 
 	        if (isTokenValid(refreshToken, user)) {
 	            var accessToken = generateToken(user);
+		        saveUserToken(user, accessToken, TokenType.ACCESS);
 
 	            ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", accessToken)
 	                    .httpOnly(true)
@@ -136,5 +140,15 @@ public class JwtService {
 	    return ""; 
 	}
 
+  private void saveUserToken(User user, String jwtToken, TokenType tokenType) {
+	    var token = Token.builder()
+	        .user(user)
+	        .token(jwtToken)
+	        .tokenType(tokenType)
+	        .expired(false)
+	        .revoked(false)
+	        .build();
+	    tokenRepository.save(token);
+	}
   
 }

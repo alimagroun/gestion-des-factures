@@ -38,10 +38,12 @@ public class AuthenticationController {
   }
   
   @PostMapping("/authenticate")
-  public ResponseEntity<AuthenticationResponse> authenticate(
-      @RequestBody AuthenticationRequest request
+  public ResponseEntity<Void> authenticate(
+      @RequestBody AuthenticationRequest request,
+      HttpServletResponse response
   ) {
-    return ResponseEntity.ok(service.authenticate(request));
+      service.authenticate(request, response);
+      return ResponseEntity.ok().build();
   }
 
   @PostMapping("/refresh-token")
@@ -77,8 +79,5 @@ public class AuthenticationController {
               // User is not logged in
               return ResponseEntity.ok("You are not logged in.");
           }
-      }
-  
-
-  
+      }  
 }

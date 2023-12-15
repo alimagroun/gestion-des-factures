@@ -61,14 +61,12 @@ public class AuthenticationService {
           .maxAge(24 * 60 * 60) 
           .build();
       response.addHeader("Set-Cookie", refreshTokenCookie.toString());
-      TokenType tokenTypeAccess = TokenType.ACCESS;
-      saveUserToken(user, jwtToken, tokenTypeAccess);
-      TokenType tokenTypeRefresh = TokenType.REFRESH;
-      saveUserToken(user, refreshToken, tokenTypeRefresh);
+      saveUserToken(user, jwtToken, TokenType.ACCESS);
+      saveUserToken(user, refreshToken, TokenType.REFRESH);
       return accessTokenCookie; 
   }
 
-  public AuthenticationResponse authenticate(AuthenticationRequest request) {
+  public ResponseCookie authenticate(AuthenticationRequest request, HttpServletResponse response) {
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
             request.getEmail(),
@@ -84,10 +82,25 @@ public class AuthenticationService {
     saveUserToken(user, jwtToken, tokenTypeAccess);
     TokenType tokenTypeRefresh = TokenType.REFRESH;
     saveUserToken(user, refreshToken, tokenTypeRefresh);
-    return AuthenticationResponse.builder()
-        .accessToken(jwtToken)
-            .refreshToken(refreshToken)
-        .build();
+
+    ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", jwtToken)
+            .httpOnly(true)
+            .secure(true)   
+            .path("/api")      
+            .maxAge(24 * 60 * 60) 
+            .build();
+        response.addHeader("Set-Cookie", accessTokenCookie.toString());
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", refreshToken)
+            .httpOnly(true)
+            .secure(true)  
+            .path("/api")     
+            .maxAge(7* 24 * 60 * 60) 
+            .build();
+        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
+        saveUserToken(user, jwtToken, TokenType.ACCESS);
+        saveUserToken(user, refreshToken, TokenType.REFRESH);
+        return accessTokenCookie; 
   }
 
   private void saveUserToken(User user, String jwtToken, TokenType tokenType) {
@@ -139,29 +152,5 @@ public class AuthenticationService {
       }
     }
   }
-  
-  
-  public void refreshToken2(HttpServletResponse response, String refreshToken) {
-	  final String userEmail;
-	    userEmail = jwtService.extractUsername(refreshToken);
-	    if (userEmail != null) {
-	      var user = this.repository.findByEmail(userEmail)
-	              .orElseThrow();
-	      if (jwtService.isTokenValid(refreshToken, user)) {
-	        var accessToken = jwtService.generateToken(user);
-	        revokeAllUserTokens(user);
-	        saveUserToken(user, accessToken, TokenType.ACCESS);
-	        
-	        ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", accessToken)
-	                .httpOnly(true)
-	                .secure(true)   
-	                .path("/api")      
-	                .maxAge(24 * 60 * 60) 
-	                .build();
-	            response.addHeader("Set-Cookie", accessTokenCookie.toString());
-	        
-  }}}
-  
-  
-  
+   
 }
