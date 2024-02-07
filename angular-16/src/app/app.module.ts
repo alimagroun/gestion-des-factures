@@ -40,6 +40,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSortModule } from '@angular/material/sort';
 import { QuoteListComponent } from './quote-list/quote-list.component';
+import { httpInterceptorProviders } from './helpers/http.interceptor';
 
 @NgModule({
   declarations: [
@@ -86,7 +87,8 @@ import { QuoteListComponent } from './quote-list/quote-list.component';
     {
       provide: LocationStrategy,
       useClass: PathLocationStrategy
-    }
+    },
+    httpInterceptorProviders
   ],
   bootstrap: [AppComponent]
 })

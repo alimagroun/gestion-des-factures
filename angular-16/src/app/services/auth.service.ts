@@ -1,20 +1,26 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { RegisterRequest } from '../models/register-request';
-
+import { AuthenticationRequest } from '../models/authentication-request';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'https://api.myapp.com'; // Replace with your backend API URL
+  private baseUrl = environment.apiUrl.auth;
 
   constructor(private http: HttpClient) {}
 
-  // Define a method to handle registration
-  register(registerRequest: RegisterRequest): Observable<any> {
-    const registerUrl = `${this.apiUrl}/register`; // Replace with your actual registration endpoint
-    return this.http.post<any>(registerUrl, registerRequest);
+  authenticate(request: AuthenticationRequest): Observable<void> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<void>(`${this.baseUrl}/authenticate`, request, { headers });
+  }
+
+  logout(): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/logout7`, {});
   }
 }

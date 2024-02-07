@@ -51,10 +51,6 @@ public class SecurityConfiguration {
                 "/webjars/**",
                 "/swagger-ui.html",
                 "/api/excel/**",
-                "api/invoices/**",
-                "api/products/**",
-       //         "/api/customers/**",
-                "api/invoices/**",
                 "api/pdf/**" //for testing
         )
           .permitAll()

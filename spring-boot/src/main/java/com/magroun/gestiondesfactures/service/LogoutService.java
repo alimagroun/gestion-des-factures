@@ -1,5 +1,6 @@
 package com.magroun.gestiondesfactures.service;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,19 +23,45 @@ public class LogoutService implements LogoutHandler {
       HttpServletResponse response,
       Authentication authentication
   ) {
-    final String authHeader = request.getHeader("Authorization");
-    final String jwt;
-    if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-      return;
-    }
-    jwt = authHeader.substring(7);
-    var storedToken = tokenRepository.findByToken(jwt)
-        .orElse(null);
-    if (storedToken != null) {
-      storedToken.setExpired(true);
-      storedToken.setRevoked(true);
-      tokenRepository.save(storedToken);
-      SecurityContextHolder.clearContext();
-    }
+	    Cookie[] cookies = request.getCookies();
+	 if (cookies != null) {
+
+	     for (Cookie cookie : cookies) {
+	         if ("access_token".equals(cookie.getName())) {
+	             
+	             var storedToken = tokenRepository.findByToken(cookie.getValue())
+	            	        .orElse(null);
+	             if (storedToken != null) {
+	                 storedToken.setExpired(true);
+	                 storedToken.setRevoked(true);
+	                 tokenRepository.save(storedToken);
+	                 SecurityContextHolder.clearContext();
+	              
+	             Cookie accessTokenCookie = new Cookie("access_token", null);
+	             accessTokenCookie.setMaxAge(0);
+	             accessTokenCookie.setPath("/api");
+	             accessTokenCookie.setHttpOnly(true);
+	             response.addCookie(accessTokenCookie);
+	         } 
+	             }
+	         else if ("refresh_token".equals(cookie.getName())) {
+	        	 
+	             var storedToken = tokenRepository.findByToken(cookie.getValue())
+	            	        .orElse(null);
+	             if (storedToken != null) {
+	                 storedToken.setExpired(true);
+	                 storedToken.setRevoked(true);
+	                 tokenRepository.save(storedToken);
+	                 SecurityContextHolder.clearContext();
+
+                 Cookie refreshTokenCookie = new Cookie("refresh_token", null);
+                 refreshTokenCookie.setMaxAge(0);
+                 refreshTokenCookie.setPath("/api");
+                 refreshTokenCookie.setHttpOnly(true);
+                 response.addCookie(refreshTokenCookie);
+             }
+	     }
+	 }
   }
-}
+  }
+  }

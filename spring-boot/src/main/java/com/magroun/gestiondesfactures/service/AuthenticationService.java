@@ -61,8 +61,10 @@ public class AuthenticationService {
           .maxAge(24 * 60 * 60) 
           .build();
       response.addHeader("Set-Cookie", refreshTokenCookie.toString());
-      saveUserToken(user, jwtToken, TokenType.ACCESS);
-      saveUserToken(user, refreshToken, TokenType.REFRESH);
+      TokenType tokenTypeAccess = TokenType.ACCESS;
+      saveUserToken(user, jwtToken, tokenTypeAccess);
+      TokenType tokenTypeRefresh = TokenType.REFRESH;
+      saveUserToken(user, refreshToken, tokenTypeRefresh);
       return accessTokenCookie; 
   }
 
@@ -98,8 +100,6 @@ public class AuthenticationService {
             .maxAge(7* 24 * 60 * 60) 
             .build();
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
-        saveUserToken(user, jwtToken, TokenType.ACCESS);
-        saveUserToken(user, refreshToken, TokenType.REFRESH);
         return accessTokenCookie; 
   }
 

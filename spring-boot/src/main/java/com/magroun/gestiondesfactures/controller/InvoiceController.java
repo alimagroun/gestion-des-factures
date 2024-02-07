@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/invoices")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials="true")
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
@@ -45,6 +45,7 @@ public class InvoiceController {
 
     @PostMapping
     public ResponseEntity<Invoice> createInvoice(@RequestBody Invoice invoice) {
+    	System.out.println(invoice.getTotalAmount());
         Invoice createdInvoice = invoiceService.createInvoice(invoice);
         return new ResponseEntity<>(createdInvoice, HttpStatus.CREATED);
     }
