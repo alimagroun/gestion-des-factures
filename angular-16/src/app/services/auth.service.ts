@@ -21,6 +21,10 @@ export class AuthService {
   }
 
   logout(): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/logout7`, {});
+    return this.http.post<void>(`${this.baseUrl}/logout`, {});
+  }
+
+  isLoggedIn(): Observable<boolean> {
+    return this.http.get<boolean>(`${this.baseUrl}/is-logged-in`);
   }
 }

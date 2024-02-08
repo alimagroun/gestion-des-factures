@@ -72,14 +72,9 @@ public class AuthenticationController {
       return ResponseEntity.ok().build();
   }
   
-      @GetMapping("/check-login")
-      public ResponseEntity<String> checkLogin(Authentication authentication) {
-          if (authentication != null && authentication.isAuthenticated()) {
-              // User is logged in
-              return ResponseEntity.ok("You are logged in.");
-          } else {
-              // User is not logged in
-              return ResponseEntity.ok("You are not logged in.");
-          }
-      }  
+  @GetMapping("/is-logged-in")
+  public ResponseEntity<Boolean> isLoggedIn(Authentication authentication) {
+      boolean isAuthenticated = authentication != null && authentication.isAuthenticated();
+      return ResponseEntity.ok(isAuthenticated);
+  }
 }

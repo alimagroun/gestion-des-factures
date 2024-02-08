@@ -40,11 +40,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
           @NonNull HttpServletResponse response,
           @NonNull FilterChain filterChain
   ) throws ServletException, IOException {
-      if (request.getServletPath().contains("/api/v1/auth")) {
+  /*    if (request.getServletPath().contains("/api/v1/auth")) {
           filterChain.doFilter(request, response);
           return;
-      }
-
+      } */
       String jwt = null;
       String refreshToken = null;
 
@@ -53,10 +52,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
           for (Cookie cookie : cookies) {
               if ("access_token".equals(cookie.getName())) {
                   jwt = cookie.getValue();
-                  System.out.println("JWT Token: " + jwt);
               } else if ("refresh_token".equals(cookie.getName())) {
                   refreshToken = cookie.getValue();
-                  System.out.println("Refresh Token: " + refreshToken);
               }
               
               if (jwt != null && refreshToken != null) {
@@ -68,20 +65,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       if (jwt != null && SecurityContextHolder.getContext().getAuthentication() == null) {
           
           if(jwtService.isTokenExpired(jwt)&&!jwtService.isTokenExpired(refreshToken)) {
-        	  System.out.println("acces token still valid : "+jwtService.isTokenExpired(jwt));
-        	  
-        	  System.out.println("old"+jwt);
-        	jwt=  jwtService.refreshToken(response, refreshToken);
-        	
+        	jwt=  jwtService.refreshToken(response, refreshToken);   	
           }
-          System.out.println("new"+jwt);
           String userEmail = jwtService.extractUsername(jwt);
-          System.out.println(userEmail);
           UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
           boolean isTokenValid = tokenRepository.findByToken(jwt)
                   .map(t -> !t.isExpired() && !t.isRevoked())
                   .orElse(false);
-          System.out.println("is token valid :"+isTokenValid);
                     
           if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
               UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -95,7 +85,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
               SecurityContextHolder.getContext().setAuthentication(authToken);
           }
       }
-
       filterChain.doFilter(request, response);
   }
 }
