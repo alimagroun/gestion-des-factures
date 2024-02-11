@@ -24,7 +24,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials="true")
+//@CrossOrigin(origins = "http://localhost:4200", allowCredentials="true")
 @RequiredArgsConstructor
 public class AuthenticationController {
 

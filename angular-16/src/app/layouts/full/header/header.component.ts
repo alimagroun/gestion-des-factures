@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
@@ -8,13 +9,13 @@ import { AuthService } from '../../../services/auth.service';
 })
 export class AppHeaderComponent {
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private router: Router) { }
 
   logout() {
     this.authService.logout().subscribe(
       () => {
         console.log('Logout successful');
-        // Perform any additional actions after successful logout
+        this.router.navigate(['/login']);
       },
       error => {
         console.error('Logout failed', error);

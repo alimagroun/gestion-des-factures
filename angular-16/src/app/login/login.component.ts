@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { AuthenticationRequest } from '../models/authentication-request';
@@ -12,7 +13,7 @@ export class LoginComponent {
 
   loginForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]]
@@ -28,8 +29,8 @@ export class LoginComponent {
 
       this.authService.authenticate(request).subscribe(
         () => {
-          // Handle successful authentication (e.g., navigate to another page)
           console.log('Authentication successful');
+        this.router.navigate(['/invoice-list']);
         },
         error => {
           // Handle authentication error
