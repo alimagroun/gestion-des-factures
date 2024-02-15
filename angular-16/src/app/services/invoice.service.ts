@@ -3,12 +3,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Invoice } from '../models/invoice';
 import { Page } from '../models/page';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InvoiceService {
-  private baseUrl = 'http://localhost:8080/api/invoices';
+  private readonly apiUrl = environment.apiUrl.invoices;
 
   constructor(private http: HttpClient) { }
 
@@ -17,7 +18,7 @@ export class InvoiceService {
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<Page<any>>(`${this.baseUrl}`,{ params });
+    return this.http.get<Page<any>>(`${this.apiUrl}`,{ params });
   }
 
   getAllQuotes(page: number, size: number): Observable<Page<any>> {
@@ -25,22 +26,22 @@ export class InvoiceService {
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<Page<any>>(`${this.baseUrl}`,{ params });
+    return this.http.get<Page<any>>(`${this.apiUrl}`,{ params });
   }
 
   getInvoiceById(id: number): Observable<Invoice> {
-    return this.http.get<Invoice>(`${this.baseUrl}/${id}`);
+    return this.http.get<Invoice>(`${this.apiUrl}/${id}`);
   }
 
   createInvoice(invoice: Invoice): Observable<Invoice> {
-    return this.http.post<Invoice>(`${this.baseUrl}`, invoice);
+    return this.http.post<Invoice>(`${this.apiUrl}`, invoice);
   }
 
   updateInvoice(id: number, invoice: Invoice): Observable<Invoice> {
-    return this.http.put<Invoice>(`${this.baseUrl}/${id}`, invoice);
+    return this.http.put<Invoice>(`${this.apiUrl}/${id}`, invoice);
   }
 
   deleteInvoice(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

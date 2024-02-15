@@ -48,7 +48,7 @@ public class AuthenticationService {
 
       ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", jwtToken)
           .httpOnly(true)
-          .secure(true)   
+          .secure(false)   
           .path("/api")      
           .maxAge(24 * 60 * 60) 
           .build();
@@ -56,7 +56,7 @@ public class AuthenticationService {
 
       ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", refreshToken)
           .httpOnly(true)
-          .secure(true)  
+          .secure(false)  
           .path("/api")     
           .maxAge(24 * 60 * 60) 
           .build();
@@ -87,7 +87,7 @@ public class AuthenticationService {
 
     ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", jwtToken)
             .httpOnly(true)
-            .secure(true)   
+            .secure(false)   
             .path("/api")      
             .maxAge(24 * 60 * 60) 
             .build();
@@ -95,7 +95,7 @@ public class AuthenticationService {
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", refreshToken)
             .httpOnly(true)
-            .secure(true)  
+            .secure(false)  
             .path("/api")     
             .maxAge(7* 24 * 60 * 60) 
             .build();

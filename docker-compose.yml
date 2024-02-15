@@ -29,7 +29,7 @@ services:
       - my-network
 
   angular-app:
-    image: alimagroun/gestion-des-factures-angular
+    image: alimagroun/gestion-de-factures-angular
     container_name: angular-container
     ports:
       - "4200:80"  # Corrected port mapping

@@ -4,6 +4,7 @@ export const environment = {
       auth: '/api/v1/auth',
       customers: '/api/customers',
       products: '/api/products',
+      invoices: '/api/invoices'
     },
   };
   
