@@ -1,5 +1,5 @@
 <h2>LISTE DES ARTICLES</h2>
-
+<mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
 <div class="button-container">
   <button mat-raised-button color="primary" *ngIf="showModifierButton" (click)="openEditProductModal(product)">Modifier</button>
   <button mat-raised-button color="warn" *ngIf="showSupprimerButton" (click)="onDeleteProduct(selectedRows)">Supprimer</button>
@@ -8,9 +8,9 @@
 
 <div class="mat-elevation-z8">
     <mat-table [dataSource]="dataSource">
-      <ng-container matColumnDef="select">
+      <ng-container matColumnDef="select" >
         <mat-header-cell *matHeaderCellDef>
-          <mat-checkbox [(ngModel)]="selectAllChecked" (change)="selectAllRows($event)"></mat-checkbox>
+          <mat-checkbox *ngIf="showCheckbox" [(ngModel)]="selectAllChecked" (change)="selectAllRows($event)"></mat-checkbox>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
           <mat-checkbox [(ngModel)]="row.isSelected" (change)="selectRow(row)"></mat-checkbox>

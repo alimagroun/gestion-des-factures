@@ -39,6 +39,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSortModule } from '@angular/material/sort';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { QuoteListComponent } from './quote-list/quote-list.component';
 import { httpInterceptorProviders } from './helpers/http.interceptor';
 
@@ -82,6 +83,7 @@ import { httpInterceptorProviders } from './helpers/http.interceptor';
     ReactiveFormsModule,
     MatSnackBarModule,
     MatSortModule,
+    MatProgressBarModule
   ],
   providers: [
     {

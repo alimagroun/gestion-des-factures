@@ -19,9 +19,11 @@ export class ProductListComponent implements OnInit {
   displayedColumns: string[] = ['select','reference', 'designation', 'sellingPrice', 'purchasePrice', 'tax', 'ttc', 'lastUpdate'];
   showModifierButton: boolean = false;
   showSupprimerButton: boolean = false;
+  showCheckbox: boolean = false;
   selectAllChecked: boolean = false;
   product!: Product;
   selectedRows: Product[] = [];
+  loading: boolean = false;
   
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
 
@@ -29,14 +31,16 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts(0, 10);
-    
   }
 
   loadProducts(page: number, size: number): void {
+    this.loading=true;
     this.productService.getAllProducts(page, size).subscribe((data: Page<any>) => {
       this.dataSource = new MatTableDataSource(data.content);
       this.paginator.length = data.totalElements;
+      this.showCheckbox = data.totalElements > 0;
     });
+    this.loading=false;
   }
 
   onPageChange(event: any): void {
@@ -101,6 +105,8 @@ onDeleteProduct(selectedRows: Product[]): void {
               }
 
               this.loadProducts(this.paginator.pageIndex, currentPageSize);
+              this.showModifierButton = false;
+              this.showSupprimerButton =false;
               this.selectAllChecked = false;
             },
             (error) => {
