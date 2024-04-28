@@ -32,6 +32,13 @@ public class InvoiceController {
     	Page<Invoice> invoices = invoiceService.getAllInvoices(pageable);
         return new ResponseEntity<>(invoices, HttpStatus.OK);
     }
+    
+    @GetMapping("/quotes")
+    public ResponseEntity<Page<Invoice>> getAllQuotes(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    	Pageable pageable = PageRequest.of(page, size);
+    	Page<Invoice> invoices = invoiceService.getAllQuotes(pageable);
+        return new ResponseEntity<>(invoices, HttpStatus.OK);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Invoice> getInvoiceById(@PathVariable Long id) {

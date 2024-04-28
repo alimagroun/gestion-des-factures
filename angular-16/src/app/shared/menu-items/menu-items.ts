@@ -9,12 +9,13 @@ export interface Menu {
 
 const MENUITEMS = [
   { state: 'dashboard', name: 'Dashboard', type: 'link', icon: 'av_timer' },
-  { state: 'button', type: 'link', name: 'Buttons', icon: 'crop_7_5' },
-  { state: 'grid', type: 'link', name: 'Grid List', icon: 'view_comfy' },
-  { state: 'lists', type: 'link', name: 'Lists', icon: 'view_list' },
-  { state: 'menu', type: 'link', name: 'Menu', icon: 'view_headline' },
-  { state: 'tabs', type: 'link', name: 'Tabs', icon: 'tab' },
-  { state: 'stepper', type: 'link', name: 'Stepper', icon: 'web' },
+  { state: 'invoice-create', type: 'link', name: 'Créer une facture', icon: 'crop_7_5' },
+  { state: 'invoice-list', type: 'link', name: 'Factures', icon: 'view_comfy' },
+  { state: 'product-list', type: 'link', name: 'Articles', icon: 'view_list' },
+  { state: 'customer-list', type: 'link', name: 'Clients', icon: 'view_headline' },
+  { state: 'quote-create', type: 'link', name: 'Créer un devis', icon: 'web' },
+  { state: 'quote-list', type: 'link', name: 'Devis', icon: 'tab' },
+
   {
     state: 'expansion',
     type: 'link',
@@ -30,9 +31,9 @@ const MENUITEMS = [
     icon: 'border_horizontal'
   },
   {
-    state: 'progress',
+    state: 'invoice-create',
     type: 'link',
-    name: 'Progress Bar',
+    name: 'create an invoice ',
     icon: 'blur_circular'
   },
   {

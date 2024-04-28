@@ -21,6 +21,8 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     List<LineItem> getLineItemsByInvoice(@Param("invoice") Invoice invoice);
     
     Page<Invoice> findByQuoteFalse(Pageable pageable);
+    
+    Page<Invoice> findByQuoteTrue(Pageable pageable);
  
 }
 

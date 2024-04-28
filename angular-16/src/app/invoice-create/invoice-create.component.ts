@@ -9,6 +9,7 @@ import { LineItem } from '../models/lineItem';
 import {Invoice} from '../models/invoice';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
+import { MatAutocomplete } from '@angular/material/autocomplete';
 
 import { CustomerService } from '../services/customer.service';
 import { ProductService } from '../services/product.service';
@@ -110,7 +111,7 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
             scan((allProducts, newProducts) => allProducts.concat(newProducts), [] as Product[])
           );
         })
-      ); 
+      );   
   }
 
 getInvoiceDetails(id: number) {
@@ -188,7 +189,6 @@ getInvoiceDetails(id: number) {
   }
 
   ngOnDestroy() {
-    console.log('inside ngOnDestroy');
     this._onDestroy.next(null);
     this._onDestroy.complete();
   }
@@ -472,6 +472,7 @@ getInvoiceDetails(id: number) {
           if (createdInvoice.id !== undefined) {
             this.invoiceId = createdInvoice.id;
           }
+          this.isSaving = false;
         },
         (error) => {
           this.isSaving = false;

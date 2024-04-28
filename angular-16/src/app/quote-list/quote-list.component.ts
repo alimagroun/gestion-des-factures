@@ -32,7 +32,7 @@ export class QuoteListComponent implements OnInit {
   }
 
   loadInvoices(page: number, size: number): void {
-    this.invoiceService.getAllInvoices(page, size).subscribe(
+    this.invoiceService.getAllQuotes(page, size).subscribe(
       (pageResponse) => {
         this.invoicesDataSource = new MatTableDataSource(pageResponse.content);
         this.paginator.length = pageResponse.totalElements;

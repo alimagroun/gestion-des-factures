@@ -45,12 +45,10 @@ export class OptionsScrollDirective implements OnDestroy {
   ngOnDestroy() {
     this._onDestroy.next(null);
     this._onDestroy.complete();
-
-    this.removeScrollEventListener();
+   // this.removeScrollEventListener();
   }
 
   onScroll(event: Event) {
-
     if (this.thresholdPercent === undefined) {
       this.scroll.next({ autoComplete: this.autoComplete, scrollEvent: event });
     } else {

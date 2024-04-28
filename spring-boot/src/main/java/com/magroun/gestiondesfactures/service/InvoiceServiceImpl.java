@@ -48,6 +48,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Page<Invoice> getAllInvoices(Pageable pageable) {
     	return invoiceRepository.findByQuoteFalse(pageable);
     }
+    
+    @Override
+    public Page<Invoice> getAllQuotes(Pageable pageable) {
+    	return invoiceRepository.findByQuoteTrue(pageable);
+    }
 
     @Override
     public Invoice getInvoiceById(Long id) {

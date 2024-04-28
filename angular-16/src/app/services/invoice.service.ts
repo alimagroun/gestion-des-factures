@@ -26,7 +26,7 @@ export class InvoiceService {
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<Page<any>>(`${this.apiUrl}`,{ params });
+    return this.http.get<Page<any>>(`${this.apiUrl}/quotes`,{ params });
   }
 
   getInvoiceById(id: number): Observable<Invoice> {
