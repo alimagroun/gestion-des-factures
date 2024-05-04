@@ -81,7 +81,7 @@ export class ProductEditModalComponent implements OnInit {
     }
   }
 
-  formatPrice(event: any): void {
+  formatPrice(event: any, fieldName: string): void {
     const inputElement = event.target as HTMLInputElement;
     const selectionStart = inputElement.selectionStart;
     const selectionEnd = inputElement.selectionEnd;
@@ -96,7 +96,7 @@ export class ProductEditModalComponent implements OnInit {
     }
   
     if (parts[1] && parts[1].length > 2) {
-      inputValue = `${parts[0]}.${parts[1].slice(0, 2)}`;
+      inputValue = `${parts[0]}.${parts[1].slice(0, 3)}`;
     }
   
     if (parts[0].length > 1 && parts[0][0] === '0' && parts[0][1] !== '.') {
@@ -104,6 +104,14 @@ export class ProductEditModalComponent implements OnInit {
     }
   
     inputElement.value = inputValue;
+  
+    if (fieldName === 'purchasePrice') {
+      this.productForm.get('purchasePrice')!.setValue(inputValue);
+    }
+  
+    if (fieldName === 'sellingPrice') {
+      this.productForm.get('sellingPrice')!.setValue(inputValue);
+    }
   
     inputElement.setSelectionRange(selectionStart, selectionEnd);
   }

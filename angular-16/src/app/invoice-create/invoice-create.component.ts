@@ -51,6 +51,8 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
   totalHT = 0;
   totalDiscount =0;
   total = 0;
+  totalAmount =0;
+  stamp =1;
   selectedDate!: Date;
   productInputIsValid: boolean = false;
   isUpdateMode: boolean = false;
@@ -69,6 +71,7 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
+    console.log(id);
     this.invoiceId = id ? +id : null; 
 
     if (this.invoiceId) {
@@ -403,6 +406,7 @@ getInvoiceDetails(id: number) {
       return acc + parseFloat(item.totalPriceAfterDiscountTTC);
     }, 0);
     this.total = totalTTC.toFixed(3);
+    this.totalAmount = (totalTTC + this.stamp).toFixed(3);
   }
   
   checkCustomerExists() {
@@ -457,13 +461,14 @@ getInvoiceDetails(id: number) {
     const invoiceData: Invoice = {
       dateIssued: this.selectedDate,
       dueDate: new Date(dueDateString),
-      totalAmount: this.total+1,
+      totalAmount: this.totalAmount,
       status: 'paid', // for testing purpose
-      stamp: 1, // for testing purpose
+      stamp: this.stamp,
       customer: customerIdOnly,
       lineItems: lineItems,
     };
-    
+    console.log(this.total);
+    console.log(invoiceData.totalAmount);
     this.invoiceService.createInvoice(invoiceData)
       .subscribe(
         (createdInvoice) => {
@@ -504,13 +509,14 @@ getInvoiceDetails(id: number) {
       id: this.invoiceId,
       dateIssued: this.selectedDate,
       dueDate: new Date(dueDateString),
-      totalAmount: this.total + 1,
+      totalAmount: this.totalAmount,
       status: 'paid', // for testing purpose
-      stamp: 1, // for testing purpose
+      stamp: this.stamp,
       customer: customerIdOnly,
       lineItems: lineItems,
     };
-  
+    console.log(this.total);
+      console.log(updatedInvoiceData.totalAmount);
     this.invoiceService.updateInvoice(this.invoiceId, updatedInvoiceData)
     .subscribe(
       (invoice) => {

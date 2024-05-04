@@ -36,4 +36,6 @@ export class Invoice {
     this.lineItems = lineItems;
     this.quote = quote;
   }
+
+  
 }

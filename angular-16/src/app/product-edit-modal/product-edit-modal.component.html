@@ -21,7 +21,7 @@
     <div class="form-group col-md-4">
       <mat-form-field appearance="fill">
         <mat-label>Prix ​​d'achat</mat-label>
-        <input matInput formControlName="purchasePrice" min="0" maxlength="13" (input)="formatPrice($event)" required>
+        <input matInput formControlName="purchasePrice" min="0" maxlength="14" (input)="formatPrice($event, 'purchasePrice')" required>
       </mat-form-field>
     </div>
   </div>
@@ -30,7 +30,7 @@
     <div class="form-group col-md-4">
       <mat-form-field appearance="fill">
         <mat-label>Prix ​​de vente</mat-label>
-        <input matInput formControlName="sellingPrice"  min="0" maxlength="13" (input)="formatPrice($event)" required>
+        <input matInput formControlName="sellingPrice"  min="0" maxlength="14" (input)="formatPrice($event, 'sellingPrice')" required>
       </mat-form-field>
     </div>
 

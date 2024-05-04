@@ -52,7 +52,6 @@ public class InvoiceController {
 
     @PostMapping
     public ResponseEntity<Invoice> createInvoice(@RequestBody Invoice invoice) {
-    	System.out.println(invoice.getTotalAmount());
         Invoice createdInvoice = invoiceService.createInvoice(invoice);
         return new ResponseEntity<>(createdInvoice, HttpStatus.CREATED);
     }
