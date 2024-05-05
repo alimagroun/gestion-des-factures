@@ -8,6 +8,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+
 import java.util.Collection;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -44,6 +47,11 @@ public class User implements UserDetails {
   public Collection<? extends GrantedAuthority> getAuthorities() {
 	  return null; // Return null for now
   }
+  
+  @DecimalMin(value = "0.0", message = "Tax must be greater than or equal to 0.0")
+  @DecimalMax(value = "100.0", message = "Tax cannot exceed 100.0")
+  private float taxPercentage;
+  private float stamp;
 
   @Override
   public String getPassword() {

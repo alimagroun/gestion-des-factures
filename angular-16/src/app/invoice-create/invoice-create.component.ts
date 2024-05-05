@@ -9,11 +9,11 @@ import { LineItem } from '../models/lineItem';
 import {Invoice} from '../models/invoice';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
-import { MatAutocomplete } from '@angular/material/autocomplete';
 
 import { CustomerService } from '../services/customer.service';
 import { ProductService } from '../services/product.service';
 import { InvoiceService } from '../services/invoice.service';
+import { UserService } from '../services/user.service';
 import { SnackbarService } from '../services/snackbar.service';
 import { PdfService } from '../services/pdf.service';
 
@@ -64,6 +64,7 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     private customerService: CustomerService,
     private productService: ProductService,
     private invoiceService: InvoiceService,
+    private userService: UserService,
     private pdfService: PdfService,
     private route: ActivatedRoute,
     private snackbarService: SnackbarService
@@ -81,6 +82,16 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
       this.isCustomerSelected=true;
     }
 
+    this.userService.getUserSettings().subscribe(
+      (data) => {
+        console.log('Tax Percentage:', data.taxPercentage);
+        console.log('Stamp:', data.stamp);
+      },
+      (error) => {
+        console.error('Failed to retrieve user settings:', error);
+      }
+    );
+  
     this.selectedDate = new Date();
     this.customers$ = this.customerSearchControl.valueChanges
       .pipe(

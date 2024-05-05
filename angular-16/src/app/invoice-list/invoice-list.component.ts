@@ -7,6 +7,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { DialogService } from '../services/DialogService';
+import { SnackbarService } from '../services/snackbar.service';
 
 @Component({
   selector: 'app-invoice-list',
@@ -32,7 +33,11 @@ export class InvoiceListComponent implements OnInit {
   selectAllChecked: boolean = false;
   invoice! : Invoice;
 
-  constructor(private invoiceService: InvoiceService, private router: Router, private dialogService: DialogService) {}
+  constructor(private invoiceService: InvoiceService,
+    private router: Router,
+    private dialogService: DialogService,
+    private snackbarService: SnackbarService
+  ) {}
 
   ngOnInit(): void {
     this.loadInvoices(0,10);
@@ -61,21 +66,10 @@ export class InvoiceListComponent implements OnInit {
     this.router.navigate(['/invoice', invoiceId]);
   }
 
-  deleteInvoice(id: number): void {
-    this.invoiceService.deleteInvoice(id).subscribe(
-      () => {
-        this.loadInvoices(0,10);
-      },
-      (error) => {
-        console.error('Error deleting invoice:', error);
-      }
-    );
-  }
-
   onDeleteInvoice(selectedRows: Invoice[]): void {
     const currentPageIndex = this.paginator.pageIndex;
     const currentPageSize = this.paginator.pageSize;
-    const confirmationMessage = `Voulez-vous vraiment supprimer ${selectedRows.length > 1 ? 'ces articles' : 'cet article'} ?`;
+    const confirmationMessage = `Voulez-vous vraiment supprimer ${selectedRows.length > 1 ? 'ces factures' : 'cette facture'} ?`;
   
     this.dialogService
       .openDeleteConfirmationDialog(confirmationMessage)
@@ -99,6 +93,9 @@ export class InvoiceListComponent implements OnInit {
                 this.loadInvoices(this.paginator.pageIndex, currentPageSize);
                 this.showSupprimerButton =false;
                 this.selectAllChecked = false;
+                const message = selectedRows.length > 1 ? 'Les factures ont été supprimées avec succès.' : 'La facture a été supprimée avec succès.';
+                this.snackbarService.openSnackBar(message, 'Fermer');
+
               },
               (error) => {
                 console.error(`Error deleting product ${invoice.id}:`, error);

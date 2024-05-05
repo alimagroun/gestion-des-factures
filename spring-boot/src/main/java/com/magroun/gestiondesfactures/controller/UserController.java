@@ -1,0 +1,44 @@
+package com.magroun.gestiondesfactures.controller;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.ResponseEntity;
+
+
+import com.magroun.gestiondesfactures.dto.SettingsResponse;
+import com.magroun.gestiondesfactures.service.UserService;
+
+@RestController
+@RequestMapping("/api/users")
+@CrossOrigin(origins = "*")
+public class UserController {
+	
+	private final UserService userService;
+	
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("/settings")
+    public ResponseEntity<SettingsResponse> getUserSettings() {
+        // Get the authenticated user's email from the security context
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName(); // Assuming the email is the username
+        
+        System.out.println(email);        
+        // Call userService.getSettings with the retrieved email
+        SettingsResponse settings = userService.getSettings(email);
+        
+        if (settings != null) {
+            return new ResponseEntity<>(settings, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}
