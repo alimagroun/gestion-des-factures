@@ -4,7 +4,8 @@ import { Customer } from '../models/customer';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
-import { CustomerCreateModalComponent } from '../customer-create-modal/customer-create-modal.component'; import { CustomerEditModalComponent } from '../customer-edit-modal/customer-edit-modal.component';
+import { CustomerCreateModalComponent } from '../customer-create-modal/customer-create-modal.component';
+import { CustomerEditModalComponent } from '../customer-edit-modal/customer-edit-modal.component';
 import { DialogService } from '../services/DialogService';
 
 @Component({
@@ -81,6 +82,8 @@ export class CustomerListComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result === true) {
         this.loadCustomers(this.paginator.pageIndex, this.paginator.pageSize);
+        this.showModifierButton = false;
+        this.showSupprimerButton = false;
       }
     });
   }

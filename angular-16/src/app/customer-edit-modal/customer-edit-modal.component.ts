@@ -44,7 +44,7 @@ export class CustomerEditModalComponent implements OnInit {
         .subscribe(
           (response) => {
             this.isSubmitting = false;
-            this.dialogRef.close(response);
+            this.dialogRef.close(true);
           },
           (error) => {
             this.isSubmitting = false;

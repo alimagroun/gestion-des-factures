@@ -36,8 +36,8 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setCompanyName(request.getCompanyName());
             customer.setTaxIdentificationNumber(request.getTaxIdentificationNumber());
 
-            if (request.getStreetAddress() != null || request.getCity() != null ||
-                request.getState() != null || request.getPostalCode() != null) {
+            if (request.getStreetAddress() != null && request.getCity() != null &&
+                request.getState() != null && request.getPostalCode() != null) {
                 Address address = new Address();
                 address.setStreetAddress(request.getStreetAddress());
                 address.setCity(request.getCity());
@@ -75,17 +75,11 @@ public class CustomerServiceImpl implements CustomerService {
             existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
             existingCustomer.setCompanyName(updatedCustomer.getCompanyName());
             existingCustomer.setTaxIdentificationNumber(updatedCustomer.getTaxIdentificationNumber());
-
-            if (updatedCustomer.getStreetAddress() != null || updatedCustomer.getCity() != null ||
-                updatedCustomer.getState() != null || updatedCustomer.getPostalCode() != null) {
-                Address updatedAddress = new Address();
-                updatedAddress.setStreetAddress(updatedCustomer.getStreetAddress());
-                updatedAddress.setCity(updatedCustomer.getCity());
-                updatedAddress.setState(updatedCustomer.getState());
-                updatedAddress.setPostalCode(updatedCustomer.getPostalCode());
-
-                existingCustomer.setAddress(updatedAddress);
-            }
+            
+            existingCustomer.getAddress().setStreetAddress(updatedCustomer.getStreetAddress());
+            existingCustomer.getAddress().setCity(updatedCustomer.getCity());
+            existingCustomer.getAddress().setState(updatedCustomer.getState());
+            existingCustomer.getAddress().setPostalCode(updatedCustomer.getPostalCode());
 
             return customerRepository.save(existingCustomer);
         } else {
