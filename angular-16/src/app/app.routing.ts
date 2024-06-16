@@ -9,6 +9,7 @@ import { QuoteCreateComponent } from './quote-create/quote-create.component';
 import { QuoteListComponent } from './quote-list/quote-list.component';
 import { ProductListComponent } from './product-list/product-list.component';
 import { CustomerListComponent } from './customer-list/customer-list.component';
+import { AccountManagementComponent } from './account-management/account-management.component';
 
 import { AuthGuard } from './guards/auth.guard';
 
@@ -64,6 +65,11 @@ export const AppRoutes: Routes = [
       {
         path: 'customer-list',
         component: CustomerListComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'account-management',
+        component: AccountManagementComponent,
         canActivate: [AuthGuard]
       },
     ]

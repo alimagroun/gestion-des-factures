@@ -1,0 +1,12 @@
+<form *ngIf="settings$ | async as settings">
+    <mat-form-field>
+      <mat-label>Tax Percentage</mat-label>
+      <input matInput [(ngModel)]="settings.taxPercentage" name="taxPercentage" type="number">
+    </mat-form-field>
+  
+    <mat-form-field>
+      <mat-label>Stamp</mat-label>
+      <input matInput [(ngModel)]="settings.stamp" name="stamp" type="number">
+    </mat-form-field>
+  </form>
+  

@@ -13,7 +13,6 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   getUserSettings(): Observable<SettingsResponse> {
-    // Assuming the endpoint for getUserSettings is '/settings'
     const url = `${this.apiUrl}/settings`;
     return this.http.get<SettingsResponse>(url);
   }

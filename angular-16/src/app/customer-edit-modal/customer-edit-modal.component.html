@@ -16,8 +16,7 @@
       <div class="form-group col-md-4">
         <mat-form-field appearance="fill">
           <mat-label>Last Name</mat-label>
-          <input matInput formControlName="lastName" placeholder="Last Name" required maxlength="50">
-          <mat-error *ngIf="customerForm?.get('lastName')?.hasError('required')">Last Name is required</mat-error>
+          <input matInput formControlName="lastName" placeholder="Last Name" maxlength="50">
           <mat-error *ngIf="customerForm?.get('lastName')?.hasError('minlength')">Last Name must be at least 2 characters</mat-error>
           <mat-error *ngIf="customerForm?.get('lastName')?.hasError('maxlength')">Last Name cannot exceed 50 characters</mat-error>
         </mat-form-field>
@@ -84,6 +83,10 @@
           <input matInput formControlName="postalCode" placeholder="Postal Code">
         </mat-form-field>
       </div>
+    </div>
+
+    <div *ngIf="formSubmitted && lastNameOrCompanyNameInvalid">
+      <mat-error>Either Last Name or Company Name must be provided.</mat-error>
     </div>
 
     <div class="modal-actions">

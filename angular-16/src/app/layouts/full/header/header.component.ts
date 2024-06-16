@@ -11,15 +11,17 @@ export class AppHeaderComponent {
 
   constructor(private authService: AuthService, private router: Router) { }
 
+  navigateToAccountManagement(): void {
+    this.router.navigate(['/account-management']);
+  }
+
   logout() {
     this.authService.logout().subscribe(
       () => {
-        console.log('Logout successful');
         this.router.navigate(['/login']);
       },
       error => {
         console.error('Logout failed', error);
-        // Handle logout failure
       }
     );
 }

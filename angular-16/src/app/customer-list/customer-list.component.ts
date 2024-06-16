@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CustomerCreateModalComponent } from '../customer-create-modal/customer-create-modal.component';
 import { CustomerEditModalComponent } from '../customer-edit-modal/customer-edit-modal.component';
 import { DialogService } from '../services/DialogService';
+import { SnackbarService } from '../services/snackbar.service';
 
 @Component({
   selector: 'app-customer-list',
@@ -19,6 +20,7 @@ export class CustomerListComponent implements OnInit {
     'select',
     'firstName',
     'lastName',
+    'companyName',
     'email',
     'phoneNumber',
   ];
@@ -33,7 +35,8 @@ export class CustomerListComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private customerService: CustomerService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private snackbarService: SnackbarService
   ) {}
 
   ngOnInit(): void {
@@ -69,6 +72,7 @@ export class CustomerListComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result === true) {
         this.loadCustomers(this.paginator.pageIndex, this.paginator.pageSize);
+        this.snackbarService.openSnackBar('Un nouveau client a été ajouté.', 'Fermer');
       }
     });
   }
@@ -84,6 +88,7 @@ export class CustomerListComponent implements OnInit {
         this.loadCustomers(this.paginator.pageIndex, this.paginator.pageSize);
         this.showModifierButton = false;
         this.showSupprimerButton = false;
+        this.snackbarService.openSnackBar('Les informations du client ont été mises à jour.', 'Fermer');
       }
     });
   }
@@ -121,6 +126,9 @@ export class CustomerListComponent implements OnInit {
   
                   this.loadCustomers(this.paginator.pageIndex, currentPageSize);
                   this.selectAllChecked = false;
+                  this.showModifierButton = false;
+                  this.showSupprimerButton = false;
+                  this.snackbarService.openSnackBar((selectedRows.length > 1 ? `${selectedRows.length} clients ont été supprimés.` : 'Un client a été supprimé.'), 'Fermer');
                 },
                 (error) => {
                   console.error(`Error deleting customer ${customerId}:`, error);

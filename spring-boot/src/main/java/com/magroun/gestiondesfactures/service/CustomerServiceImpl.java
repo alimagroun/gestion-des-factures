@@ -1,6 +1,5 @@
 package com.magroun.gestiondesfactures.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,14 +17,12 @@ import java.util.Optional;
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final AddressRepository addressRepository;
 
-    @Autowired
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, AddressRepository addressRepository) {
         this.customerRepository = customerRepository;
+        this.addressRepository = addressRepository;
     }
-    
-        @Autowired
-        private AddressRepository addressRepository;
 
         public Customer createCustomer(CustomerCreationRequest request) {
             Customer customer = new Customer();
@@ -36,8 +33,6 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setCompanyName(request.getCompanyName());
             customer.setTaxIdentificationNumber(request.getTaxIdentificationNumber());
 
-            if (request.getStreetAddress() != null && request.getCity() != null &&
-                request.getState() != null && request.getPostalCode() != null) {
                 Address address = new Address();
                 address.setStreetAddress(request.getStreetAddress());
                 address.setCity(request.getCity());
@@ -47,7 +42,7 @@ public class CustomerServiceImpl implements CustomerService {
                 addressRepository.save(address);
                 
                 customer.setAddress(address);
-            }
+
 
             return customerRepository.save(customer);
         }

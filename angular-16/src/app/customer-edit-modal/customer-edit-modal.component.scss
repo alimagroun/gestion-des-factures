@@ -25,7 +25,7 @@
     margin-left: 20px;
   }
   
-  @media screen and (max-width: 959px) {
+  @media screen and (max-width: 959px), screen and (max-height: 810px) {
     .scrollable-container {
       max-height: 400px;
       overflow-y: auto;

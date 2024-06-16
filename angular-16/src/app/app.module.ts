@@ -42,6 +42,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { QuoteListComponent } from './quote-list/quote-list.component';
 import { httpInterceptorProviders } from './helpers/http.interceptor';
+import { AccountManagementComponent } from './account-management/account-management.component';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { httpInterceptorProviders } from './helpers/http.interceptor';
     OptionsScrollDirective,
     QuoteCreateComponent,
     QuoteListComponent,
+    AccountManagementComponent,
     
   ],
   imports: [
