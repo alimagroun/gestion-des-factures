@@ -2,6 +2,8 @@ package com.magroun.gestiondesfactures.controller;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,18 +29,28 @@ public class UserController {
 
     @GetMapping("/settings")
     public ResponseEntity<SettingsResponse> getUserSettings() {
-        // Get the authenticated user's email from the security context
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName(); // Assuming the email is the username
+        String email = authentication.getName(); 
         
-        System.out.println(email);        
-        // Call userService.getSettings with the retrieved email
         SettingsResponse settings = userService.getSettings(email);
         
         if (settings != null) {
             return new ResponseEntity<>(settings, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    
+    @PostMapping("/update-settings")
+    public ResponseEntity<SettingsResponse> updateSettings(@RequestBody SettingsResponse settingsResponse) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        SettingsResponse updatedSettings = userService.updateSettings(email, settingsResponse);
+        if (updatedSettings != null) {
+            return ResponseEntity.ok(updatedSettings);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 }

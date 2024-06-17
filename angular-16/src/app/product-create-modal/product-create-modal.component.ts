@@ -2,7 +2,9 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ProductService } from '../services/product.service';
+import { UserService } from '../services/user.service';
 import { Product } from '../models/product';
+import { SettingsResponse } from '../models/settings-response';
 
 @Component({
   selector: 'app-product-create-modal',
@@ -11,16 +13,28 @@ import { Product } from '../models/product';
 })
 export class ProductCreateModalComponent implements OnInit {
   productForm!: FormGroup;
+  defaultTax: number =0;
 
   constructor(
     private formBuilder: FormBuilder,
     private productService: ProductService,
+    private userService: UserService,
     public dialogRef: MatDialogRef<ProductCreateModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
   ngOnInit(): void {
     this.initializeForm();
+    this.userService.getUserSettings().subscribe(
+      (settingsResponse: SettingsResponse) => {
+        this.defaultTax =settingsResponse.taxPercentage || 0;
+        this.productForm.patchValue({ tax: this.defaultTax });
+      },
+      (error) => {
+        console.error('Failed to retrieve user settings:', error);
+      }
+    );
+
   }
 
   initializeForm(): void {
@@ -30,7 +44,7 @@ export class ProductCreateModalComponent implements OnInit {
       purchasePrice: ['', [Validators.required, Validators.min(0)]],
       sellingPrice: ['' , [Validators.required, Validators.min(0)]],
       profitMargin: ['', [Validators.required, Validators.min(0)]],
-      tax: ['19', [Validators.required, Validators.min(0)]],
+      tax: [this.defaultTax.toString(), [Validators.required, Validators.min(0)]],
       lastUpdated: [new Date(), [Validators.required]]
     });
 

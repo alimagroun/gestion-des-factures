@@ -5,8 +5,8 @@ import { debounceTime, distinctUntilChanged, switchMap, map, exhaustMap, scan, s
 import { Page } from '../models/page';
 import { Customer } from '../models/customer';
 import { Product } from '../models/product';
-import { LineItem } from '../models/lineItem';
 import {Invoice} from '../models/invoice';
+import { SettingsResponse } from '../models/settings-response';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 
@@ -52,7 +52,7 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
   totalDiscount =0;
   total = 0;
   totalAmount =0;
-  stamp =1;
+  stamp: number =0;
   selectedDate!: Date;
   productInputIsValid: boolean = false;
   isUpdateMode: boolean = false;
@@ -83,9 +83,8 @@ export class InvoiceCreateComponent implements OnInit, OnDestroy  {
     }
 
     this.userService.getUserSettings().subscribe(
-      (data) => {
-        console.log('Tax Percentage:', data.taxPercentage);
-        console.log('Stamp:', data.stamp);
+      (settingsResponse: SettingsResponse) => {
+        this.stamp =settingsResponse.stamp || 0;
       },
       (error) => {
         console.error('Failed to retrieve user settings:', error);
@@ -473,13 +472,11 @@ getInvoiceDetails(id: number) {
       dateIssued: this.selectedDate,
       dueDate: new Date(dueDateString),
       totalAmount: this.totalAmount,
-      status: 'paid', // for testing purpose
+      status: 'paid',
       stamp: this.stamp,
       customer: customerIdOnly,
       lineItems: lineItems,
     };
-    console.log(this.total);
-    console.log(invoiceData.totalAmount);
     this.invoiceService.createInvoice(invoiceData)
       .subscribe(
         (createdInvoice) => {
@@ -489,6 +486,7 @@ getInvoiceDetails(id: number) {
             this.invoiceId = createdInvoice.id;
           }
           this.isSaving = false;
+          this.snackbarService.openSnackBar('La facture a été enregistrée.', 'Fermer');
         },
         (error) => {
           this.isSaving = false;
@@ -526,14 +524,13 @@ getInvoiceDetails(id: number) {
       customer: customerIdOnly,
       lineItems: lineItems,
     };
-    console.log(this.total);
-      console.log(updatedInvoiceData.totalAmount);
     this.invoiceService.updateInvoice(this.invoiceId, updatedInvoiceData)
     .subscribe(
       (invoice) => {
         if (invoice && invoice.lineItems) {
           this.updateDataSourceWithInvoiceItems(invoice);
         }
+        this.snackbarService.openSnackBar('La facture a été mise à jour.', 'Fermer');
       },
       (error) => {
         console.error('Error updating invoice:', error);

@@ -16,4 +16,9 @@ export class UserService {
     const url = `${this.apiUrl}/settings`;
     return this.http.get<SettingsResponse>(url);
   }
+
+  updateUserSettings(settingsResponse: SettingsResponse): Observable<SettingsResponse> {
+    const url = `${this.apiUrl}/update-settings`;
+    return this.http.post<SettingsResponse>(url, settingsResponse);
+  }
 }

@@ -30,4 +30,21 @@ public class UserServiceImpl implements UserService{
         }
     }
 
+    @Override
+    public SettingsResponse updateSettings(String email, SettingsResponse settingsResponse) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            
+            user.setTaxPercentage(settingsResponse.getTaxPercentage());
+            user.setStamp(settingsResponse.getStamp());
+            
+            userRepository.save(user);
+            
+            return userMapper.toSettingsResponse(user);
+        } else {
+            return null;
+        }
+    }
+
 }
