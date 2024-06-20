@@ -26,6 +26,7 @@ export class CustomerListComponent implements OnInit {
   ];
   showModifierButton: boolean = false;
   showSupprimerButton: boolean = false;
+  showCheckbox: boolean = false;
   selectAllChecked: boolean = false;
   customer!: Customer;
   selectedRows: Customer[] = [];
@@ -48,6 +49,7 @@ export class CustomerListComponent implements OnInit {
       (data: Page<Customer>) => {
         this.dataSource = new MatTableDataSource(data.content);
         this.paginator.length = data.totalElements;
+        this.showCheckbox = data.totalElements > 0;
       },
       (error) => {
         console.error('Error loading customers:', error);

@@ -49,6 +49,7 @@ export class InvoiceListComponent implements OnInit {
         this.invoicesDataSource = new MatTableDataSource(pageResponse.content);
         this.paginator.length = pageResponse.totalElements;
         this.invoicesDataSource.sort = this.sort;
+        this.showCheckbox = pageResponse.totalElements > 0;
       },
       (error) => {
         console.error('Error loading invoices:', error);

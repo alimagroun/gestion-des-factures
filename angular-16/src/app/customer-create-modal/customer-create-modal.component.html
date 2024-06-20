@@ -55,38 +55,38 @@
 </div>
 
     </div>
-    <h3 class="section-heading">Address</h3>
+    <h3 class="section-heading">Adresse</h3>
       <div class="form-row">
       <div class="form-group col-md-4">
         <mat-form-field appearance="fill">
-          <mat-label>Street Address</mat-label>
+          <mat-label>adresse</mat-label>
           <input matInput formControlName="streetAddress" placeholder="Street Address">
         </mat-form-field>
       </div>
       <div class="form-group col-md-4">
         <mat-form-field appearance="fill">
-          <mat-label>City</mat-label>
+          <mat-label>ville</mat-label>
           <input matInput formControlName="city" placeholder="City">
         </mat-form-field>
       </div>
 
       <div class="form-group col-md-4">
         <mat-form-field appearance="fill">
-          <mat-label>State</mat-label>
+          <mat-label>province</mat-label>
           <input matInput formControlName="state" placeholder="State">
         </mat-form-field>
       </div>
 
       <div class="form-group col-md-4">
         <mat-form-field appearance="fill">
-          <mat-label>Postal Code</mat-label>
+          <mat-label>code postal</mat-label>
           <input matInput formControlName="postalCode" placeholder="Postal Code">
         </mat-form-field>
       </div>
       </div>
       
       <div *ngIf="formSubmitted && lastNameOrCompanyNameInvalid">
-        <mat-error>Either Last Name or Company Name must be provided.</mat-error>
+        <mat-error>Le nom de famille ou le nom de l'entreprise doit être fourni.</mat-error>
       </div>
 
     <div class="modal-actions">

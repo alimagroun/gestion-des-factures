@@ -519,7 +519,7 @@ getInvoiceDetails(id: number) {
       dateIssued: this.selectedDate,
       dueDate: new Date(dueDateString),
       totalAmount: this.totalAmount,
-      status: 'paid', // for testing purpose
+      status: 'payé',
       stamp: this.stamp,
       customer: customerIdOnly,
       lineItems: lineItems,
