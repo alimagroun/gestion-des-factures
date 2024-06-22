@@ -449,7 +449,6 @@ getInvoiceDetails(id: number) {
   
   saveInvoice(): void {
     this.isSaving = true;
-    const dueDateString = '2023-12-16T00:00:00Z'; // for testing purpose
     const customer = this.customerSearchControl.value;
     const customerIdOnly = Customer.createWithId(customer.id);
 
@@ -470,9 +469,9 @@ getInvoiceDetails(id: number) {
     
     const invoiceData: Invoice = {
       dateIssued: this.selectedDate,
-      dueDate: new Date(dueDateString),
+      dueDate: this.selectedDate,
       totalAmount: this.totalAmount,
-      status: 'paid',
+      status: 'payé',
       stamp: this.stamp,
       customer: customerIdOnly,
       lineItems: lineItems,
@@ -495,7 +494,6 @@ getInvoiceDetails(id: number) {
   }
 
   updateInvoice() {
-    const dueDateString = '2023-12-16T00:00:00Z'; // for testing purpose
     const customer = this.customerSearchControl.value;
     const customerIdOnly = Customer.createWithId(customer.id);
     const lineItems = this.dataSource.data.map(item => {
@@ -517,7 +515,7 @@ getInvoiceDetails(id: number) {
     const updatedInvoiceData: Invoice = {
       id: this.invoiceId,
       dateIssued: this.selectedDate,
-      dueDate: new Date(dueDateString),
+      dueDate: this.selectedDate,
       totalAmount: this.totalAmount,
       status: 'payé',
       stamp: this.stamp,

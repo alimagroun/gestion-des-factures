@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ProductCreateModalComponent } from '../product-create-modal/product-create-modal.component';
 import { ProductEditModalComponent } from '../product-edit-modal/product-edit-modal.component';
 import { DialogService } from '../services/DialogService';
+import { SnackbarService } from '../services/snackbar.service';
 
 @Component({
   selector: 'app-product-list',
@@ -27,7 +28,10 @@ export class ProductListComponent implements OnInit {
   
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
 
-  constructor(private dialog: MatDialog, private productService: ProductService, private dialogService: DialogService) {}
+  constructor(private dialog: MatDialog,
+              private productService: ProductService,
+              private dialogService: DialogService,
+              private snackbarService: SnackbarService) {}
 
   ngOnInit(): void {
     this.loadProducts(0, 10);
@@ -59,8 +63,8 @@ export class ProductListComponent implements OnInit {
 
   dialogRef.afterClosed().subscribe((result: any) => {
     if (result === true) {
-  
       this.loadProducts(this.paginator.pageIndex, this.paginator.pageSize);
+      this.snackbarService.openSnackBar('Un nouvel article a été ajouté.', 'Fermer');
     }
   });
 }
@@ -76,6 +80,7 @@ export class ProductListComponent implements OnInit {
       this.loadProducts(this.paginator.pageIndex, this.paginator.pageSize);
       this.showModifierButton = false;
       this.showSupprimerButton = false;
+      this.snackbarService.openSnackBar('L\'article a été mis à jour.', 'Fermer');
     }
   });
 }
@@ -108,6 +113,7 @@ onDeleteProduct(selectedRows: Product[]): void {
               this.showModifierButton = false;
               this.showSupprimerButton =false;
               this.selectAllChecked = false;
+              this.snackbarService.openSnackBar(selectedRows.length > 1 ? 'Les articles ont été supprimés.' : 'L\'article a été supprimé.', 'Fermer');
             },
             (error) => {
               console.error(`Error deleting product ${product.id}:`, error);

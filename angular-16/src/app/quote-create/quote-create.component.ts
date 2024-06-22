@@ -6,6 +6,7 @@ import { Page } from '../models/page';
 import { Customer } from '../models/customer';
 import { Product } from '../models/product';
 import {Invoice} from '../models/invoice';
+import { SettingsResponse } from '../models/settings-response';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 
@@ -14,6 +15,7 @@ import { ProductService } from '../services/product.service';
 import { InvoiceService } from '../services/invoice.service';
 import { SnackbarService } from '../services/snackbar.service';
 import { PdfService } from '../services/pdf.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-quote-create',
@@ -49,6 +51,7 @@ export class QuoteCreateComponent implements OnInit, OnDestroy  {
   totalHT = 0;
   totalDiscount =0;
   total = 0;
+  totalAmount =0;
   selectedDate!: Date;
   productInputIsValid: boolean = false;
   isUpdateMode: boolean = false;
@@ -56,13 +59,15 @@ export class QuoteCreateComponent implements OnInit, OnDestroy  {
   hasProductInInvoice: boolean = false;
   isCustomerSelected: boolean = false;
   isSaving = false;
+  stamp: number =0;
   constructor(
     private customerService: CustomerService,
     private productService: ProductService,
     private invoiceService: InvoiceService,
     private pdfService: PdfService,
     private route: ActivatedRoute,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
+    private userService: UserService,
     ) {}
 
   ngOnInit() {
@@ -75,6 +80,15 @@ export class QuoteCreateComponent implements OnInit, OnDestroy  {
       this.hasProductInInvoice=true;
       this.isCustomerSelected=true;
     }
+
+    this.userService.getUserSettings().subscribe(
+      (settingsResponse: SettingsResponse) => {
+        this.stamp =settingsResponse.stamp || 0;
+      },
+      (error) => {
+        console.error('Failed to retrieve user settings:', error);
+      }
+    );
 
     this.selectedDate = new Date();
     this.customers$ = this.customerSearchControl.valueChanges
@@ -402,6 +416,7 @@ getInvoiceDetails(id: number) {
       return acc + parseFloat(item.totalPriceAfterDiscountTTC);
     }, 0);
     this.total = totalTTC.toFixed(3);
+    this.totalAmount = (totalTTC + this.stamp).toFixed(3);
   }
   
   checkCustomerExists() {
@@ -434,7 +449,6 @@ getInvoiceDetails(id: number) {
   
   saveInvoice(): void {
     this.isSaving = true;
-    const dueDateString = '2023-12-16T00:00:00Z'; // for testing purpose
     const customer = this.customerSearchControl.value;
     const customerIdOnly = Customer.createWithId(customer.id);
 
@@ -455,10 +469,10 @@ getInvoiceDetails(id: number) {
     
     const invoiceData: Invoice = {
       dateIssued: this.selectedDate,
-      dueDate: new Date(dueDateString),
-      totalAmount: this.total+1,
-      status: 'not paid', // for testing purpose
-      stamp: 1, // for testing purpose
+      dueDate: this.selectedDate,
+      totalAmount: this.total,
+      status: 'non payé', 
+      stamp: this.stamp, 
       customer: customerIdOnly,
       lineItems: lineItems,
       quote: true
@@ -480,7 +494,6 @@ getInvoiceDetails(id: number) {
   }
 
   updateInvoice() {
-    const dueDateString = '2023-12-16T00:00:00Z'; // for testing purpose
     const customer = this.customerSearchControl.value;
     const customerIdOnly = Customer.createWithId(customer.id);
     const lineItems = this.dataSource.data.map(item => {
@@ -502,10 +515,10 @@ getInvoiceDetails(id: number) {
     const updatedInvoiceData: Invoice = {
       id: this.invoiceId,
       dateIssued: this.selectedDate,
-      dueDate: new Date(dueDateString),
-      totalAmount: this.total + 1,
-      status: 'paid', // for testing purpose
-      stamp: 1, // for testing purpose
+      dueDate: this.selectedDate,
+      totalAmount: this.total,
+      status: 'non payé',
+      stamp: this.stamp,
       customer: customerIdOnly,
       lineItems: lineItems,
       quote: true
