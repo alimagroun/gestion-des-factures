@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,9 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseCookie;
 import jakarta.servlet.http.Cookie;
 
-
 import com.magroun.gestiondesfactures.dto.AuthenticationRequest;
-import com.magroun.gestiondesfactures.dto.AuthenticationResponse;
 import com.magroun.gestiondesfactures.dto.RegisterRequest;
 import com.magroun.gestiondesfactures.service.AuthenticationService;
 import org.springframework.security.core.Authentication;
@@ -24,7 +21,6 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-//@CrossOrigin(origins = "http://localhost:4200", allowCredentials="true")
 @RequiredArgsConstructor
 public class AuthenticationController {
 

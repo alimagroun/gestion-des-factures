@@ -24,7 +24,6 @@ export class QuoteListComponent implements OnInit {
     'customer',
     'date',
     'totalAmount',
-    'state',
     'action',
   ];
   selectedRows: Invoice[] = [];
@@ -64,7 +63,7 @@ export class QuoteListComponent implements OnInit {
   onDeleteInvoice(selectedRows: Invoice[]): void {
     const currentPageIndex = this.paginator.pageIndex;
     const currentPageSize = this.paginator.pageSize;
-    const confirmationMessage = `Voulez-vous vraiment supprimer ${selectedRows.length > 1 ? 'ces factures' : 'cette facture'} ?`;
+    const confirmationMessage = `Voulez-vous vraiment supprimer ${selectedRows.length > 1 ? 'ces devis' : 'ce devis'} ?`;
   
     this.dialogService
       .openDeleteConfirmationDialog(confirmationMessage)
@@ -88,7 +87,7 @@ export class QuoteListComponent implements OnInit {
                 this.loadInvoices(this.paginator.pageIndex, currentPageSize);
                 this.showSupprimerButton =false;
                 this.selectAllChecked = false;
-                const message = selectedRows.length > 1 ? 'Les factures ont été supprimées avec succès.' : 'La facture a été supprimée avec succès.';
+                const message = selectedRows.length > 1 ? 'Les devis ont été supprimés avec succès.' : 'Le devis a été supprimé avec succès.';
                 this.snackbarService.openSnackBar(message, 'Fermer');
 
               },

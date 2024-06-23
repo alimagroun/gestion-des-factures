@@ -13,7 +13,6 @@ import com.magroun.gestiondesfactures.service.InvoiceService;
 
 @RestController
 @RequestMapping("/api/invoices")
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials="true")
 public class InvoiceController {
 
     private final InvoiceService invoiceService;

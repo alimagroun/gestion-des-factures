@@ -60,8 +60,8 @@
 </div>
 
 <div class="button-container">
-  <button mat-raised-button (click)="deleteProduct()" *ngIf="selected" class="delete-button mat-warn">Delete</button>
-  <button mat-button color="primary" *ngIf="invoiceId !== null" (click)="generateInvoicePdf(invoiceId)" class="download-button">
+  <button mat-raised-button color="warn" (click)="deleteProduct()" *ngIf="selected">Delete</button>
+  <button mat-button color="primary" *ngIf="invoiceId !== null" (click)="generateInvoicePdf(invoiceId)">
     <mat-icon>cloud_download</mat-icon>
     Télécharger
   </button>

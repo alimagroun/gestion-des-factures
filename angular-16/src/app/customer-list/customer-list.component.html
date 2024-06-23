@@ -4,7 +4,14 @@
     <button mat-raised-button color="primary" *ngIf="showModifierButton" (click)="openEditCustomerModal(customer)">Modifier</button>
     <button mat-raised-button color="warn" *ngIf="showSupprimerButton" (click)="onDeleteCustomer(selectedRows)">Supprimer</button>
     <button mat-raised-button color="primary" (click)="openCreateCustomerModal()">NOUVEAU CLIENT</button>
+
+    <button mat-button color="primary" *ngIf="showCheckbox" (click)="downloadFile()">
+      <mat-icon>cloud_download</mat-icon>
+      Télécharger
+    </button>
     </div>
+
+
 
     <div class="mat-elevation-z8">
     <mat-table [dataSource]="dataSource" matSort>

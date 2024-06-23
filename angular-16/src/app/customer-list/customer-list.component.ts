@@ -8,6 +8,7 @@ import { CustomerCreateModalComponent } from '../customer-create-modal/customer-
 import { CustomerEditModalComponent } from '../customer-edit-modal/customer-edit-modal.component';
 import { DialogService } from '../services/DialogService';
 import { SnackbarService } from '../services/snackbar.service';
+import { ExcelService } from '../services/excel.service';
 
 @Component({
   selector: 'app-customer-list',
@@ -37,7 +38,8 @@ export class CustomerListComponent implements OnInit {
     private dialog: MatDialog,
     private customerService: CustomerService,
     private dialogService: DialogService,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
+    private excelService: ExcelService
   ) {}
 
   ngOnInit(): void {
@@ -180,4 +182,18 @@ export class CustomerListComponent implements OnInit {
     this.selectAllChecked = allCustomersSelected;
   }
   
+  downloadFile(): void {
+    this.excelService.downloadCustomersExcel().subscribe(response => {
+      const blob = new Blob([response], { type: 'application/vnd.ms-excel' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'customers.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }, error => {
+      console.error('Download error:', error);
+    });
+  }
 }

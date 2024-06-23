@@ -43,17 +43,11 @@
       <mat-cell mat-cell *matCellDef="let invoice"> {{ invoice.totalAmount}} </mat-cell>
     </ng-container>
 
-    <!-- État -->
-    <ng-container matColumnDef="state">
-      <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header> État </mat-header-cell>
-      <mat-cell mat-cell *matCellDef="let invoice"> {{ invoice.status }} </mat-cell>
-    </ng-container>
-
     <!-- Action -->
     <ng-container matColumnDef="action">
       <mat-header-cell mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
       <mat-cell mat-cell *matCellDef="let invoice">
-        <button mat-icon-button matTooltip="Consulter la facture" (click)="viewInvoice(invoice.id)">
+        <button mat-icon-button matTooltip="Consulter le devis" (click)="viewInvoice(invoice.id)">
           <mat-icon>visibility</mat-icon>
         </button>      
       </mat-cell>

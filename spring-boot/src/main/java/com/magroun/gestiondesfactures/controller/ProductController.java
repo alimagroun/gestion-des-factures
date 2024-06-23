@@ -10,12 +10,10 @@ import org.springframework.data.domain.Pageable;
 import com.magroun.gestiondesfactures.exception.ResourceNotFoundException;
 import com.magroun.gestiondesfactures.model.Product;
 import com.magroun.gestiondesfactures.service.ProductService;
-
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/products")
-@CrossOrigin(origins = "*")
 public class ProductController {
 
     private final ProductService productService;

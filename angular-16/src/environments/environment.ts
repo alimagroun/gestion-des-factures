@@ -5,7 +5,8 @@ export const environment = {
       customers: '/api/customers',
       products: '/api/products',
       invoices: '/api/invoices',
-      users: '/api/users'
+      users: '/api/users',
+      excel: '/api/excel'
     },
   };
   

@@ -129,8 +129,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceRepository.deleteById(id);
     }
     
-    @Override
-    public String generateInvoiceNumber() {
+    private String generateInvoiceNumber() {
         int currentYear = LocalDate.now().getYear() % 100;
         Integer lastInvoiceNumber = invoiceRepository.findLastInvoiceNumberByYear(String.format("%02d", currentYear));
 
