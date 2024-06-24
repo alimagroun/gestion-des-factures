@@ -8,7 +8,6 @@ export interface Menu {
 }
 
 const MENUITEMS = [
-  { state: 'dashboard', name: 'Dashboard', type: 'link', icon: 'av_timer' },
   { state: 'invoice-create', type: 'link', name: 'Créer une facture', icon: 'crop_7_5' },
   { state: 'invoice-list', type: 'link', name: 'Factures', icon: 'view_comfy' },
   { state: 'product-list', type: 'link', name: 'Articles', icon: 'view_list' },
