@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 
 import { FullComponent } from './layouts/full/full.component';
 import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
 import { InvoiceListComponent } from './invoice-list/invoice-list.component';
 import { InvoiceCreateComponent } from './invoice-create/invoice-create.component';
 import { QuoteCreateComponent } from './quote-create/quote-create.component';
@@ -62,10 +61,11 @@ export const AppRoutes: Routes = [
         path: 'account-management',
         component: AccountManagementComponent,
         canActivate: [AuthGuard]
-      },
+      }
     ]
   },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-
+  { 
+    path: 'login',
+    component: LoginComponent 
+  }
 ];

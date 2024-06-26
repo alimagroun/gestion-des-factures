@@ -92,7 +92,8 @@ public class PdfUtils {
 
         PdfPCell invoiceIdCell = new PdfPCell();
         invoiceIdCell.setBorder(PdfPCell.NO_BORDER);
-        Chunk invoiceIdChunk = new Chunk("N° de facture : " + invoice.getInvoiceNumber());
+        String label = invoice.isQuote() ? "N° de devis : " : "N° de facture : ";
+        Chunk invoiceIdChunk = new Chunk(label + invoice.getInvoiceNumber());
         Phrase invoiceIdPhrase = new Phrase(invoiceIdChunk);
         invoiceIdCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
         invoiceIdCell.addElement(invoiceIdPhrase);

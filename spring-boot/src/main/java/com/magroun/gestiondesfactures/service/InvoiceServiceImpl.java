@@ -24,7 +24,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final LineItemService lineItemService;
 
-    @Autowired
     public InvoiceServiceImpl(InvoiceRepository invoiceRepository, LineItemService lineItemService) {
         this.invoiceRepository = invoiceRepository;
         this.lineItemService = lineItemService;

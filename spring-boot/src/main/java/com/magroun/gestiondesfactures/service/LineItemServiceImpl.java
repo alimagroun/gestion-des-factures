@@ -1,6 +1,5 @@
 package com.magroun.gestiondesfactures.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.magroun.gestiondesfactures.model.LineItem;
@@ -13,7 +12,6 @@ public class LineItemServiceImpl implements LineItemService {
 
     private final LineItemRepository lineItemRepository;
 
-    @Autowired
     public LineItemServiceImpl(LineItemRepository lineItemRepository) {
         this.lineItemRepository = lineItemRepository;
     }

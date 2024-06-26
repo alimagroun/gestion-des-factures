@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseCookie;
-import jakarta.servlet.http.Cookie;
 
 import com.magroun.gestiondesfactures.dto.AuthenticationRequest;
 import com.magroun.gestiondesfactures.dto.RegisterRequest;
@@ -52,22 +51,6 @@ public class AuthenticationController {
     service.refreshToken(request, response);
   }
 
-  @PostMapping("/logout7")
-  public ResponseEntity<Void> logout(HttpServletResponse response) {
-
-      Cookie accessTokenCookie = new Cookie("access_token", null);
-      accessTokenCookie.setMaxAge(0); 
-      accessTokenCookie.setPath("/api"); 
-      response.addCookie(accessTokenCookie);
-
-      Cookie refreshTokenCookie = new Cookie("refresh_token", null);
-      refreshTokenCookie.setMaxAge(0);
-      refreshTokenCookie.setPath("/api"); 
-      response.addCookie(refreshTokenCookie);
-
-      return ResponseEntity.ok().build();
-  }
-  
   @GetMapping("/is-logged-in")
   public ResponseEntity<Boolean> isLoggedIn(Authentication authentication) {
       boolean isAuthenticated = authentication != null && authentication.isAuthenticated();

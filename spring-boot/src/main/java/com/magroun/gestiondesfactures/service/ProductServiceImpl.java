@@ -1,6 +1,5 @@
 package com.magroun.gestiondesfactures.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import com.magroun.gestiondesfactures.model.Product;
 import com.magroun.gestiondesfactures.repository.ProductRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,7 +14,6 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
 
-    @Autowired
     public ProductServiceImpl(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
